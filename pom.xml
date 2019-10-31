@@ -12,23 +12,11 @@
   
  	<dependencies>
  	
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math -->
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-math</artifactId>
 		    <version>2.2</version>
 		</dependency>
-
-	 	
-		    <!-- 
-		<dependency>
-		    <groupId>org.objectweb</groupId>
-		    <artifactId>asm-all</artifactId>
-		    <version>3.3</version>
-		    <scope>system</scope>
-			<systemPath>${project.basedir}/lib/asm-all-3.3.jar</systemPath>
-		</dependency>
-			 -->
 				
 		<dependency>
 		  <groupId>org.eclipse.jetty.orbit</groupId>
@@ -36,23 +24,12 @@
 		  <version>3.3.1.v201105211655</version>
 		</dependency>
 
-
-		<!-- https://mvnrepository.com/artifact/org.jdom/jdom -->
 		<dependency>
 		    <groupId>org.jdom</groupId>
 		    <artifactId>jdom</artifactId>
 		    <version>1.1.3</version>
 		</dependency>
 
-		<!--  
-		<dependency>
-			<groupId>jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/jdom.jar</systemPath>
-		</dependency>
-		-->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -64,7 +41,6 @@
 		    <artifactId>testng</artifactId>
 		    <version>6.5.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.jline/jline -->
  	</dependencies>
   	<build>
   	
@@ -84,72 +60,6 @@
 		    
 	   	</resources>	   	
 		<plugins>
-		<!-- 
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/TESTA/resources</outputDirectory>
-							<resources>
-								<resource>
-									<directory>TESTB/resources</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
-			 -->
-		   	<!-- 
-			<plugin>
-		        <artifactId>maven-resources-plugin</artifactId>
-		        <version>3.1.0</version>
-		        <executions>
-		          <execution>
-		            <id>copy-resources</id>
-		            <phase>validate</phase>
-		            <goals>
-		              <goal>copy-resources</goal>
-		            </goals>
-		            <configuration>
-		              <outputDirectory>${basedir}/target/ch/idsia/benchmark/mario/engine/resources</outputDirectory>
-		              <resources>          
-		                <resource>
-							<directory>src/ch/idsia/benchmark/mario/engine/resources</directory>
-					       	<includes>
-					       		<include>*.png</include>
-					       		<include>*.gif</include>
-					       	</includes>
-		                </resource>
-		              </resources>              
-		            </configuration>            
-		          </execution>
-		        </executions>
-		      </plugin>
-		
-		
-		      <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-jar-plugin</artifactId>
-		        <version>3.1.2</version>
-		        <configuration>
-		          <includes>
-		            <include>**/resources/*</include>
-		          </includes>
-		        </configuration>
-		      </plugin>
-		-->
-				
-		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -169,15 +79,6 @@
 										<exclude>META-INF/*.DSA</exclude>
 										<exclude>META-INF/*.RSA</exclude>
 									</excludes>
-									<!-- 
-									<includes>
-                    					<include>**/resources/*</include>
-                    					<include>**/*.class</include>
-                    					<include>**/*.dat</include>
-                    					<include>**/*.png</include>
-                    					<include>**/*.gif</include>
-                    				</includes>
-                    				 -->
 								</filter>
 							</filters>
 						</configuration>
