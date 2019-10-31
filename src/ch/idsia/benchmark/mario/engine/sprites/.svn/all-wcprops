@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/742/trunk/src/ch/idsia/benchmark/mario/engine/sprites
+END
+Sparkle.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/sprites/Sparkle.java
+END
+Particle.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/sprites/Particle.java
+END
+FireFlower.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/sprites/FireFlower.java
+END
+Sprite.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/738/trunk/src/ch/idsia/benchmark/mario/engine/sprites/Sprite.java
+END
+Mario.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/742/trunk/src/ch/idsia/benchmark/mario/engine/sprites/Mario.java
+END
+Shell.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/sprites/Shell.java
+END
+Mushroom.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/sprites/Mushroom.java
+END
+SpriteContext.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/sprites/SpriteContext.java
+END
+Enemy.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/705/trunk/src/ch/idsia/benchmark/mario/engine/sprites/Enemy.java
+END
+Fireball.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/sprites/Fireball.java
+END
+Princess.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/704/trunk/src/ch/idsia/benchmark/mario/engine/sprites/Princess.java
+END
+WaveGoomba.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/700/trunk/src/ch/idsia/benchmark/mario/engine/sprites/WaveGoomba.java
+END
+GreenMushroom.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/689/trunk/src/ch/idsia/benchmark/mario/engine/sprites/GreenMushroom.java
+END
+BulletBill.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/sprites/BulletBill.java
+END
+FlowerEnemy.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/705/trunk/src/ch/idsia/benchmark/mario/engine/sprites/FlowerEnemy.java
+END
+CoinAnim.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/sprites/CoinAnim.java
+END

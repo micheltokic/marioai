@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/753/trunk/src/amico/python/PyJava/src
+END
+AmiCoPyJava.def
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/745/trunk/src/amico/python/PyJava/src/AmiCoPyJava.def
+END
+arrayutils.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/632/trunk/src/amico/python/PyJava/src/arrayutils.h
+END
+PythonCallsJava.cc
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/753/trunk/src/amico/python/PyJava/src/PythonCallsJava.cc
+END
+PythonCallsJava.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/753/trunk/src/amico/python/PyJava/src/PythonCallsJava.h
+END

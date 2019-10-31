@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/758/trunk/src/ch/idsia/agents/controllers
+END
+RandomAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/controllers/RandomAgent.java
+END
+ScaredAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/controllers/ScaredAgent.java
+END
+BasicMarioAIAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/758/trunk/src/ch/idsia/agents/controllers/BasicMarioAIAgent.java
+END
+ForwardAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/676/trunk/src/ch/idsia/agents/controllers/ForwardAgent.java
+END
+TimingAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/controllers/TimingAgent.java
+END
+ScaredShooty.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/676/trunk/src/ch/idsia/agents/controllers/ScaredShooty.java
+END
+forwardagent.py
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/476/trunk/src/ch/idsia/agents/controllers/forwardagent.py
+END
+ReplayAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/676/trunk/src/ch/idsia/agents/controllers/ReplayAgent.java
+END
+ForwardJumpingAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/controllers/ForwardJumpingAgent.java
+END
+marioagent.py
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/476/trunk/src/ch/idsia/agents/controllers/marioagent.py
+END

@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/763/trunk/src/ch/idsia/agents
+END
+MLPESLearningAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/715/trunk/src/ch/idsia/agents/MLPESLearningAgent.java
+END
+BasicLearningAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/711/trunk/src/ch/idsia/agents/BasicLearningAgent.java
+END
+simplepythonagent.py
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/476/trunk/src/ch/idsia/agents/simplepythonagent.py
+END
+AgentLoader.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/763/trunk/src/ch/idsia/agents/AgentLoader.java
+END
+AmiCoAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/685/trunk/src/ch/idsia/agents/AmiCoAgent.java
+END
+SimpleAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/676/trunk/src/ch/idsia/agents/SimpleAgent.java
+END
+SRNESLearningAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/711/trunk/src/ch/idsia/agents/SRNESLearningAgent.java
+END
+AgentsPool.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/758/trunk/src/ch/idsia/agents/AgentsPool.java
+END
+LearningAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/711/trunk/src/ch/idsia/agents/LearningAgent.java
+END
+Agent.java
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/676/trunk/src/ch/idsia/agents/Agent.java
+END

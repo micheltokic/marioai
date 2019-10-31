@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/764/trunk/src/ch/idsia/benchmark/mario/engine
+END
+BgRenderer.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/693/trunk/src/ch/idsia/benchmark/mario/engine/BgRenderer.java
+END
+Replayer.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/645/trunk/src/ch/idsia/benchmark/mario/engine/Replayer.java
+END
+LevelScene.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/742/trunk/src/ch/idsia/benchmark/mario/engine/LevelScene.java
+END
+Recorder.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/705/trunk/src/ch/idsia/benchmark/mario/engine/Recorder.java
+END
+Art.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/690/trunk/src/ch/idsia/benchmark/mario/engine/Art.java
+END
+GlobalOptions.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/764/trunk/src/ch/idsia/benchmark/mario/engine/GlobalOptions.java
+END
+GeneralizerLevelScene.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/749/trunk/src/ch/idsia/benchmark/mario/engine/GeneralizerLevelScene.java
+END
+GeneralizerEnemies.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/698/trunk/src/ch/idsia/benchmark/mario/engine/GeneralizerEnemies.java
+END
+LevelRenderer.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/705/trunk/src/ch/idsia/benchmark/mario/engine/LevelRenderer.java
+END
+MarioVisualComponent.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/705/trunk/src/ch/idsia/benchmark/mario/engine/MarioVisualComponent.java
+END

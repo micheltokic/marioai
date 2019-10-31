@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/758/trunk/src/ch/idsia/scenarios/test
+END
+EvolveWithChangingSeeds.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/711/trunk/src/ch/idsia/scenarios/test/EvolveWithChangingSeeds.java
+END
+EvolveSingle.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/711/trunk/src/ch/idsia/scenarios/test/EvolveSingle.java
+END
+StatsJLink.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/645/trunk/src/ch/idsia/scenarios/test/StatsJLink.java
+END
+PaperEvolve.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/715/trunk/src/ch/idsia/scenarios/test/PaperEvolve.java
+END
+PaperEvolveBatch.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/645/trunk/src/ch/idsia/scenarios/test/PaperEvolveBatch.java
+END
+StochasticityTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/758/trunk/src/ch/idsia/scenarios/test/StochasticityTest.java
+END
+PlayJLink.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/711/trunk/src/ch/idsia/scenarios/test/PlayJLink.java
+END
+EvaluateJLink.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/711/trunk/src/ch/idsia/scenarios/test/EvaluateJLink.java
+END

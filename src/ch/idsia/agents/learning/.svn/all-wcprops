@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/676/trunk/src/ch/idsia/agents/learning
+END
+SmallMLPAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/learning/SmallMLPAgent.java
+END
+SRNAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/676/trunk/src/ch/idsia/agents/learning/SRNAgent.java
+END
+SimpleMLPAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/676/trunk/src/ch/idsia/agents/learning/SimpleMLPAgent.java
+END
+LargeMLPAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/learning/LargeMLPAgent.java
+END
+MediumSRNAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/learning/MediumSRNAgent.java
+END
+MediumMLPAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/learning/MediumMLPAgent.java
+END
+SmallSRNAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/learning/SmallSRNAgent.java
+END
+LargeSRNAgent.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/645/trunk/src/ch/idsia/agents/learning/LargeSRNAgent.java
+END
