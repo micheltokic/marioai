@@ -36,9 +36,9 @@ import java.util.TimeZone;
 
 public abstract class GlobalOptions
 {
-public static final int primaryVersionUID = 0;
-public static final int minorVersionUID = 2;
-public static final int minorSubVersionID = 0;
+public static final int primaryVerionUID = 0;
+public static final int minorVerionUID = 1;
+public static final int minorSubVerionID = 9;
 
 public static boolean areLabels = false;
 public static boolean isCameraCenteredOnMario = false;
@@ -74,17 +74,17 @@ public static boolean isReplaying = false;
 
 public static int getPrimaryVersionUID()
 {
-    return primaryVersionUID;
+    return primaryVerionUID;
 }
 
 public static int getMinorVersionUID()
 {
-    return minorVersionUID;
+    return minorVerionUID;
 }
 
 public static int getMinorSubVersionID()
 {
-    return minorSubVersionID;
+    return minorSubVerionID;
 }
 
 public static String getBenchmarkName()

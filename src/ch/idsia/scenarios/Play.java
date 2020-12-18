@@ -27,12 +27,6 @@
 
 package ch.idsia.scenarios;
 
-import java.util.Random;
-
-import org.apache.commons.math.stat.descriptive.moment.Mean;
-import org.apache.commons.math.stat.descriptive.moment.StandardDeviation;
-
-import ch.idsia.agents.controllers.ForwardJumpingAgent;
 import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.MarioCustomSystemOfValues;
 import ch.idsia.tools.MarioAIOptions; /**
@@ -66,41 +60,17 @@ public final class Play
 
 public static void main(String[] args)
 {
-    MarioAIOptions marioAIOptions = new MarioAIOptions(args);
-    
-    Random rand = new Random();
-    //marioAIOptions.setLevelRandSeed(rand.nextInt());
-//    marioAIOptions.setAgent(new ForwardJumpingAgent());
-    //marioAIOptions.setScale2X(true);
+    final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+    final BasicTask basicTask = new BasicTask(marioAIOptions);
+    marioAIOptions.setVisualization(true);
 //        basicTask.reset(marioAIOptions);
-    //final MarioCustomSystemOfValues m = new MarioCustomSystemOfValues();
+    final MarioCustomSystemOfValues m = new MarioCustomSystemOfValues();
 //        basicTask.runSingleEpisode();
     // run 1 episode with same options, each time giving output of Evaluation info.
     // verbose = false
-    
-    int numTests = 10;
-    double[] score = new double[numTests];
-    marioAIOptions.setScale2X(true);
-    for (int i = 0; i < numTests; i++) {
-    	marioAIOptions.setVisualization(true);
-    	marioAIOptions.setLevelLength(128);
-    	marioAIOptions.setTimeLimit(100);
-    	marioAIOptions.setLevelDifficulty(0);
-    	marioAIOptions.setLevelRandSeed(rand.nextInt());
-    	BasicTask basicTask = new BasicTask(marioAIOptions);
-    	marioAIOptions.setScale2X(false);
-    	basicTask.doEpisodes(1, false, 1);
-    	score[i] = basicTask.getEnvironment().getEvaluationInfo().computeWeightedFitness();
-    	System.out.println(score[i]);
-    }
-    Mean mean = new Mean();
-    StandardDeviation sd = new StandardDeviation();
-    System.out.println("Mean: " + mean.evaluate(score));
-    System.out.println("SD: " + sd.evaluate(score));
-    
-//    basicTask.doEpisodes(10, true, 1);
-//    System.out.println("\nEvaluationInfo: \n" + basicTask.getEnvironment().getEvaluationInfoAsString());
-//    System.out.println("\nCustom : \n" + basicTask.getEnvironment().getEvaluationInfo().computeWeightedFitness());
+    basicTask.doEpisodes(1, false, 1);
+    System.out.println("\nEvaluationInfo: \n" + basicTask.getEnvironment().getEvaluationInfoAsString());
+    System.out.println("\nCustom : \n" + basicTask.getEnvironment().getEvaluationInfo().computeWeightedFitness(m));
     System.exit(0);
 }
 }
