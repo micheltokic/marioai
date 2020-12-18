@@ -1,49 +1,0 @@
-10
-
-dir
-764
-https://marioai.googlecode.com/svn/trunk/src/ch/idsia
-https://marioai.googlecode.com/svn
-
-
-
-2011-04-27T09:49:57.241277Z
-764
-Nikolay.Sohryakov@gmail.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-91117294-33d9-11de-9c63-4752e237b823
-
-tools
-dir
-
-utils
-dir
-
-agents
-dir
-
-unittests
-dir
-
-evolution
-dir
-
-scenarios
-dir
-
-benchmark
-dir
-

@@ -1,9 +1,0 @@
-K 10
-svn:ignore
-V 44
-.project
-.pydevproject
-.idea
-libAmiCo.dylib
-
-END

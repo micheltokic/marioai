@@ -1,0 +1,5 @@
+.svn
+*.class
+.svn-base
+prop-base
+text-base
