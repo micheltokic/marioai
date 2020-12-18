@@ -1,6 +1,6 @@
 # marioai
 Clone of https://code.google.com/archive/p/marioai/downloads + Maven 
 
-#build
+# build
 mvn clean package
 mvn install
