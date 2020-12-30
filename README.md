@@ -8,7 +8,7 @@ This is a clone of the MarioAI engine https://code.google.com/archive/p/marioai/
  * cd marioai-engine
  * mvn clean package install
  
-# 2) Build and install Demo-Agent
+# 2) Build and run Demo-Agent
  * cd marioai-demo-agent
  * mvn clean package
  * java -jar target/mario-demo-agent-0.0.2-SNAPSHOT.jar
