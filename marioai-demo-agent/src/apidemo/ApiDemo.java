@@ -56,8 +56,16 @@ public class ApiDemo {
 		
 		// setup level options
 		//MarioAIOptions marioAIOptions = new MarioAIOptions("-vh 240 -vw 320 -srf on -rfw 5 -rfh 5");
-		MarioAIOptions marioAIOptions = new MarioAIOptions("-vh 320 -vw 1600 -srf on -rfw 11 -rfh 5");
-		
+		int receptiveFieldHeight = 5;  // rows
+		int receptiveFieldWidth = 11;  // columns
+		int viewHeight=320; // pixels
+		int viewWidth=1600; // pixels
+		MarioAIOptions marioAIOptions = new MarioAIOptions(
+					" -vh " + viewHeight + 
+					" -vw " + viewWidth + 
+					" -srf on " + 
+					" -rfw " + receptiveFieldWidth + 
+					" -rfh " + receptiveFieldHeight);
 		
 		marioAIOptions.setFlatLevel(false);
 		marioAIOptions.setBlocksCount(true);
@@ -73,9 +81,7 @@ public class ApiDemo {
 		marioAIOptions.setTubesCount(false);
 		marioAIOptions.setLevelDifficulty(2);
 		//marioAIOptions.setScale2X(true); // does only work for 240x320
-		//marioAIOptions.setViewHeight(800);
-		//marioAIOptions.setViewWidth(800);
-		//marioAIOptions.setReceptiveFieldVisualized(true);
+
 		
 		System.out.println("Options: " + marioAIOptions.asString());
 	    marioAIOptions.printOptions(true);
@@ -83,29 +89,11 @@ public class ApiDemo {
 		// setup engine 
 		ApiAgent agent = new ApiAgent();
 		marioAIOptions.setAgent(agent); 
-		
-		System.out.println("go.h" + GlobalOptions.VISUAL_COMPONENT_HEIGHT);
-		System.out.println("go.w" + GlobalOptions.VISUAL_COMPONENT_WIDTH);
-		
-		agent.setObservationDetails(environment.getReceptiveFieldWidth(),
-	    		environment.getReceptiveFieldHeight(),
-	    		environment.getMarioEgoPos()[0],
-	    		environment.getMarioEgoPos()[1]);
+
 		System.out.println("CMD Options: " + marioAIOptions.toString());
 		
-		environment.reset(marioAIOptions); // does not work :(
-		
-		System.out.println("go.h" + GlobalOptions.VISUAL_COMPONENT_HEIGHT);
-		System.out.println("go.w" + GlobalOptions.VISUAL_COMPONENT_WIDTH);
-
-	    //environment.reset("-srf on -vh 600 -vw 800");
-		//environment.reset("-rfw 19 -rfh 19 -vis on -mec 9 -fps 24 -echo off -mer 9 -srf on -vw 320 -pr off -vh 240 -stop off");
 		// reset agent
-	    agent.setObservationDetails(
-	    		environment.getReceptiveFieldWidth(),
-	    		environment.getReceptiveFieldHeight(),
-	    		environment.getMarioEgoPos()[0],
-	    		environment.getMarioEgoPos()[1]);
+	    environment.reset(marioAIOptions); 
 	    
 	    boolean[] marioAiAction = new boolean[ch.idsia.benchmark.mario.environments.Environment.numberOfKeys];
 	    double totalReward = -1;
