@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package marioai;
 
-option java_package = "de.lmu.parl";
+option java_package = "de.lmu.parl.proto";
 option java_outer_classname = "ActionProtos";
 
 message Action {
