@@ -1,14 +1,16 @@
 package de.lmu.parl;
 
-import de.lmu.parl.messages.MessageHandler;
+import de.lmu.parl.action.ActionHandler;
+import de.lmu.parl.proto.ActionProtos;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+
 
 public class MarioAIProtoServer {
 
@@ -19,6 +21,7 @@ public class MarioAIProtoServer {
     }
 
     public void run() throws Exception {
+        System.out.println("Listening on port " + this.port);
         EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -28,7 +31,12 @@ public class MarioAIProtoServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new MessageHandler());
+                            ChannelPipeline ph = ch.pipeline();
+                            ph.addLast("protobufDecoder",
+                                            new ProtobufDecoder(ActionProtos.Action.getDefaultInstance()));
+                            ph.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
+                            ph.addLast("protobufEncoder", new ProtobufEncoder());
+                            ph.addLast("handler", new ActionHandler());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)
@@ -52,7 +60,6 @@ public class MarioAIProtoServer {
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
         }
-
         new MarioAIProtoServer(port).run();
     }
 }
