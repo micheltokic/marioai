@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package marioai;
+
+option java_package = "de.lmu.parl";
+option java_outer_classname = "ActionProtos";
+
+message Action {
+  int32 action_number = 1;
+}
