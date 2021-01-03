@@ -3,45 +3,59 @@ package de.lmu.parl.handlers;
 import static de.lmu.parl.proto.MarioProtos.MarioMessage;
 import static de.lmu.parl.proto.MarioProtos.Init;
 import static de.lmu.parl.proto.MarioProtos.Action;
+import static de.lmu.parl.proto.MarioProtos.State;
 
-import io.netty.buffer.ByteBuf;
+import ch.idsia.benchmark.mario.environments.MarioEnvironment;
+import ch.idsia.tools.MarioAIOptions;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.ReferenceCountUtil;
 
 public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
+
+    private MarioEnvironment marioEnvironment = MarioEnvironment.getInstance();
+    private MarioAIOptions marioAIOptions;
+    private State state;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
         try {
             MarioMessage marioMessage = (MarioMessage) msg;
-
             switch (marioMessage.getType()) {
                 case INIT:
                     Init init = marioMessage.getInit();
-                    Init resInit = Init.newBuilder().mergeFrom(init).build();
-                    MarioMessage resMsg = MarioMessage.newBuilder()
-                            .setType(MarioMessage.Type.INIT)
-                            .setInit(resInit).build();
-                    ctx.writeAndFlush(resMsg);
+                    marioAIOptions = buildOptions(
+                            init.getRFieldW(), init.getRFieldH(), init.getSeed(),
+                            init.getLevelLength(), init.getDifficulty());
+
+                    marioEnvironment.reset(this.marioAIOptions);
+                    marioEnvironment.tick();
+
+                    // Random answer, work in progress
+                    state = State.newBuilder().setState(42).build();
+                    MarioMessage stateMsg1 = MarioMessage.newBuilder()
+                            .setType(MarioMessage.Type.STATE)
+                            .setState(state).build();
+                    ctx.writeAndFlush(stateMsg1);
                     break;
+
                 case ACTION:
                     Action action = marioMessage.getAction();
-                    Action resAction = Action.newBuilder().mergeFrom(action).build();
-                    ctx.writeAndFlush(resAction);
-            }
+                    boolean[] actionArray = new boolean[]{
+                            action.getUp(), action.getRight(), action.getDown(),
+                            action.getLeft(), action.getSpeed(), action.getJump()};
+                    marioEnvironment.performAction(actionArray);
+                    marioEnvironment.tick();
+
+                    // Random answer, work in progress
+                    state = State.newBuilder().setState(42).build();
+                    MarioMessage stateMsg2 = MarioMessage.newBuilder()
+                            .setType(MarioMessage.Type.STATE)
+                            .setState(state).build();
+                    ctx.writeAndFlush(stateMsg2);            }
     }
         catch (ClassCastException e) {
-            ByteBuf in = (ByteBuf) msg;
-            try {
-                while (in.isReadable()) { // (1)
-                    System.out.print((char) in.readByte());
-                    System.out.flush();
-                }
-            } finally {
-                ReferenceCountUtil.release(msg); // (2)
-            }
-
+            e.printStackTrace();
+            ctx.close();
         }
     }
 
@@ -54,5 +68,30 @@ public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
         // Close the connection when an exception is raised.
         cause.printStackTrace();
         ctx.close();
+    }
+
+    public MarioAIOptions buildOptions(int rfw, int rfh, int randSeed, int levelLength, int difficulty) {
+        int viewHeight=320; // pixels
+        int viewWidth=1600; // pixels
+        MarioAIOptions options = new MarioAIOptions(
+                " -vh " + viewHeight +
+                        " -vw " + viewWidth +
+                        " -srf on " +
+                        " -rfw " + rfw +
+                        " -rfh " + rfh);
+        options.setFlatLevel(false);
+        options.setBlocksCount(true);
+        options.setCoinsCount(true);
+        options.setLevelRandSeed(randSeed); // comment out for random levels
+        options.setVisualization(true); // false: no visualization => faster learning
+        options.setGapsCount(true);
+        options.setMarioMode(2);
+        options.setLevelLength(levelLength);
+        options.setCannonsCount(true);
+        options.setTimeLimit(100);
+        options.setDeadEndsCount(false);
+        options.setTubesCount(false);
+        options.setLevelDifficulty(difficulty);
+        return options;
     }
 }

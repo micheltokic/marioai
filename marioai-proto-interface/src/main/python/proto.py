@@ -1,4 +1,5 @@
 import socket
+import random
 
 from mario_pb2 import MarioMessage, Init, Action, State
 
@@ -46,25 +47,40 @@ class MySocket:
 
 
 if __name__ == "__main__":
+    state = MarioMessage()
+    state.type = MarioMessage.Type.STATE
+    state.state.state = 42
+    state_data = state.SerializeToString()
+
     init_message = MarioMessage()
     init_message.type = MarioMessage.Type.INIT
-    init_message.init.difficulty = 15
-    init_message.init.seed = 2
-    init_message.init.r_field_w = 3
-    init_message.init.r_field_h = 4
-    init_message.init.level_length = 5
+    init_message.init.difficulty = 2
+    init_message.init.seed = 1000
+    init_message.init.r_field_w = 11
+    init_message.init.r_field_h = 5
+    init_message.init.level_length = 80
     init_s = init_message.SerializeToString()
     # init_m = MarioMessage()
     # init_m.ParseFromString(init_s)
 
     s = MySocket()
     s.connect("localhost", 8080)
-
     s.mysend(init_s)
-    data = s.myreceive(len(init_s)+1)
 
-    response = MarioMessage()
-    response.ParseFromString(data[1:])
-    print(str(response))
+    data = s.myreceive(len(state_data)+1)
+
+    for i in range(100):
+        action_message = MarioMessage()
+        action_message.type = MarioMessage.Type.ACTION
+        action_message.action.up = random.random() > 0.5
+        action_message.action.right = random.random() > 0.5
+        action_message.action.down = random.random() > 0.5
+        action_message.action.left = random.random() > 0.5
+        action_message.action.speed = random.random() > 0.5
+        action_message.action.jump = random.random() > 0.5
+        action_s = action_message.SerializeToString()
+        s.mysend(action_s)
+        data = s.myreceive(len(state_data)+1)
+
     s.disconnect()
     pass

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\021de.lmu.parl.protoB\013MarioProtos',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x11proto/mario.proto\x12\x07marioai\"\xbe\x01\n\x0cMarioMessage\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.marioai.MarioMessage.Type\x12\x1b\n\x04init\x18\x02 \x01(\x0b\x32\r.marioai.Init\x12\x1f\n\x06\x61\x63tion\x18\x03 \x01(\x0b\x32\x0f.marioai.Action\x12\x1d\n\x05state\x18\x04 \x01(\x0b\x32\x0e.marioai.State\"\'\n\x04Type\x12\x08\n\x04INIT\x10\x00\x12\n\n\x06\x41\x43TION\x10\x01\x12\t\n\x05STATE\x10\x02\"d\n\x04Init\x12\x12\n\ndifficulty\x18\x01 \x01(\x05\x12\x0c\n\x04seed\x18\x02 \x01(\x05\x12\x11\n\tr_field_w\x18\x03 \x01(\x05\x12\x11\n\tr_field_h\x18\x04 \x01(\x05\x12\x14\n\x0clevel_length\x18\x05 \x01(\x05\"\x1f\n\x06\x41\x63tion\x12\x15\n\raction_number\x18\x01 \x01(\x05\"\x16\n\x05State\x12\r\n\x05state\x18\x01 \x01(\x05\x42 \n\x11\x64\x65.lmu.parl.protoB\x0bMarioProtosb\x06proto3'
+  serialized_pb=b'\n\x11proto/mario.proto\x12\x07marioai\"\xbe\x01\n\x0cMarioMessage\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.marioai.MarioMessage.Type\x12\x1b\n\x04init\x18\x02 \x01(\x0b\x32\r.marioai.Init\x12\x1f\n\x06\x61\x63tion\x18\x03 \x01(\x0b\x32\x0f.marioai.Action\x12\x1d\n\x05state\x18\x04 \x01(\x0b\x32\x0e.marioai.State\"\'\n\x04Type\x12\x08\n\x04INIT\x10\x00\x12\n\n\x06\x41\x43TION\x10\x01\x12\t\n\x05STATE\x10\x02\"d\n\x04Init\x12\x12\n\ndifficulty\x18\x01 \x01(\x05\x12\x0c\n\x04seed\x18\x02 \x01(\x05\x12\x11\n\tr_field_w\x18\x03 \x01(\x05\x12\x11\n\tr_field_h\x18\x04 \x01(\x05\x12\x14\n\x0clevel_length\x18\x05 \x01(\x05\"\\\n\x06\x41\x63tion\x12\n\n\x02up\x18\x01 \x01(\x08\x12\r\n\x05right\x18\x02 \x01(\x08\x12\x0c\n\x04\x64own\x18\x03 \x01(\x08\x12\x0c\n\x04left\x18\x04 \x01(\x08\x12\r\n\x05speed\x18\x05 \x01(\x08\x12\x0c\n\x04jump\x18\x06 \x01(\x08\"\x16\n\x05State\x12\r\n\x05state\x18\x01 \x01(\x05\x42 \n\x11\x64\x65.lmu.parl.protoB\x0bMarioProtosb\x06proto3'
 )
 
 
@@ -178,9 +178,44 @@ _ACTION = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='action_number', full_name='marioai.Action.action_number', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
+      name='up', full_name='marioai.Action.up', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='right', full_name='marioai.Action.right', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='down', full_name='marioai.Action.down', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='left', full_name='marioai.Action.left', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='speed', full_name='marioai.Action.speed', index=4,
+      number=5, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='jump', full_name='marioai.Action.jump', index=5,
+      number=6, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -197,7 +232,7 @@ _ACTION = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=325,
-  serialized_end=356,
+  serialized_end=417,
 )
 
 
@@ -228,8 +263,8 @@ _STATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=358,
-  serialized_end=380,
+  serialized_start=419,
+  serialized_end=441,
 )
 
 _MARIOMESSAGE.fields_by_name['type'].enum_type = _MARIOMESSAGE_TYPE

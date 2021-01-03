@@ -26,7 +26,12 @@ message Init {
 }
 
 message Action {
-  int32 action_number = 1;
+  bool up = 1;
+  bool right = 2;
+  bool down = 3;
+  bool left = 4;
+  bool speed = 5;
+  bool jump = 6;
 }
 
 message State {
