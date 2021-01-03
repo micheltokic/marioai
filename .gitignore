@@ -7,3 +7,4 @@ target
 *.prefs
 *.project
 settings.json
+__pycache__
