@@ -51,8 +51,9 @@ class MarioEnv(gym.Env):
         init_message.init.r_field_w = self.r_field_w
         init_message.init.r_field_h = self.r_field_h
         init_message.init.level_length = self.level_length
-        init_s = init_message.SerializeToString()
-        self.socket.mysend(init_s)
+        # init_s = init_message.SerializeToString()
+        # self.socket.mysend(init_s)
+        self.socket.send_proto(init_message)
 
         self.__recv_state()
 
@@ -65,16 +66,20 @@ class MarioEnv(gym.Env):
 
     def __recv_state(self):
         # receive the state information
-        state = MarioMessage()
-        state.type = MarioMessage.Type.STATE
-        state.state.state = 42
+        # state = MarioMessage()
+        # state.type = MarioMessage.Type.STATE
+        # state.state.state = 42
+        state = self.socket.receive_proto()
+        print('state:\n', state)
 
-        # determine the length to read 
-        state_data = state.SerializeToString()
-        serialized_msg = self.socket.myreceive(len(state_data)+1)
-        print(serialized_msg)
+        # # determine the length to read 
+        # state_data = state.SerializeToString()
+        # print('what we expect to receive: ', state_data)
+        # # serialized_msg = self.socket.myreceive(len(state_data)+1)
+        # serialized_msg = self.socket.receive()
+        # print(serialized_msg)
 
-        # TODO this does not work yet...
+        # # TODO this does not work yet...
         # state.ParseFromString(serialized_msg)
         return state
 
@@ -86,8 +91,9 @@ class MarioEnv(gym.Env):
         init_message.init.r_field_w = self.r_field_w
         init_message.init.r_field_h = self.r_field_h
         init_message.init.level_length = self.level_length
-        init_s = init_message.SerializeToString()
-        self.socket.mysend(init_s)
+        # init_s = init_message.SerializeToString()
+        # self.socket.mysend(init_s)
+        self.socket.send_proto(init_message)
         return self.__recv_state()
 
     def step(self, action:List[int]):
@@ -104,8 +110,9 @@ class MarioEnv(gym.Env):
         msg.action.speed = action[4]
         msg.action.jump = action[5]
 
-        serialized_msg = msg.SerializeToString()
-        self.socket.mysend(serialized_msg)
+        # serialized_msg = msg.SerializeToString()
+        # self.socket.mysend(serialized_msg)
+        self.socket.send_proto(msg)
 
         # receive the new state information
         new_state = self.__recv_state()
