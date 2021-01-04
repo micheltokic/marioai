@@ -5,6 +5,7 @@ import static de.lmu.parl.proto.MarioProtos.Init;
 import static de.lmu.parl.proto.MarioProtos.Action;
 import static de.lmu.parl.proto.MarioProtos.State;
 
+import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 import ch.idsia.tools.MarioAIOptions;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,44 +17,51 @@ public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
     private MarioAIOptions marioAIOptions;
     private State state;
 
+    public MarioMessage handleInitMessage(MarioMessage msg) {
+        Init init = msg.getInit();
+        marioAIOptions = buildOptions(
+                init.getRFieldW(), init.getRFieldH(), init.getSeed(),
+                init.getLevelLength(), init.getDifficulty());
+
+        marioEnvironment.reset(this.marioAIOptions);
+        marioEnvironment.tick();
+
+        // Random answer, work in progress
+        state = State.newBuilder().setState(42).build();
+        return MarioMessage.newBuilder()
+                .setType(MarioMessage.Type.STATE)
+                .setState(state).build();
+    }
+
+    public MarioMessage handleActionMessage(MarioMessage msg) {
+        Action action = msg.getAction();
+        boolean[] actionArray = new boolean[]{
+                action.getUp(), action.getRight(), action.getDown(),
+                action.getLeft(), action.getSpeed(), action.getJump()};
+        marioEnvironment.performAction(actionArray);
+        marioEnvironment.tick();
+
+        // Random answer, work in progress
+        state = State.newBuilder().setState(42).build();
+        return MarioMessage.newBuilder()
+                .setType(MarioMessage.Type.STATE)
+                .setState(state).build();
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
         try {
             MarioMessage marioMessage = (MarioMessage) msg;
             switch (marioMessage.getType()) {
                 case INIT:
-                    Init init = marioMessage.getInit();
-                    marioAIOptions = buildOptions(
-                            init.getRFieldW(), init.getRFieldH(), init.getSeed(),
-                            init.getLevelLength(), init.getDifficulty());
-
-                    marioEnvironment.reset(this.marioAIOptions);
-                    marioEnvironment.tick();
-
-                    // Random answer, work in progress
-                    state = State.newBuilder().setState(42).build();
-                    MarioMessage stateMsg1 = MarioMessage.newBuilder()
-                            .setType(MarioMessage.Type.STATE)
-                            .setState(state).build();
-                    ctx.writeAndFlush(stateMsg1);
+                    MarioMessage response = handleInitMessage(marioMessage);
+                    ctx.writeAndFlush(response);
                     break;
-
                 case ACTION:
-                    Action action = marioMessage.getAction();
-                    boolean[] actionArray = new boolean[]{
-                            action.getUp(), action.getRight(), action.getDown(),
-                            action.getLeft(), action.getSpeed(), action.getJump()};
-                    marioEnvironment.performAction(actionArray);
-                    marioEnvironment.tick();
-
-                    // Random answer, work in progress
-                    state = State.newBuilder().setState(42).build();
-                    MarioMessage stateMsg2 = MarioMessage.newBuilder()
-                            .setType(MarioMessage.Type.STATE)
-                            .setState(state).build();
-                    ctx.writeAndFlush(stateMsg2);            }
-    }
-        catch (ClassCastException e) {
+                    MarioMessage state = handleActionMessage(marioMessage);
+                    ctx.writeAndFlush(state);
+            }
+        } catch (ClassCastException e) {
             e.printStackTrace();
             ctx.close();
         }

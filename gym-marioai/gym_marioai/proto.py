@@ -1,11 +1,9 @@
 import socket
-import random
-import struct
+
+from google.protobuf.internal.decoder import _DecodeVarint32
+from google.protobuf.internal.encoder import _VarintBytes
 
 from .mario_pb2 import MarioMessage, Init, Action, State
-
-# TO_MSGLEN = 3
-# FROM_MSGLEN = 4
 
 
 class MySocket:
@@ -23,49 +21,67 @@ class MySocket:
     def connect(self, host, port):
         self.sock.connect((host, port))
 
-    # def mysend(self, msg):
-    #     totalsent = 0
-    #     while totalsent < len(msg):
-    #         sent = self.sock.send(msg[totalsent:])
-    #         if sent == 0:
-    #             raise RuntimeError("socket connection broken")
-    #         totalsent = totalsent + sent
+    def send(self, msg:MarioMessage, delim=False):
+        """
+        send protobuf message with optional message length header.
 
-    # def myreceive(self, length):
-    #     chunks = []
-    #     bytes_recd = 0
-    #     while bytes_recd < length:
-    #         chunk = self.sock.recv(min(length - bytes_recd, 2048))
-    #         if chunk == b'':
-    #             raise RuntimeError("socket connection broken")
-    #         chunks.append(chunk)
-    #         bytes_recd = bytes_recd + len(chunk)
-    #     return b''.join(chunks)
-
-    def send_proto(self, msg:MarioMessage):
+        - netty server only accepts messages without header.
+        - plain java server expects the length header
+        """
+        if delim:
+            size = msg.ByteSize()
+            self.sock.send(_VarintBytes(size))
         serialized = msg.SerializeToString()
         self.sock.send(serialized)
 
-    def receive_proto(self):
+    def receive_daniel(self):
+        """ daniels version """
+        chunks = []
+        bytes_recd = 0
+        msg_len = 0
+        length = []
+        length_read = False
 
-        # read the size
-        size = self.sock.recv(1)
-        if size is None or size == b'':
+        while not length_read:
+            chunk = self.sock.recv(1)
+            if chunk == b'':
+                raise RuntimeError("socket connection broken")
+            length.append(chunk)
+            try:
+                ln = b''.join(length)
+                msg_len, _ = _DecodeVarint32(ln, 0)
+                length_read = True
+            except:
+                pass
+
+        while bytes_recd < msg_len:
+            chunk = self.sock.recv(msg_len)
+            if chunk == b'':
+                raise RuntimeError("socket connection broken")
+            chunks.append(chunk)
+            bytes_recd = bytes_recd + len(chunk)
+
+        proto_msg = MarioMessage()
+        proto_msg.ParseFromString(b''.join(chunks))
+        return proto_msg
+
+    def receive(self):
+        # parse the header
+        buf = self.sock.recv(10)
+        if buf is None or buf == b'':
             raise RuntimeError("socket connection broken")
 
-        size = bytearray(size)[0]
-        print('size:', size)
+        total_len, offset = _DecodeVarint32(buf, 0)
+        msg = buf[offset:]
+        remaining_len = total_len - len(msg)
 
-        # read the message
-        msg = self.sock.recv(size)
+        while remaining_len > 0:
+            chunk = self.sock.recv(remaining_len)
+            if chunk is None or chunk == b'':
+                raise RuntimeError("socket connection broken")
+            msg += chunk
+            remaining_len -= len(chunk)
 
-        if msg is None or msg == b'':
-            raise RuntimeError("socket connection broken")
-        # print('msg:', msg)
-        # print(bytearray(msg))
-        # for b in bytearray(msg):
-        #     print(b, end=' ')
-        # print()
         parsed_msg = MarioMessage()
         parsed_msg.ParseFromString(msg)
         return parsed_msg

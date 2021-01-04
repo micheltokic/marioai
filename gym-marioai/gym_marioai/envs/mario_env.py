@@ -41,9 +41,9 @@ class MarioEnv(gym.Env):
         except Exception as e:
             print(f'unable to connect to the server, is it running at ' \
                   f'{host}:{port}?\n')
-            # abort
             raise e
 
+        print('connected to the server')
         init_message = MarioMessage()
         init_message.type = MarioMessage.Type.INIT
         init_message.init.difficulty = self.difficulty
@@ -51,9 +51,7 @@ class MarioEnv(gym.Env):
         init_message.init.r_field_w = self.r_field_w
         init_message.init.r_field_h = self.r_field_h
         init_message.init.level_length = self.level_length
-        # init_s = init_message.SerializeToString()
-        # self.socket.mysend(init_s)
-        self.socket.send_proto(init_message)
+        self.socket.send(init_message)
 
         self.__recv_state()
 
@@ -65,25 +63,13 @@ class MarioEnv(gym.Env):
         print('dummy rendering method called, has no effect yet')
 
     def __recv_state(self):
-        # receive the state information
-        # state = MarioMessage()
-        # state.type = MarioMessage.Type.STATE
-        # state.state.state = 42
-        state = self.socket.receive_proto()
-        print('state:\n', state)
-
-        # # determine the length to read 
-        # state_data = state.SerializeToString()
-        # print('what we expect to receive: ', state_data)
-        # # serialized_msg = self.socket.myreceive(len(state_data)+1)
-        # serialized_msg = self.socket.receive()
-        # print(serialized_msg)
-
-        # # TODO this does not work yet...
-        # state.ParseFromString(serialized_msg)
+        state = self.socket.receive()
         return state
 
     def reset(self):
+        """
+        reset the environment, return new initial state
+        """
         init_message = MarioMessage()
         init_message.type = MarioMessage.Type.INIT
         init_message.init.difficulty = self.difficulty
@@ -91,18 +77,20 @@ class MarioEnv(gym.Env):
         init_message.init.r_field_w = self.r_field_w
         init_message.init.r_field_h = self.r_field_h
         init_message.init.level_length = self.level_length
-        # init_s = init_message.SerializeToString()
-        # self.socket.mysend(init_s)
-        self.socket.send_proto(init_message)
+        self.socket.send(init_message)
+
         return self.__recv_state()
 
     def step(self, action:List[int]):
+        """
+        perform action in the environment and return new state, reward,
+        done and info
+        """
         assert len(action) == 6, 'step() expects an action list of length 6'
 
-        # send the action
+        # contruct the action
         msg = MarioMessage()
         msg.type = MarioMessage.Type.ACTION
-
         msg.action.up = action[0]
         msg.action.right = action[1]
         msg.action.down = action[2]
@@ -110,9 +98,7 @@ class MarioEnv(gym.Env):
         msg.action.speed = action[4]
         msg.action.jump = action[5]
 
-        # serialized_msg = msg.SerializeToString()
-        # self.socket.mysend(serialized_msg)
-        self.socket.send_proto(msg)
+        self.socket.send(msg)
 
         # receive the new state information
         new_state = self.__recv_state()
