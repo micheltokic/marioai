@@ -1,0 +1,4 @@
+#!/bin/bash
+# creates mario_pb2.py in the folder ./gym-marioai/gym_marioai/
+
+protoc -I=./marioai-proto-interface/src/main/resources/proto/ --python_out=./gym-marioai/gym_marioai/ mario.proto

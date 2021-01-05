@@ -11,9 +11,9 @@ import static de.lmu.parl.proto.MarioProtos.MarioMessage;
 
 public class PlainProtoServer {
 
-    private int port;
+    private final int port;
     private ServerSocket serverSocket;
-    private MessageHandler msgHandler;
+    private final MessageHandler msgHandler;
 
     public PlainProtoServer(int port) {
         this.port = port;
@@ -41,13 +41,17 @@ public class PlainProtoServer {
 
                 switch (msg.getType()) {
                     case INIT:
-                        msgHandler.handleInitMessage(msg).writeDelimitedTo(out);
+                        msgHandler.handleInitMessage(msg);
+                        break;
+                    case RESET:
+                        msgHandler.handleResetMessage().writeDelimitedTo(out);
                         break;
                     case ACTION:
                         msgHandler.handleActionMessage(msg).writeDelimitedTo(out);
                         break;
-                    default:
-                        throw new NotImplementedException();
+                    case RENDER:
+                        msgHandler.handleRenderMessage(msg);
+                        break;
                 }
             } catch (IOException e) {
                 System.out.println("An IOException occurred, closing client connection");

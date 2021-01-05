@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     env = gym.make('Marioai-v0')
 
-    for e in range(100):
+    for e in range(3):
 
         s = env.reset()
         done = False

@@ -7,7 +7,7 @@ from gym import spaces
 
 from ..proto import MySocket 
 from .. import mario_pb2
-from ..mario_pb2 import MarioMessage
+from ..mario_pb2 import MarioMessage, State
 
 
 class MarioEnv(gym.Env):
@@ -44,42 +44,43 @@ class MarioEnv(gym.Env):
             raise e
 
         print('connected to the server')
-        init_message = MarioMessage()
-        init_message.type = MarioMessage.Type.INIT
-        init_message.init.difficulty = self.difficulty
-        init_message.init.seed = self.seed
-        init_message.init.r_field_w = self.r_field_w
-        init_message.init.r_field_h = self.r_field_h
-        init_message.init.level_length = self.level_length
-        self.socket.send(init_message)
+        msg = MarioMessage()
+        msg.type = MarioMessage.Type.INIT
+        msg.init.difficulty = self.difficulty
+        msg.init.seed = self.seed
+        msg.init.r_field_w = self.r_field_w
+        msg.init.r_field_h = self.r_field_h
+        msg.init.level_length = self.level_length
+        self.socket.send(msg)
+        print('sent init message')
 
-        self.__recv_state()
+        # do not wait for reply
+        self.socket.receive()
+        # self.__recv_state()
 
     def __del__(self):
         print('deleting environment...')
         self.socket.disconnect()
 
     def render(self, mode='human'):
-        print('dummy rendering method called, has no effect yet')
-
-    def __recv_state(self):
-        state = self.socket.receive()
-        return state
+        msg = MarioMessage()
+        msg.type = MarioMessage.Type.RENDER
+        self.socket.send(msg)
+        # do not wait for response
 
     def reset(self):
         """
         reset the environment, return new initial state
         """
-        init_message = MarioMessage()
-        init_message.type = MarioMessage.Type.INIT
-        init_message.init.difficulty = self.difficulty
-        init_message.init.seed = self.seed
-        init_message.init.r_field_w = self.r_field_w
-        init_message.init.r_field_h = self.r_field_h
-        init_message.init.level_length = self.level_length
-        self.socket.send(init_message)
+        msg = MarioMessage()
+        msg.type = MarioMessage.Type.RESET
+        self.socket.send(msg)
+        print('sent reset message, waiting for state response')
 
-        return self.__recv_state()
+        # assuming the response is a state message
+        reply = self.socket.receive()
+        assert reply.type == MarioMessage.Type.STATE
+        return reply.state
 
     def step(self, action:List[int]):
         """
@@ -101,12 +102,16 @@ class MarioEnv(gym.Env):
         self.socket.send(msg)
 
         # receive the new state information
-        new_state = self.__recv_state()
+        reply = self.socket.receive()
+        assert reply.type == MarioMessage.Type.STATE
+
+        state = reply.state
+        game_status = state.game_status
 
         # TODO obtain reward signal from state data
         reward = 0
-        done = False
+        done = game_status != State.GameStatus.RUNNING
         info = ''
 
-        return new_state, reward, done, info
+        return state, reward, done, info
 
