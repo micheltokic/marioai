@@ -48,7 +48,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
                 .build();
     }
 
-    public MarioMessage handleInitMessage(MarioMessage msg) {
+    public void handleInitMessage(MarioMessage msg) {
         System.out.println("handle init message");
         Init init = msg.getInit();
 
@@ -61,11 +61,11 @@ public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
         marioEnvironment.tick();
         // no reply required
         System.out.println("finished handle init message");
-        return createStateMessage();
+        //return createStateMessage();
     }
 
     public MarioMessage handleResetMessage() {
-        System.out.println("handle reset messaage");
+        System.out.println("handle reset message");
         if (marioAIOptions != null)
             marioEnvironment.reset(this.marioAIOptions);
         marioEnvironment.tick();
@@ -99,13 +99,13 @@ public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
              MarioMessage marioMessage = (MarioMessage) msg;
              switch (marioMessage.getType()) {
                  case INIT:
-                     MarioMessage res = handleInitMessage(marioMessage);
-                     ctx.writeAndFlush(res);
+                     handleInitMessage(marioMessage);
+                     //MarioMessage res = handleInitMessage(marioMessage);
+                     //ctx.writeAndFlush(res);
                      break;
                  case RESET:
                      MarioMessage initialState = handleResetMessage();
-                     if (initialState != null)
-                         ctx.writeAndFlush(initialState);
+                     ctx.writeAndFlush(initialState);
                      break;
                  case ACTION:
                      MarioMessage state = handleActionMessage(marioMessage);

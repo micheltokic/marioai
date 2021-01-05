@@ -55,8 +55,7 @@ class MarioEnv(gym.Env):
         print('sent init message')
 
         # do not wait for reply
-        self.socket.receive()
-        # self.__recv_state()
+        # self.socket.receive()
 
     def __del__(self):
         print('deleting environment...')
