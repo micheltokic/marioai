@@ -1,23 +1,20 @@
 package de.lmu.parl;
 
-import de.lmu.parl.handlers.MessageHandler;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.*;
 import java.net.*;
 
 import static de.lmu.parl.proto.MarioProtos.MarioMessage;
 
 
-public class PlainProtoServer {
+public class MarioServer {
 
     private final int port;
     private ServerSocket serverSocket;
-    private final MessageHandler msgHandler;
+    private final Controller msgHandler;
 
-    public PlainProtoServer(int port) {
+    public MarioServer(int port) {
         this.port = port;
-        this.msgHandler = new MessageHandler();
+        this.msgHandler = new Controller();
 
         try {
             this.serverSocket = new ServerSocket(port);
@@ -49,9 +46,9 @@ public class PlainProtoServer {
                     case ACTION:
                         msgHandler.handleActionMessage(msg).writeDelimitedTo(out);
                         break;
-                    case RENDER:
-                        msgHandler.handleRenderMessage(msg);
-                        break;
+                    //case RENDER:
+                    //    msgHandler.handleRenderMessage(msg);
+                    //    break;
                 }
             } catch (IOException e) {
                 System.out.println("An IOException occurred, closing client connection");
@@ -88,7 +85,7 @@ public class PlainProtoServer {
     }
 
     public static void main(String[] args) {
-        PlainProtoServer server = new PlainProtoServer(8080);
+        MarioServer server = new MarioServer(8080);
         server.run();
     }
 }

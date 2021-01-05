@@ -11,7 +11,7 @@ message MarioMessage {
     ACTION = 1;
     STATE = 2;
     RESET = 3;
-    RENDER = 4;
+    //RENDER = 4;
   }
   Type type = 1;
   Init init = 2;
@@ -25,6 +25,7 @@ message Init {
   int32 r_field_w = 3;
   int32 r_field_h = 4;
   int32 level_length = 5;
+  bool render = 6;
 }
 
 message Action {

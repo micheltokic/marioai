@@ -5,7 +5,7 @@ from typing import List, Optional
 import gym
 from gym import spaces
 
-from ..proto import MySocket 
+from ..protobuf_socket import ProtobufSocket 
 from .. import mario_pb2
 from ..mario_pb2 import MarioMessage, State
 
@@ -13,6 +13,7 @@ from ..mario_pb2 import MarioMessage, State
 class MarioEnv(gym.Env):
 
     def __init__(self, host='localhost', port=8080,
+            visible=False,
             difficulty=15,
             seed=2,
             r_field_w=3,
@@ -22,6 +23,7 @@ class MarioEnv(gym.Env):
         Environment initialization
         """
 
+        self.visible = visible
         self.difficulty = difficulty
         self.seed = seed
         self.r_field_w = r_field_w
@@ -36,35 +38,32 @@ class MarioEnv(gym.Env):
         self.observation_space = spaces.MultiBinary(n_features)
 
         try:
-            self.socket = MySocket()
+            self.socket = ProtobufSocket()
             self.socket.connect(host, port)
         except Exception as e:
             print(f'unable to connect to the server, is it running at ' \
                   f'{host}:{port}?\n')
             raise e
 
-        print('connected to the server')
         msg = MarioMessage()
         msg.type = MarioMessage.Type.INIT
+        msg.init.render = self.visible
         msg.init.difficulty = self.difficulty
         msg.init.seed = self.seed
         msg.init.r_field_w = self.r_field_w
         msg.init.r_field_h = self.r_field_h
         msg.init.level_length = self.level_length
         self.socket.send(msg)
-        print('sent init message')
-
-        # do not wait for reply
-        # self.socket.receive()
 
     def __del__(self):
         print('deleting environment...')
         self.socket.disconnect()
 
     def render(self, mode='human'):
-        msg = MarioMessage()
-        msg.type = MarioMessage.Type.RENDER
-        self.socket.send(msg)
+        pass
+        # msg = MarioMessage()
+        # msg.type = MarioMessage.Type.RENDER
+        # self.socket.send(msg)
         # do not wait for response
 
     def reset(self):
@@ -74,7 +73,6 @@ class MarioEnv(gym.Env):
         msg = MarioMessage()
         msg.type = MarioMessage.Type.RESET
         self.socket.send(msg)
-        print('sent reset message, waiting for state response')
 
         # assuming the response is a state message
         reply = self.socket.receive()
@@ -97,7 +95,6 @@ class MarioEnv(gym.Env):
         msg.action.left = action[3]
         msg.action.speed = action[4]
         msg.action.jump = action[5]
-
         self.socket.send(msg)
 
         # receive the new state information

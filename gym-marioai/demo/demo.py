@@ -4,7 +4,7 @@ import gym_marioai
 
 if __name__ == '__main__':
 
-    env = gym.make('Marioai-v0')
+    env = gym.make('Marioai-v0', visible=True)
 
     for e in range(3):
 

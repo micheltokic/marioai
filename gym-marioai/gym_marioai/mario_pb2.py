@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\021de.lmu.parl.protoB\013MarioProtos',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bmario.proto\x12\x07marioai\"\xd5\x01\n\x0cMarioMessage\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.marioai.MarioMessage.Type\x12\x1b\n\x04init\x18\x02 \x01(\x0b\x32\r.marioai.Init\x12\x1f\n\x06\x61\x63tion\x18\x03 \x01(\x0b\x32\x0f.marioai.Action\x12\x1d\n\x05state\x18\x04 \x01(\x0b\x32\x0e.marioai.State\">\n\x04Type\x12\x08\n\x04INIT\x10\x00\x12\n\n\x06\x41\x43TION\x10\x01\x12\t\n\x05STATE\x10\x02\x12\t\n\x05RESET\x10\x03\x12\n\n\x06RENDER\x10\x04\"d\n\x04Init\x12\x12\n\ndifficulty\x18\x01 \x01(\x05\x12\x0c\n\x04seed\x18\x02 \x01(\x05\x12\x11\n\tr_field_w\x18\x03 \x01(\x05\x12\x11\n\tr_field_h\x18\x04 \x01(\x05\x12\x14\n\x0clevel_length\x18\x05 \x01(\x05\"\\\n\x06\x41\x63tion\x12\n\n\x02up\x18\x01 \x01(\x08\x12\r\n\x05right\x18\x02 \x01(\x08\x12\x0c\n\x04\x64own\x18\x03 \x01(\x08\x12\x0c\n\x04left\x18\x04 \x01(\x08\x12\r\n\x05speed\x18\x05 \x01(\x08\x12\x0c\n\x04jump\x18\x06 \x01(\x08\"\xfc\x01\n\x05State\x12\x35\n\x10receptive_fields\x18\x01 \x03(\x0b\x32\x1b.marioai.ReceptiveFieldCell\x12.\n\x0bgame_status\x18\x02 \x01(\x0e\x32\x19.marioai.State.GameStatus\x12.\n\x08position\x18\x03 \x01(\x0e\x32\x1c.marioai.State.MarioPosition\",\n\nGameStatus\x12\x0b\n\x07RUNNING\x10\x00\x12\x07\n\x03WON\x10\x01\x12\x08\n\x04LOST\x10\x02\".\n\rMarioPosition\x12\t\n\x05\x46LOOR\x10\x00\x12\x07\n\x03\x41IR\x10\x01\x12\t\n\x05\x43LIFF\x10\x02\"T\n\x12ReceptiveFieldCell\x12\r\n\x05\x65nemy\x18\x01 \x01(\x08\x12\x10\n\x08obstacle\x18\x02 \x01(\x08\x12\x0c\n\x04\x63oin\x18\x03 \x01(\x08\x12\x0f\n\x07itembox\x18\x04 \x01(\x08\x42 \n\x11\x64\x65.lmu.parl.protoB\x0bMarioProtosb\x06proto3'
+  serialized_pb=b'\n\x0bmario.proto\x12\x07marioai\"\xc9\x01\n\x0cMarioMessage\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.marioai.MarioMessage.Type\x12\x1b\n\x04init\x18\x02 \x01(\x0b\x32\r.marioai.Init\x12\x1f\n\x06\x61\x63tion\x18\x03 \x01(\x0b\x32\x0f.marioai.Action\x12\x1d\n\x05state\x18\x04 \x01(\x0b\x32\x0e.marioai.State\"2\n\x04Type\x12\x08\n\x04INIT\x10\x00\x12\n\n\x06\x41\x43TION\x10\x01\x12\t\n\x05STATE\x10\x02\x12\t\n\x05RESET\x10\x03\"t\n\x04Init\x12\x12\n\ndifficulty\x18\x01 \x01(\x05\x12\x0c\n\x04seed\x18\x02 \x01(\x05\x12\x11\n\tr_field_w\x18\x03 \x01(\x05\x12\x11\n\tr_field_h\x18\x04 \x01(\x05\x12\x14\n\x0clevel_length\x18\x05 \x01(\x05\x12\x0e\n\x06render\x18\x06 \x01(\x08\"\\\n\x06\x41\x63tion\x12\n\n\x02up\x18\x01 \x01(\x08\x12\r\n\x05right\x18\x02 \x01(\x08\x12\x0c\n\x04\x64own\x18\x03 \x01(\x08\x12\x0c\n\x04left\x18\x04 \x01(\x08\x12\r\n\x05speed\x18\x05 \x01(\x08\x12\x0c\n\x04jump\x18\x06 \x01(\x08\"\xfc\x01\n\x05State\x12\x35\n\x10receptive_fields\x18\x01 \x03(\x0b\x32\x1b.marioai.ReceptiveFieldCell\x12.\n\x0bgame_status\x18\x02 \x01(\x0e\x32\x19.marioai.State.GameStatus\x12.\n\x08position\x18\x03 \x01(\x0e\x32\x1c.marioai.State.MarioPosition\",\n\nGameStatus\x12\x0b\n\x07RUNNING\x10\x00\x12\x07\n\x03WON\x10\x01\x12\x08\n\x04LOST\x10\x02\".\n\rMarioPosition\x12\t\n\x05\x46LOOR\x10\x00\x12\x07\n\x03\x41IR\x10\x01\x12\t\n\x05\x43LIFF\x10\x02\"T\n\x12ReceptiveFieldCell\x12\r\n\x05\x65nemy\x18\x01 \x01(\x08\x12\x10\n\x08obstacle\x18\x02 \x01(\x08\x12\x0c\n\x04\x63oin\x18\x03 \x01(\x08\x12\x0f\n\x07itembox\x18\x04 \x01(\x08\x42 \n\x11\x64\x65.lmu.parl.protoB\x0bMarioProtosb\x06proto3'
 )
 
 
@@ -51,16 +51,11 @@ _MARIOMESSAGE_TYPE = _descriptor.EnumDescriptor(
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
-    _descriptor.EnumValueDescriptor(
-      name='RENDER', index=4, number=4,
-      serialized_options=None,
-      type=None,
-      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
   serialized_start=176,
-  serialized_end=238,
+  serialized_end=226,
 )
 _sym_db.RegisterEnumDescriptor(_MARIOMESSAGE_TYPE)
 
@@ -89,8 +84,8 @@ _STATE_GAMESTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=597,
-  serialized_end=641,
+  serialized_start=601,
+  serialized_end=645,
 )
 _sym_db.RegisterEnumDescriptor(_STATE_GAMESTATUS)
 
@@ -119,8 +114,8 @@ _STATE_MARIOPOSITION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=643,
-  serialized_end=689,
+  serialized_start=647,
+  serialized_end=693,
 )
 _sym_db.RegisterEnumDescriptor(_STATE_MARIOPOSITION)
 
@@ -175,7 +170,7 @@ _MARIOMESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=25,
-  serialized_end=238,
+  serialized_end=226,
 )
 
 
@@ -222,6 +217,13 @@ _INIT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='render', full_name='marioai.Init.render', index=5,
+      number=6, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -234,8 +236,8 @@ _INIT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=240,
-  serialized_end=340,
+  serialized_start=228,
+  serialized_end=344,
 )
 
 
@@ -301,8 +303,8 @@ _ACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=342,
-  serialized_end=434,
+  serialized_start=346,
+  serialized_end=438,
 )
 
 
@@ -349,8 +351,8 @@ _STATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=437,
-  serialized_end=689,
+  serialized_start=441,
+  serialized_end=693,
 )
 
 
@@ -402,8 +404,8 @@ _RECEPTIVEFIELDCELL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=691,
-  serialized_end=775,
+  serialized_start=695,
+  serialized_end=779,
 )
 
 _MARIOMESSAGE.fields_by_name['type'].enum_type = _MARIOMESSAGE_TYPE

@@ -1,4 +1,4 @@
-package de.lmu.parl.handlers;
+package de.lmu.parl;
 
 import static de.lmu.parl.proto.MarioProtos.MarioMessage;
 import static de.lmu.parl.proto.MarioProtos.Init;
@@ -9,15 +9,11 @@ import static de.lmu.parl.proto.MarioProtos.ReceptiveFieldCell;
 import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 import ch.idsia.tools.MarioAIOptions;
-import de.lmu.parl.proto.MarioProtos;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 
-public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
+public class Controller {
 
     private MarioEnvironment marioEnvironment = MarioEnvironment.getInstance();
     private MarioAIOptions marioAIOptions;
-    //private State state;
 
     private MarioMessage createStateMessage() {
 
@@ -49,28 +45,21 @@ public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
     }
 
     public void handleInitMessage(MarioMessage msg) {
-        System.out.println("handle init message");
         Init init = msg.getInit();
 
         // cache options
         marioAIOptions = buildOptions(
                 init.getRFieldW(), init.getRFieldH(), init.getSeed(),
-                init.getLevelLength(), init.getDifficulty());
+                init.getLevelLength(), init.getDifficulty(), init.getRender());
 
         marioEnvironment.reset(marioAIOptions);
         marioEnvironment.tick();
         // no reply required
-        System.out.println("finished handle init message");
-        //return createStateMessage();
     }
 
     public MarioMessage handleResetMessage() {
-        System.out.println("handle reset message");
-        if (marioAIOptions != null)
-            marioEnvironment.reset(this.marioAIOptions);
+        marioEnvironment.reset(this.marioAIOptions);
         marioEnvironment.tick();
-
-        System.out.println("finished handle reset message");
 
         return createStateMessage();
     }
@@ -87,53 +76,14 @@ public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
         return createStateMessage();
     }
 
+    /*
     public void handleRenderMessage(MarioMessage msg) {
         // render() may contain a mode
         // render the environment
-        // TODO
     }
+     */
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
-        try {
-             MarioMessage marioMessage = (MarioMessage) msg;
-             switch (marioMessage.getType()) {
-                 case INIT:
-                     handleInitMessage(marioMessage);
-                     //MarioMessage res = handleInitMessage(marioMessage);
-                     //ctx.writeAndFlush(res);
-                     break;
-                 case RESET:
-                     MarioMessage initialState = handleResetMessage();
-                     ctx.writeAndFlush(initialState);
-                     break;
-                 case ACTION:
-                     MarioMessage state = handleActionMessage(marioMessage);
-                     ctx.writeAndFlush(state);
-                     break;
-                 case RENDER:
-                     handleRenderMessage(marioMessage);
-                     break;
-             }
-
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-            ctx.close();
-        }
-    }
-
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, MarioMessage msg) throws Exception {
-        System.out.println(msg);
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
-        // Close the connection when an exception is raised.
-        cause.printStackTrace();
-        ctx.close();
-    }
-
-    public MarioAIOptions buildOptions(int rfw, int rfh, int randSeed, int levelLength, int difficulty) {
+    public MarioAIOptions buildOptions(int rfw, int rfh, int randSeed, int levelLength, int difficulty, boolean render) {
         int viewHeight=320; // pixels
         int viewWidth=1600; // pixels
         MarioAIOptions options = new MarioAIOptions(
@@ -146,7 +96,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
         options.setBlocksCount(true);
         options.setCoinsCount(true);
         options.setLevelRandSeed(randSeed); // comment out for random levels
-        options.setVisualization(true); // false: no visualization => faster learning
+        options.setVisualization(render); // false: no visualization => faster learning
         options.setGapsCount(true);
         options.setMarioMode(2);
         options.setLevelLength(levelLength);
@@ -157,4 +107,5 @@ public class MessageHandler extends SimpleChannelInboundHandler<MarioMessage> {
         options.setLevelDifficulty(difficulty);
         return options;
     }
+
 }
