@@ -84,7 +84,20 @@ public class MarioServer {
     }
 
     public static void main(String[] args) {
-        MarioServer server = new MarioServer(8080);
+        int port = 8080;
+
+        // simple parsing of --port / -p argument.
+        // For more args use something like commons-cli    http://blog.wenzlaff.de/?p=12952
+        if (args.length == 2 && (args[0].equals("--port") || args[0].equals("-p"))) {
+            try {
+                port = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("Error: unable to parse parameter ".concat(args[0]));
+                System.exit(1);
+            }
+        }
+
+        MarioServer server = new MarioServer(port);
         server.run();
     }
 }
