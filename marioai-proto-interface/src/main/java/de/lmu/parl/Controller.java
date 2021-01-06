@@ -10,6 +10,7 @@ import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 import ch.idsia.tools.MarioAIOptions;
 
+
 public class Controller {
 
     private MarioEnvironment marioEnvironment = MarioEnvironment.getInstance();
@@ -107,5 +108,4 @@ public class Controller {
         options.setLevelDifficulty(difficulty);
         return options;
     }
-
 }

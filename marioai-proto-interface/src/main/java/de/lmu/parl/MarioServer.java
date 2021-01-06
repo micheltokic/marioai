@@ -10,11 +10,11 @@ public class MarioServer {
 
     private final int port;
     private ServerSocket serverSocket;
-    private final Controller msgHandler;
+    private final Controller controller;
 
     public MarioServer(int port) {
         this.port = port;
-        this.msgHandler = new Controller();
+        this.controller = new Controller();
 
         try {
             this.serverSocket = new ServerSocket(port);
@@ -38,20 +38,20 @@ public class MarioServer {
 
                 switch (msg.getType()) {
                     case INIT:
-                        msgHandler.handleInitMessage(msg);
+                        controller.handleInitMessage(msg);
                         break;
                     case RESET:
-                        msgHandler.handleResetMessage().writeDelimitedTo(out);
+                        controller.handleResetMessage().writeDelimitedTo(out);
                         break;
                     case ACTION:
-                        msgHandler.handleActionMessage(msg).writeDelimitedTo(out);
+                        controller.handleActionMessage(msg).writeDelimitedTo(out);
                         break;
                     //case RENDER:
                     //    msgHandler.handleRenderMessage(msg);
                     //    break;
                 }
             } catch (IOException e) {
-                System.out.println("An IOException occurred, closing client connection");
+                System.out.println("IOException occurred during client handling, closing connection");
                 break;
             }
         }
@@ -66,14 +66,13 @@ public class MarioServer {
         try {
             while (true) {
                 Socket sock = serverSocket.accept();
-                System.out.println("New client connected");
+                System.out.println("client connection established.");
 
                 handleConnection(sock.getInputStream(), sock.getOutputStream());
 
-                if (!sock.isClosed()) {
-                    sock.close();
-                }
-                System.out.println("socket connection closed.");
+                if (!sock.isClosed()) sock.close();
+
+                System.out.println("client connection closed.");
             }
 
         } catch (IOException ex) {
