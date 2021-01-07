@@ -39,9 +39,9 @@ message Action {
 
 message State {
   enum GameStatus {
-    RUNNING = 0;
-    WON = 1;
-    LOST = 2;
+    DEAD = 0;
+    WIN = 1;
+    RUNNING = 2;
   }
   enum MarioPosition {
     FLOOR = 0;

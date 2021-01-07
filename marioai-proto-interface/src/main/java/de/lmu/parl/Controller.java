@@ -3,45 +3,20 @@ package de.lmu.parl;
 import static de.lmu.parl.proto.MarioProtos.MarioMessage;
 import static de.lmu.parl.proto.MarioProtos.Init;
 import static de.lmu.parl.proto.MarioProtos.Action;
-import static de.lmu.parl.proto.MarioProtos.State;
-import static de.lmu.parl.proto.MarioProtos.ReceptiveFieldCell;
 
-import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 import ch.idsia.tools.MarioAIOptions;
 
 
 public class Controller {
 
-    private MarioEnvironment marioEnvironment = MarioEnvironment.getInstance();
-    private MarioAIOptions marioAIOptions;
+    private MarioEnvironment env = MarioEnvironment.getInstance();
+    private MarioAIOptions options;
 
     private MarioMessage createStateMessage() {
-
-        // TODO extract and send all state information
-        // example of how to build a ReceptiveFieldCell instance
-        ReceptiveFieldCell cell0 = ReceptiveFieldCell.newBuilder()
-                .setObstacle(true).build();
-
-        State.Builder stateBuilder = State.newBuilder();
-        stateBuilder.addReceptiveFields(cell0);
-
-        // is mario dead or alive?
-        switch (marioEnvironment.getMarioStatus()) {
-            case Mario.STATUS_RUNNING:
-                stateBuilder.setGameStatus(State.GameStatus.RUNNING);
-                break;
-            case Mario.STATUS_WIN:
-                stateBuilder.setGameStatus(State.GameStatus.WON);
-                break;
-            case Mario.STATUS_DEAD:
-                stateBuilder.setGameStatus(State.GameStatus.LOST);
-                break;
-        }
-
         return MarioMessage.newBuilder()
                 .setType(MarioMessage.Type.STATE)
-                .setState(stateBuilder.build())
+                .setState(FeatureExtraction.getState(env))
                 .build();
     }
 
@@ -49,18 +24,17 @@ public class Controller {
         Init init = msg.getInit();
 
         // cache options
-        marioAIOptions = buildOptions(
+        options = buildOptions(
                 init.getRFieldW(), init.getRFieldH(), init.getSeed(),
                 init.getLevelLength(), init.getDifficulty(), init.getRender());
 
-        marioEnvironment.reset(marioAIOptions);
-        marioEnvironment.tick();
-        // no reply required
+        env.reset(options);
+        env.tick();
     }
 
     public MarioMessage handleResetMessage() {
-        marioEnvironment.reset(this.marioAIOptions);
-        marioEnvironment.tick();
+        env.reset(options);
+        env.tick();
 
         return createStateMessage();
     }
@@ -71,8 +45,8 @@ public class Controller {
                 action.getUp(), action.getRight(), action.getDown(),
                 action.getLeft(), action.getSpeed(), action.getJump()};
 
-        marioEnvironment.performAction(actionArray);
-        marioEnvironment.tick();
+        env.performAction(actionArray);
+        env.tick();
 
         return createStateMessage();
     }

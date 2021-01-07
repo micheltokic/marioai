@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     env = gym.make('Marioai-v0', visible=True)
 
-    for e in range(3):
+    for e in range(100):
 
         s = env.reset()
         done = False
@@ -16,6 +16,8 @@ if __name__ == '__main__':
             env.render()
             a = env.action_space.sample()
             s, r, done, info = env.step(a)
+            print(s)
+
             total_reward += r
 
         print(f'finished episode {e}, total_reward: {total_reward}')

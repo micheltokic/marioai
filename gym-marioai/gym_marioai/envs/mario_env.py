@@ -14,11 +14,11 @@ class MarioEnv(gym.Env):
 
     def __init__(self, host='localhost', port=8080,
             visible=False,
-            difficulty=15,
-            seed=2,
+            difficulty=0,
+            seed=1000,
             r_field_w=3,
             r_field_h=4,
-            level_length=5):
+            level_length=80):
         """
         Environment initialization
         """
@@ -40,6 +40,10 @@ class MarioEnv(gym.Env):
         try:
             self.socket = ProtobufSocket()
             self.socket.connect(host, port)
+        except ConnectionRefusedError as e:
+            print(f'unable to connect to the server, is it running at ' \
+                  f'{host}:{port}?\n')
+            raise e
         except Exception as e:
             print(f'unable to connect to the server, is it running at ' \
                   f'{host}:{port}?\n')

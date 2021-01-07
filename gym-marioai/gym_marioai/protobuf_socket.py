@@ -56,8 +56,11 @@ class ProtobufSocket:
         return parsed_msg
 
     def disconnect(self):
-        self.sock.shutdown(socket.SHUT_RDWR)
-        self.sock.close()
+        try:
+            self.sock.shutdown(socket.SHUT_RDWR)
+            self.sock.close()
+        except OSError:
+            pass
 
     def receive_daniel(self):
         """ daniels version """
