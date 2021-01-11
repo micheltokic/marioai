@@ -14,7 +14,8 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'numpy', 
-        'gym'],
+        'gym', 
+        'protobuf'],
     # package_dir={
     #     'gym_marioai': 'src/gym_marioai'},
     # packages=['gym_marioai', 'gym_marioai.envs'],
