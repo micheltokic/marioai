@@ -11,12 +11,13 @@ import ch.idsia.tools.MarioAIOptions;
 public class Controller {
 
     private MarioEnvironment env = MarioEnvironment.getInstance();
+    private FeatureExtractor featureExtractor = new FeatureExtractor(env);
     private MarioAIOptions options;
 
     private MarioMessage createStateMessage() {
         return MarioMessage.newBuilder()
                 .setType(MarioMessage.Type.STATE)
-                .setState(FeatureExtraction.getState(env))
+                .setState(featureExtractor.getState())
                 .build();
     }
 
