@@ -50,9 +50,21 @@ message State {
     // ...
   }
 
+  enum MarioMode {
+    SMALL = 0;
+    BIG = 1;
+    FIRE = 2;
+  }
+
   repeated ReceptiveFieldCell receptive_fields = 1;
   GameStatus game_status = 2;
   MarioPosition position = 3;
+  MarioMode mode = 4;
+  int32 kills_by_stomp = 5;     // required for the reward function and general stats
+  int32 kills_by_fire = 6;
+  int32 kills_by_shell = 7;
+  int32 mario_x = 8;            // mario position to determine the progress
+  int32 mario_y = 9;
 }
 
 message ReceptiveFieldCell {

@@ -55,6 +55,18 @@ public class FeatureExtractor {
             }
         }
 
+        ////////////////////////////////////////////////////////
+        // general additional information, not included in the receptive field
+        ///////////////////////////////////////////////////////
+        stateBuilder.setKillsByFire(env.getKillsByFire())
+                    .setKillsByStomp(env.getKillsByStomp())
+                    .setKillsByShell(env.getKillsByShell())
+
+                    .setMarioX(mario.mapX)
+                    .setMarioY(mario.mapY)
+                    .setModeValue(mario.getMode());
+
+
         return stateBuilder.build();
     }
 
