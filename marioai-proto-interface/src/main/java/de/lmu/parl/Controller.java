@@ -42,11 +42,7 @@ public class Controller {
 
     public MarioMessage handleActionMessage(MarioMessage msg) {
         Action action = msg.getAction();
-        boolean[] actionArray = new boolean[]{
-                action.getUp(), action.getRight(), action.getDown(),
-                action.getLeft(), action.getSpeed(), action.getJump()};
-
-        env.performAction(actionArray);
+        env.performAction(ActionMap.actionMap.get(action));
         env.tick();
 
         return createStateMessage();

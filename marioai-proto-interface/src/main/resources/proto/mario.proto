@@ -28,13 +28,27 @@ message Init {
   bool render = 6;
 }
 
-message Action {
-  bool up = 1;
-  bool right = 2;
-  bool down = 3;
-  bool left = 4;
-  bool speed = 5;
-  bool jump = 6;
+// message Action {
+//   bool up = 1;
+//   bool right = 2;
+//   bool down = 3;
+//   bool left = 4;
+//   bool speed = 5;
+//   bool jump = 6;
+// }
+
+enum Action {
+  DOWN = 0;
+  JUMP = 1;
+  //
+  SPEED_JUMP = 2;
+  SPEED_RIGHT = 3;
+  SPEED_LEFT = 4;
+  //
+  JUMP_RIGHT = 5;
+  JUMP_LEFT = 6;
+  SPEED_JUMP_RIGHT = 7;
+  SPEED_JUMP_LEFT = 8;
 }
 
 message State {

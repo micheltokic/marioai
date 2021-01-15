@@ -1,25 +1,25 @@
 """
 
 """
-from typing import List 
+from typing import List
 import numpy as np
 import gym
 from gym import spaces
 
-from ..protobuf_socket import ProtobufSocket 
+from ..protobuf_socket import ProtobufSocket
 # from .. import mario_pb2
-from ..mario_pb2 import MarioMessage, State
+from ..mario_pb2 import Action, MarioMessage, State
 
 
 class MarioEnv(gym.Env):
 
     def __init__(self, host='localhost', port=8080,
-            visible=False,
-            difficulty=0,
-            seed=1000,
-            rf_width=3,
-            rf_height=4,
-            level_length=80):
+                 visible=False,
+                 difficulty=0,
+                 seed=1000,
+                 rf_width=3,
+                 rf_height=4,
+                 level_length=80):
         """
         Environment initialization
         """
@@ -34,23 +34,21 @@ class MarioEnv(gym.Env):
         self.n_features = 4   # number of features in one receptive field cell
 
         # define action space
-        self.action_space = spaces.MultiBinary(6)
+        self.action_space = spaces.Discrete(9)
 
         # observation space is a binary feature vector
-        self.observation_space = spaces.MultiBinary([self.rf_width, 
-                                                     self.rf_height, 
+        self.observation_space = spaces.MultiBinary([self.rf_width,
+                                                     self.rf_height,
                                                      self.n_features])
-
 
         # cache some information about the current environent state
         self.mario_pos = None
-
 
         try:
             self.socket = ProtobufSocket()
             self.socket.connect(host, port)
         except ConnectionRefusedError as e:
-            print(f'unable to connect to the server, is it running at ' \
+            print(f'unable to connect to the server, is it running at '
                   f'{host}:{port}?\n')
             raise e
         # except Exception as e:
@@ -79,13 +77,14 @@ class MarioEnv(gym.Env):
         reply = self.socket.receive()
         assert reply.type == MarioMessage.Type.STATE
         self.__update_cached_data(reply)
-        return self.__extract_observation(reply) 
+        return self.__extract_observation(reply)
 
-    def step(self, action:List[int]):
+    def step(self, action: int):
         """
         perform action in the environment and return new state, reward,
         done and info
         """
+        # action_enum = Action.Value
         self.__send_action_message(action)
 
         # receive the new state information
@@ -112,19 +111,13 @@ class MarioEnv(gym.Env):
         msg.init.level_length = self.level_length
         self.socket.send(msg)
 
-    def __send_action_message(self, action:List[int]):
-        assert len(action) == 6, 'given action does not match action_space'
+    def __send_action_message(self, action: Action):
         msg = MarioMessage()
         msg.type = MarioMessage.Type.ACTION
-        msg.action.up = action[0]
-        msg.action.right = action[1]
-        msg.action.down = action[2]
-        msg.action.left = action[3]
-        msg.action.speed = action[4]
-        msg.action.jump = action[5]
+        msg.action = action
         self.socket.send(msg)
 
-    def __update_cached_data(self, res:MarioMessage):
+    def __update_cached_data(self, res: MarioMessage):
         """
         some env information needs to be stored on the client side.
         e.g., mario's current position, to determine changes in position
@@ -135,25 +128,25 @@ class MarioEnv(gym.Env):
         self.kills_by_fire = s.kills_by_fire
         self.kills_by_shell = s.kills_by_shell
 
-    def __extract_observation(self, res:MarioMessage):
+    def __extract_observation(self, res: MarioMessage):
         """
         return a compact representation of the environment state
         returns a numpy array of shape rf_width x rf_height x n_features
         """
-        obs = np.ndarray(self.observation_space.shape)
-        rf_cells = res.state.receptive_fields
+        # obs = np.ndarray(self.observation_space.shape)
+        # rf_cells = res.state.receptive_fields
 
-        # TODO fill the observation
-        for x in range(self.rf_width):
-            for y in range(self.rf_height):
-                cell = rf_cells[y * self.rf_width + x]
-                obs[x, y] = [cell.enemy, 
-                             cell.obstacle, 
-                             cell.coin, 
-                             cell.itembox]
-        return obs
+        # # TODO fill the observation
+        # for x in range(self.rf_width):
+        #     for y in range(self.rf_height):
+        #         cell = rf_cells[y * self.rf_width + x]
+        #         obs[x, y] = [cell.enemy,
+        #                      cell.obstacle,
+        #                      cell.coin,
+        #                      cell.itembox]
+        return 1
 
-    def __extract_reward(self, res:MarioMessage):
+    def __extract_reward(self, res: MarioMessage):
         """
         calculate the reward based on some information from the state response
         This is just dummy code for now
@@ -166,7 +159,7 @@ class MarioEnv(gym.Env):
 
         return d_x + d_kills_stomp + d_kills_fire + d_kills_shell
 
-    def __extract_done(self, res:MarioMessage):
+    def __extract_done(self, res: MarioMessage):
         """
         check whether the episode is terminated
         """
