@@ -67,7 +67,9 @@ public class Controller {
                         " -vw " + viewWidth +
                         " -srf on " +
                         " -rfw " + rfw +
-                        " -rfh " + rfh);
+                        " -rfh " + rfh );
+                        //" -ls C:\\Users\\Magdalena\\Documents\\ARL\\marioai-master\\marioai\\marioai-proto-interface\\src\\main\\java\\de\\lmu\\parl\\test-easy.lvl"); // save level
+
         options.setFlatLevel(false);
         options.setBlocksCount(true);
         options.setCoinsCount(true);
@@ -81,6 +83,8 @@ public class Controller {
         options.setDeadEndsCount(false);
         options.setTubesCount(false);
         options.setLevelDifficulty(difficulty);
+        // options.setArgs("-lf on -lg on"); easy level --> flat with no obstacles
+        // options.setArgs("-lde on -i on -ld 30 -ls 133434"); hard level with lots of birds and enemies
         return options;
     }
 }
