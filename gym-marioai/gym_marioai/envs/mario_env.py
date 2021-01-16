@@ -133,18 +133,17 @@ class MarioEnv(gym.Env):
         return a compact representation of the environment state
         returns a numpy array of shape rf_width x rf_height x n_features
         """
-        # obs = np.ndarray(self.observation_space.shape)
-        # rf_cells = res.state.receptive_fields
-
-        # # TODO fill the observation
-        # for x in range(self.rf_width):
-        #     for y in range(self.rf_height):
-        #         cell = rf_cells[y * self.rf_width + x]
-        #         obs[x, y] = [cell.enemy,
-        #                      cell.obstacle,
-        #                      cell.coin,
-        #                      cell.itembox]
-        return 1
+        obs = np.zeros((self.rf_width * self.rf_height,
+                        self.n_features), dtype=np.bool)
+        rf_cells = res.state.receptive_fields
+        for y in range(self.rf_height):
+            for x in range(self.rf_width):
+                idx = y*self.rf_width + x
+                cell = rf_cells[idx]
+                cell_state = np.array(
+                    [cell.enemy, cell.obstacle, cell.coin, cell.itembox])
+                obs[idx] = cell_state
+        return obs
 
     def __extract_reward(self, res: MarioMessage):
         """
