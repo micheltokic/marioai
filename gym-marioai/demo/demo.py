@@ -4,10 +4,13 @@ import gym_marioai
 
 if __name__ == '__main__':
 
-    env = gym.make('Marioai-v0', visible=True)
+    # adjust the reward settings like so:
+    reward_settings = gym_marioai.RewardSettings(timestep=-0.1,)
+
+    env = gym.make('Marioai-v0', visible=True,
+                   reward_settings=reward_settings)
 
     for e in range(100):
-
         s = env.reset()
         done = False
         total_reward = 0
