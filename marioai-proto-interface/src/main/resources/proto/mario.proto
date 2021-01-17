@@ -26,6 +26,7 @@ message Init {
   int32 r_field_h = 4;
   int32 level_length = 5;
   bool render = 6;
+  string file_name = 7;
 }
 
 // message Action {

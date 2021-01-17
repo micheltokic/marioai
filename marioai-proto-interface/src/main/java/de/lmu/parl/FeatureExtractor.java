@@ -7,6 +7,7 @@ import ch.idsia.tools.MarioAIOptions;
 import de.lmu.parl.proto.MarioProtos;
 import de.lmu.parl.proto.MarioProtos.State;
 import de.lmu.parl.proto.MarioProtos.ReceptiveFieldCell;
+import org.junit.Test;
 
 public class FeatureExtractor {
 
@@ -211,7 +212,7 @@ public class FeatureExtractor {
         int rfw = 11;
         int rfh = 5;
         MarioAIOptions options = new Controller().buildOptions(
-                rfw, rfh, 1000, 80, 0, true
+                rfw, rfh, 1000, 80, 0, true, "flatLevel.lvl"
         );
 
         env.reset(options);

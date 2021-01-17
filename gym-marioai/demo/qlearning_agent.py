@@ -75,7 +75,8 @@ class Agent:
 
 if __name__ == '__main__':
 
-    env = gym.make('Marioai-v0', visible=False)
+    #possible levels are: flatLevel.lvl, easyLevel.lvl, hardLevel.lvl or None for seed-based selection
+    env = gym.make('Marioai-v0', visible=True, file_name="easyLevel.lvl")
     agent = Agent(env)
     agent.train(1000)
 

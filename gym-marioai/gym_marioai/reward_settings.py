@@ -16,3 +16,5 @@ class RewardSettings:
         self.kill = kill
         self.win = win
         self.dead = dead
+
+

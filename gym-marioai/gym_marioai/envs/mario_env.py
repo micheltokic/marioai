@@ -26,7 +26,8 @@ class MarioEnv(gym.Env):
                  rf_height=4,
                  level_length=80,
                  max_steps=0,
-                 reward_settings=RewardSettings()):
+                 reward_settings=RewardSettings(),
+                 file_name="None"):
         """
         Environment initialization
         """
@@ -39,6 +40,8 @@ class MarioEnv(gym.Env):
         self.rf_height:int = rf_height
         self.max_steps:int = max_steps
         self.reward_settings:RewardSettings = reward_settings
+        self.file_name:str = file_name
+
         # TODO read this dynamically?
         self.n_features:int = 4   # number of features in one receptive field cell
 
@@ -115,6 +118,7 @@ class MarioEnv(gym.Env):
         msg.init.r_field_w = self.rf_width
         msg.init.r_field_h = self.rf_height
         msg.init.level_length = self.level_length
+        msg.init.file_name = self.file_name
         self.socket.send(msg)
 
     def __send_action_message(self, action: Action):
