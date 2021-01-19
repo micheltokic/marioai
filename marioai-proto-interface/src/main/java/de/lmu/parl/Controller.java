@@ -7,9 +7,16 @@ import static de.lmu.parl.proto.MarioProtos.Action;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 import ch.idsia.tools.MarioAIOptions;
 
-import java.io.IOException;
+
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+
+import java.util.jar.JarFile;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+
+
 
 
 public class Controller {
@@ -67,7 +74,7 @@ public class Controller {
                         " -vw " + viewWidth +
                         " -srf on " +
                         " -rfw " + rfw +
-                        " -rfh " + rfh); // save level
+                        " -rfh " + rfh);
 
         options.setFlatLevel(false);
         options.setBlocksCount(true);
@@ -85,8 +92,38 @@ public class Controller {
         //options.setArgs("-lde on -i on -ld 30 -ls 133434"); //hard level with lots of birds and enemies
         //options.setArgs("-lf on -lg on"); //easy level --> flat with no obstacles
         if(!fileName.equals("None")){
-            String workingDir = System.getProperty("user.dir");
-            options.setArgs(" -ls " + workingDir +"\\src\\\\main\\\\java\\\\de\\\\lmu\\\\parl\\"+ fileName);
+
+            final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+
+            if(jarFile.isFile()) {  // Run with JAR file
+                //URL localPackage = this.getClass().getResource("");
+                //System.out.println(localPackage.getPath());
+                //String[] pathArray = localPackage.getPath().split("de/");
+                //String[] pathArray2 = pathArray[0].split("e:/");
+                //System.out.println(pathArray2[0]+"\r\n" + pathArray2[1]); // + "\r\n" + pathArray[2]);
+                //System.out.println(" -ls "+pathArray2[1]+"Levels/"+fileName);
+                //options.setArgs(" -ls "+pathArray2[1]+"Levels/"+fileName);
+                //try{
+                //    File file = new File(getClass().getResource("/Levels/"+fileName).toURI());
+                //    options.setArgs(" -ls "+file.getPath());
+                //}catch(java.net.URISyntaxException e){
+                //    System.out.println("Exeption: "+e);
+                //}
+                System.out.println("Stable level selection is currently not possible");
+                if (fileName.equals("easyLevel.lvl")){
+                    options.setArgs("-lf on -lg on");
+                }else if (fileName.equals("flatLevel.lvl")){
+                    options.setFlatLevel(true);
+                }else if (fileName.equals("hardLevel.lvl")){
+                    options.setArgs("-lde on -i on -ld 30 -ls 133434");
+                }
+
+            } else { // Run with IDE
+                options.setArgs(" -ls target/classes/Levels/"+fileName);
+            }
+            // File file = new File(getClass().getResource("/Levels/"+fileName).getPath());
+            //System.out.println("Test100: "+file);
+
         };
 
         return options;
