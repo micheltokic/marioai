@@ -172,7 +172,7 @@ class MarioEnv(gym.Env):
 
         reward = 0
         reward += self.reward_settings.timestep  
-        reward += self.reward_settings.progress * (s.mario_x - self.mario_pos[0])
+        reward += self.reward_settings.progress * max(0, s.mario_x - self.mario_pos[0])
 
         # kills
         reward += self.reward_settings.kill * (s.kills_by_stomp - self.kills_by_stomp)
