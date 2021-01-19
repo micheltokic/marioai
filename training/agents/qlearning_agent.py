@@ -42,7 +42,7 @@ class Agent:
         self.epsilon = epsilon
 
         self.env = env
-        self.Q = QTable(initial_capacity, env.action_space.n)
+        self.Q = QTable(env.action_space.n, initial_capacity)
 
     def select_action(self, state):
         if not state in self.Q:

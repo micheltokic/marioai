@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     #possible levels are: flatLevel.lvl, easyLevel.lvl, hardLevel.lvl or None for seed-based selection
     env = gym.make('Marioai-v0', visible=False, 
-            file_name=level_name+'.lvl', 
+            file_name='easyLevel.lvl', 
             )
     agent = qlearning_agent.Agent(env, alpha=0.3)
     train(env, agent, logger, TOTAL_EPISODES)

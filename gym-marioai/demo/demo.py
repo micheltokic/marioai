@@ -8,7 +8,8 @@ if __name__ == '__main__':
     reward_settings = gym_marioai.RewardSettings(timestep=-0.1,)
 
     env = gym.make('Marioai-v0', visible=True,
-                   reward_settings=reward_settings)
+                   reward_settings=reward_settings, 
+                   file_name='easyLevel.lvl')
 
     for e in range(100):
         s = env.reset()
