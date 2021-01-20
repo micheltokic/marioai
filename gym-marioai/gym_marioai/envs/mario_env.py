@@ -53,8 +53,10 @@ class MarioEnv(gym.Env):
                                                      self.n_features])
 
         # cache some information about the current environent state
+        self.mario_mode = None
         self.mario_pos = None
         self.steps = 0
+        self.best_x = 0
 
         try:
             self.socket = ProtobufSocket()
@@ -84,8 +86,8 @@ class MarioEnv(gym.Env):
         # assuming the response is a state message
         reply = self.socket.receive()
         assert reply.type == MarioMessage.Type.STATE
-        self.__update_cached_data(reply)
-        self.steps = 0
+        # self.__update_cached_data(reply)
+        self.__reset_cached_data(reply)
         return self.__extract_observation(reply)
 
     def step(self, action: int):
@@ -127,17 +129,31 @@ class MarioEnv(gym.Env):
         msg.action = action
         self.socket.send(msg)
 
+    def __reset_cached_data(self, res:MarioMessage):
+        s = res.state
+        self.mario_mode = s.mode
+        self.mario_pos = (s.mario_x, s.mario_y)
+        self.best_x = s.mario_x
+        self.kills_by_stomp = 0
+        self.kills_by_fire = 0
+        self.kills_by_shell = 0
+        self.steps = 0 
+
     def __update_cached_data(self, res: MarioMessage):
         """
         some env information needs to be stored on the client side.
         e.g., mario's current position, to determine changes in position
         """
         s = res.state
+        self.mario_mode = s.mode
         self.mario_pos = (s.mario_x, s.mario_y)
+        self.best_x = max(self.best_x, s.mario_x)
+
         self.kills_by_stomp = s.kills_by_stomp
         self.kills_by_fire = s.kills_by_fire
         self.kills_by_shell = s.kills_by_shell
         self.steps += 1
+
 
     def __extract_observation(self, res: MarioMessage):
         """
@@ -154,13 +170,6 @@ class MarioEnv(gym.Env):
                 [cell.enemy, cell.obstacle, cell.coin, cell.itembox])
             obs[i] = cell_state
 
-        # for y in range(self.rf_height):
-        #     for x in range(self.rf_width):
-        #         idx = y*self.rf_width + x
-        #         cell = rf_cells[idx]
-        #         cell_state = np.array(
-        #             [cell.enemy, cell.obstacle, cell.coin, cell.itembox])
-        #         obs[idx] = cell_state
         return obs
 
     def __extract_reward(self, res: MarioMessage):
@@ -172,7 +181,12 @@ class MarioEnv(gym.Env):
 
         reward = 0
         reward += self.reward_settings.timestep  
-        reward += self.reward_settings.progress * max(0, s.mario_x - self.mario_pos[0])
+        reward += self.reward_settings.progress * max(0, s.mario_x - self.best_x)
+
+        # reward for mario mode change. Modes: small=0, big=1, fire=2
+        # this will be negative if mario gets downgraded and positive if mario
+        # gets upgraded
+        reward += self.reward_settings.mario_mode * (s.mode - self.mario_mode)
 
         # kills
         reward += self.reward_settings.kill * (s.kills_by_stomp - self.kills_by_stomp)

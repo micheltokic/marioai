@@ -66,6 +66,7 @@ message State {
   }
 
   enum MarioMode {
+    // keep order!
     SMALL = 0;
     BIG = 1;
     FIRE = 2;

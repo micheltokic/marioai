@@ -9,6 +9,14 @@ target
 settings.json
 
 
+training/models/
+training/results/
+training/plots/
+
+
+
+
+
 ################
 # python stuff #
 # https://raw.githubusercontent.com/github/gitignore/master/Python.gitignore
