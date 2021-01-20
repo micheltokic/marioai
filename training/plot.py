@@ -46,7 +46,7 @@ def plot_training_curve(data, filename, avg=50):
     plot_path = os.path.dirname(os.path.realpath(__file__)) \
                 + '/plots/' + filename + '.png'
     plt.savefig(plot_path)
-    # plt.show()
+    plt.show()
 
 
 if __name__ == '__main__':

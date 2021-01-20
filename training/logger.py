@@ -3,38 +3,24 @@ logger
 """
 import os
 import json
+import pickle
 
 
 class Logger:
 
     def __init__(self, filename:str):
-        path = os.path.dirname(os.path.realpath(__file__)) \
-                + '/results/' + filename + '.json'
+        self.parent_dir = os.path.dirname(os.path.realpath(__file__))
+        self.result_dir = self.parent_dir + '/results/'
+        self.model_dir = self.parent_dir + '/models/'
 
-        while os.path.isfile(path):
-            parts = filename.split('-')
+        self.filename = self.find_unused_filename(filename)
+        self.log_path = self.result_dir + self.filename + '.json'
+        self.model_path = self.model_dir + self.filename + '.p'
 
-            if len(parts) == 1:
-                filename = filename + '-0'
-            elif len(parts) == 2:
+        print('result will be stored in ', self.log_path)
 
-                assert parts[1].isnumeric(), \
-                        "invalid filename, has to be *-{int}"
-
-                number = int(parts[1])
-                filename = parts[0] + '-' + str(number + 1)
-            else:
-                raise Exception()
-
-            path = os.path.dirname(os.path.realpath(__file__)) \
-                    + '/results/' + filename + '.json'
-
-        self.path = path
-        # self.filename = filename
-        print('result will be stored in ', self.path)
-
-        assert not os.path.isfile(self.path), \
-            f"the file {self.path} already exists"
+        assert not os.path.isfile(self.log_path), \
+            f"the file {self.log_path} already exists"
 
         self.data = { 
                 'episodes':0,
@@ -46,6 +32,23 @@ class Logger:
         # generate the empty file
         self.save()
 
+    def find_unused_filename(self, filename):
+        while os.path.isfile(self.result_dir + filename + '.json'):
+            parts = filename.split('-')
+
+            if len(parts) == 1:
+                filename = filename + '-0'
+
+            elif len(parts) == 2:
+                assert parts[1].isnumeric(), \
+                        "invalid filename, has to be *-{int}"
+                number = int(parts[1])
+                filename = parts[0] + '-' + str(number + 1)
+            else:
+                raise Exception()
+
+        return filename
+
     def append(self, reward:float, steps:int, success:bool):
         self.data['rewards'].append(reward)
         self.data['steps'].append(steps)
@@ -53,7 +56,10 @@ class Logger:
         self.data['episodes'] += 1
 
     def save(self):
-        with open(self.path, 'w') as f:
+        with open(self.log_path, 'w') as f:
             json.dump(self.data, f)
+
+    def save_model(self, model):
+        pickle.dump(model, open(self.model_path, 'wb'))
 
 

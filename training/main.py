@@ -1,5 +1,3 @@
-
-import numpy as np
 import gym
 import gym_marioai
 
@@ -8,7 +6,7 @@ from logger import Logger
 
 
 SAVE_FREQUENCY = 10 
-TOTAL_EPISODES = 1000
+TOTAL_EPISODES = 5000
 
 
 def train(env, agent: qlearning_agent.Agent, 
@@ -40,12 +38,12 @@ def train(env, agent: qlearning_agent.Agent,
 
         if e % SAVE_FREQUENCY == 0:
             logger.save()
+            logger.save_model(agent.Q)
 
 
-        # .update_stats(e, n_episodes, total_reward, info)
-        print(f'episode {e} terminated after {info["steps"]} steps. ' \
-              f'Total reward: {total_reward:.2f}, ' \
-              f'states visited: {len(agent.Q)}, ' \
+        print(f'episode {e:4} terminated. Steps: {info["steps"]:4}\t' \
+              f'R: {total_reward:7.2f}\t' \
+              f'|O|: {len(agent.Q):4}\t' \
               f'win: {info["win"]}')
 
 
