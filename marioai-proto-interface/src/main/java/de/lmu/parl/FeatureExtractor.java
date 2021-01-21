@@ -44,7 +44,6 @@ public class FeatureExtractor {
         extractEnemies(enemies, rfw, rfh);
 
         State.Builder stateBuilder = State.newBuilder();
-        stateBuilder.setGameStatusValue(mario.getStatus());
         for (int y = 0; y < rfh; y++){
             for (int x = 0; x < rfw; x++) {
                 ReceptiveFieldCell.Builder rFBuilder = ReceptiveFieldCell.newBuilder();
@@ -62,11 +61,10 @@ public class FeatureExtractor {
         stateBuilder.setKillsByFire(env.getKillsByFire())
                     .setKillsByStomp(env.getKillsByStomp())
                     .setKillsByShell(env.getKillsByShell())
-
                     .setMarioX(mario.mapX)
                     .setMarioY(mario.mapY)
+                    .setGameStatusValue(mario.getStatus())
                     .setModeValue(mario.getMode());
-
 
         return stateBuilder.build();
     }

@@ -58,7 +58,7 @@ if __name__ == '__main__':
     file_path = marioai_file_path+ "/gym-marioai/levels/"+level_name +".lvl"
 
     #possible levels are: flatLevel.lvl, easyLevel.lvl, hardLevel.lvl or None for seed-based selection
-    env = gym.make('Marioai-v0', visible=False,
+    env = gym.make('Marioai-v0', render=False,
             file_name=file_path,
             )
     agent = qlearning_agent.Agent(env, alpha=0.3)

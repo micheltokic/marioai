@@ -7,7 +7,7 @@ import gym
 from gym import spaces
 
 from ..protobuf_socket import ProtobufSocket
-from ..mario_pb2 import Action, MarioMessage, State
+from ..mario_pb2 import MarioMessage, State
 from ..reward_settings import RewardSettings
 
 
@@ -19,7 +19,7 @@ RUNNING = State.GameStatus.RUNNING
 class MarioEnv(gym.Env):
 
     def __init__(self, host='localhost', port=8080,
-                 visible=False,
+                 render=False,
                  difficulty=0,
                  seed=1000,
                  rf_width=3,
@@ -32,7 +32,7 @@ class MarioEnv(gym.Env):
         Environment initialization
         """
 
-        self.visible:bool = visible
+        self._render:bool = render
         self.difficulty = difficulty
         self.seed = seed
         self.level_length:int = level_length
@@ -44,9 +44,10 @@ class MarioEnv(gym.Env):
 
         # TODO read this dynamically?
         self.n_features:int = 4   # number of features in one receptive field cell
+        self.n_actions:int = 9
 
         # define action space
-        self.action_space = spaces.Discrete(9)
+        self.action_space = spaces.Discrete(self.n_actions)
 
         # observation space is a binary feature vector
         self.observation_space = spaces.MultiBinary([self.rf_width * self.rf_height,
@@ -59,14 +60,15 @@ class MarioEnv(gym.Env):
         self.best_x = 0
 
         try:
-            self.socket = ProtobufSocket()
+            self.socket = ProtobufSocket(self.n_actions)
             self.socket.connect(host, port)
+            self.socket.send_init(difficulty, seed, rf_width, rf_height,
+                                    level_length, file_name, render)
+
         except ConnectionRefusedError as e:
             print(f'unable to connect to the server, is it running at '
                   f'{host}:{port}?\n')
             raise e
-
-        self.__send_init_message()
 
     def __del__(self):
         print('deleting environment...')
@@ -79,55 +81,27 @@ class MarioEnv(gym.Env):
         """
         reset the environment, return new initial state
         """
-        msg = MarioMessage()
-        msg.type = MarioMessage.Type.RESET
-        self.socket.send(msg)
-
-        # assuming the response is a state message
-        reply = self.socket.receive()
-        assert reply.type == MarioMessage.Type.STATE
-        # self.__update_cached_data(reply)
-        self.__reset_cached_data(reply)
-        return self.__extract_observation(reply)
+        self.socket.send_reset()
+        state_msg = self.socket.receive()
+        self.__reset_cached_data(state_msg)
+        return self.__extract_observation(state_msg)
 
     def step(self, action: int):
         """
         perform action in the environment and return new state, reward,
         done and info
         """
-        # action_enum = Action.Value
-        self.__send_action_message(action)
+        self.socket.send_action(action)
+        state_msg = self.socket.receive()
 
-        # receive the new state information
-        reply = self.socket.receive()
-        assert reply.type == MarioMessage.Type.STATE
+        observation = self.__extract_observation(state_msg)
+        reward = self.__extract_reward(state_msg)
+        done = self.__extract_done(state_msg)
+        info = self.__extract_info(state_msg)
 
-        observation = self.__extract_observation(reply)
-        reward = self.__extract_reward(reply)
-        done = self.__extract_done(reply)
-        info = self.__extract_info(reply)
-
-        self.__update_cached_data(reply)
+        self.__update_cached_data(state_msg)
 
         return observation, reward, done, info
-
-    def __send_init_message(self):
-        msg = MarioMessage()
-        msg.type = MarioMessage.Type.INIT
-        msg.init.render = self.visible
-        msg.init.difficulty = self.difficulty
-        msg.init.seed = self.seed
-        msg.init.r_field_w = self.rf_width
-        msg.init.r_field_h = self.rf_height
-        msg.init.level_length = self.level_length
-        msg.init.file_name = self.file_name
-        self.socket.send(msg)
-
-    def __send_action_message(self, action: Action):
-        msg = MarioMessage()
-        msg.type = MarioMessage.Type.ACTION
-        msg.action = action
-        self.socket.send(msg)
 
     def __reset_cached_data(self, res:MarioMessage):
         s = res.state
@@ -154,7 +128,6 @@ class MarioEnv(gym.Env):
         self.kills_by_shell = s.kills_by_shell
         self.steps += 1
 
-
     def __extract_observation(self, res: MarioMessage):
         """
         return a compact representation of the environment state
@@ -165,10 +138,10 @@ class MarioEnv(gym.Env):
         rf_cells = res.state.receptive_fields
 
         for i in range(self.rf_width * self.rf_height):
-            cell = rf_cells[i]
-            cell_state = np.array(
-                [cell.enemy, cell.obstacle, cell.coin, cell.itembox])
-            obs[i] = cell_state
+            obs[i, 0] = rf_cells[i].enemy
+            obs[i, 1] = rf_cells[i].obstacle
+            obs[i, 2] = rf_cells[i].coin
+            obs[i, 3] = rf_cells[i].itembox
 
         return obs
 
@@ -179,23 +152,22 @@ class MarioEnv(gym.Env):
         """
         s = res.state
 
-        reward = 0
-        reward += self.reward_settings.timestep  
-        reward += self.reward_settings.progress * max(0, s.mario_x - self.best_x)
+        reward = self.reward_settings.timestep  
+        + self.reward_settings.progress * max(0, s.mario_x - self.best_x)
 
         # reward for mario mode change. Modes: small=0, big=1, fire=2
         # this will be negative if mario gets downgraded and positive if mario
         # gets upgraded
-        reward += self.reward_settings.mario_mode * (s.mode - self.mario_mode)
+        + self.reward_settings.mario_mode * (s.mode - self.mario_mode)
 
         # kills
-        reward += self.reward_settings.kill * (s.kills_by_stomp - self.kills_by_stomp)
-        reward += self.reward_settings.kill * (s.kills_by_fire - self.kills_by_fire)
-        reward += self.reward_settings.kill * (s.kills_by_shell - self.kills_by_shell)
+        + self.reward_settings.kill * (
+                s.kills_by_stomp + s.kills_by_fire + s.kills_by_shell -
+                self.kills_by_stomp - self.kills_by_fire - self.kills_by_shell)
 
         # bonus for winning
-        reward += self.reward_settings.win * (res.state.game_status == WIN)
-        reward += self.reward_settings.dead * (res.state.game_status == DEAD)
+        + self.reward_settings.win * (s.game_status == WIN)
+        + self.reward_settings.dead * (s.game_status == DEAD)
 
         return reward
 

@@ -17,7 +17,7 @@ public class MarioServer {
         this.controller = new Controller();
 
         try {
-            this.serverSocket = new ServerSocket(port);
+            this.serverSocket = new ServerSocket(port, 0, InetAddress.getByName(null));
         } catch (IOException e) {
             System.out.println("unable to initialize server socket: " + e.getMessage());
             e.printStackTrace();
@@ -30,7 +30,7 @@ public class MarioServer {
      * @param in
      * @param out
      */
-    private void handleConnection(InputStream in, OutputStream out) {
+    private void handleConnection(BufferedInputStream in, BufferedOutputStream out) {
         while (true) {
             try {
                 MarioMessage msg = MarioMessage.parseDelimitedFrom(in);
@@ -42,9 +42,11 @@ public class MarioServer {
                         break;
                     case RESET:
                         controller.handleResetMessage().writeDelimitedTo(out);
+                        out.flush();
                         break;
                     case ACTION:
                         controller.handleActionMessage(msg).writeDelimitedTo(out);
+                        out.flush();
                         break;
                     //case RENDER:
                     //    msgHandler.handleRenderMessage(msg);
@@ -68,7 +70,10 @@ public class MarioServer {
                 Socket sock = serverSocket.accept();
                 System.out.println("client connection established.");
 
-                handleConnection(sock.getInputStream(), sock.getOutputStream());
+                BufferedInputStream in = new BufferedInputStream(sock.getInputStream());
+                BufferedOutputStream out = new BufferedOutputStream(sock.getOutputStream());
+                handleConnection(in, out);
+                //handleConnection(sock.getInputStream(), sock.getOutputStream());
 
                 if (!sock.isClosed()) sock.close();
 

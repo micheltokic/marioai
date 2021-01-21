@@ -18,7 +18,7 @@ if __name__ == '__main__':
     marioai_file_path = os.path.dirname(os.path.abspath(os.path.join(os.getcwd(),os.pardir)))
     file_path = marioai_file_path+ "/gym-marioai/levels/"+level_name
 
-    env = gym.make('Marioai-v0', visible=False,
+    env = gym.make('Marioai-v0', render=False,
                    reward_settings=reward_settings, 
                    file_name=file_path)
 
