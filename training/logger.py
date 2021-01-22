@@ -8,19 +8,21 @@ import pickle
 
 class Logger:
 
-    def __init__(self, filename:str):
+    def __init__(self, filename:str, load_existing=False):
         self.parent_dir = os.path.dirname(os.path.realpath(__file__))
         self.result_dir = self.parent_dir + '/results/'
         self.model_dir = self.parent_dir + '/models/'
 
-        self.filename = self.find_unused_filename(filename)
+        if load_existing:
+            self.filename = filename
+        else:
+            self.filename = self.find_unused_filename(filename)
+
         self.log_path = self.result_dir + self.filename + '.json'
         self.model_path = self.model_dir + self.filename + '.p'
 
         print('result will be stored in ', self.log_path)
 
-        assert not os.path.isfile(self.log_path), \
-            f"the file {self.log_path} already exists"
 
         self.data = { 
                 'episodes':0,
@@ -29,8 +31,15 @@ class Logger:
                 'success':[]
                 }
 
-        # generate the empty file
-        self.save()
+        if load_existing:
+            self.load()
+        else:
+            assert not os.path.isfile(self.log_path), \
+                f"the file {self.log_path} already exists"
+
+            self.save()
+
+
 
     def find_unused_filename(self, filename):
         while os.path.isfile(self.result_dir + filename + '.json'):
@@ -59,7 +68,12 @@ class Logger:
         with open(self.log_path, 'w') as f:
             json.dump(self.data, f)
 
+    def load(self):
+        with open(self.log_path, 'r') as f:
+            self.data = json.load(f) 
+
     def save_model(self, model):
         pickle.dump(model, open(self.model_path, 'wb'))
 
-
+    def load_model(self):
+        return pickle.load(open(self.model_path, 'rb'))

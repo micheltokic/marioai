@@ -6,8 +6,8 @@ from agents import qlearning_agent
 from logger import Logger
 
 
-SAVE_FREQUENCY = 10 
-TOTAL_EPISODES = 5000
+SAVE_FREQUENCY = 100 
+TOTAL_EPISODES = 10000
 
 
 def train(env, agent: qlearning_agent.Agent, 
@@ -50,16 +50,18 @@ def train(env, agent: qlearning_agent.Agent,
 
 
 if __name__ == '__main__':
-    level_name = 'easyLevel'
+    level_name = 'easyLevel_7x5'
     logger = Logger(level_name)
 
     #adjust filepath when moved
     marioai_file_path = os.path.abspath(os.path.join(os.getcwd(),os.pardir))
-    file_path = marioai_file_path+ "/gym-marioai/levels/"+level_name +".lvl"
+    file_path = marioai_file_path+ "/gym-marioai/levels/easyLevel.lvl"
+
 
     #possible levels are: flatLevel.lvl, easyLevel.lvl, hardLevel.lvl or None for seed-based selection
     env = gym.make('Marioai-v0', render=False,
             file_name=file_path,
+            rf_width=7, rf_height=5,
             )
     agent = qlearning_agent.Agent(env, alpha=0.3)
     train(env, agent, logger, TOTAL_EPISODES)

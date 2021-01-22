@@ -6,7 +6,7 @@ class RewardSettings:
 
     def __init__(self, 
                 progress=1,
-                timestep=-0.1,
+                timestep=-.1,
                 mario_mode=10,
                 kill=1,
                 win=100,
