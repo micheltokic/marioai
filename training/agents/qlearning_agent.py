@@ -35,11 +35,18 @@ class QTable:
 
 class Agent:
 
-    def __init__(self, env, alpha=0.1, gamma=0.99, epsilon=0.1, 
+    def __init__(self, env, alpha=0.1, gamma=0.99, 
+            epsilon_start=0.5, epsilon_end=0.001,
+            epsilon_decay_length=10000, # in episodes
             initial_capacity=10):
         self.alpha = alpha
         self.gamma = gamma
-        self.epsilon = epsilon
+
+        # self.epsilon_start = epsilon_start
+        # self.epsilon_decay_length = epsilon_decay_length
+        self.epsilon = epsilon_start
+        self.epsilon_end = epsilon_end
+        self.decay_step = (epsilon_start - epsilon_end) / epsilon_decay_length
 
         self.env = env
         self.Q = QTable(env.action_space.n, initial_capacity)
@@ -64,4 +71,8 @@ class Agent:
         td_error = reward + self.gamma * np.max(self.Q[next_state]) \
                     - self.Q[state][action]
         self.Q[state][action] += self.alpha * td_error 
+
+    def decay_epsilon(self):
+        if self.epsilon > self.epsilon_end:
+            self.epsilon -= self.decay_step
 

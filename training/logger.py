@@ -21,9 +21,6 @@ class Logger:
         self.log_path = self.result_dir + self.filename + '.json'
         self.model_path = self.model_dir + self.filename + '.p'
 
-        print('result will be stored in ', self.log_path)
-
-
         self.data = { 
                 'episodes':0,
                 'rewards':[],
@@ -33,13 +30,12 @@ class Logger:
 
         if load_existing:
             self.load()
+            print('loaded results from ', self.log_path)
         else:
             assert not os.path.isfile(self.log_path), \
                 f"the file {self.log_path} already exists"
-
+            print('result will be stored in ', self.log_path)
             self.save()
-
-
 
     def find_unused_filename(self, filename):
         while os.path.isfile(self.result_dir + filename + '.json'):

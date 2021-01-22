@@ -7,7 +7,7 @@ from logger import Logger
 
 
 SAVE_FREQUENCY = 100 
-TOTAL_EPISODES = 10000
+TOTAL_EPISODES = 20000
 
 
 def train(env, agent: qlearning_agent.Agent, 
@@ -36,13 +36,14 @@ def train(env, agent: qlearning_agent.Agent,
 
         # episode has finished
         logger.append(total_reward, info['steps'], info['win'])
+        agent.decay_epsilon()
 
         if e % SAVE_FREQUENCY == 0:
             logger.save()
             logger.save_model(agent.Q)
 
 
-        print(f'episode {e:4} terminated. Steps: {info["steps"]:4}\t' \
+        print(f'episode {e:4} terminated. epsilon: {agent.epsilon:3f}, Steps: {info["steps"]:4}\t' \
               f'R: {total_reward:7.2f}\t' \
               f'|O|: {len(agent.Q):4}\t' \
               f'win: {info["win"]}')
@@ -63,6 +64,7 @@ if __name__ == '__main__':
             file_name=file_path,
             rf_width=7, rf_height=5,
             )
-    agent = qlearning_agent.Agent(env, alpha=0.3)
+    agent = qlearning_agent.Agent(env, alpha=0.2, 
+            epsilon_decay_length=TOTAL_EPISODES / 2)
     train(env, agent, logger, TOTAL_EPISODES)
     print('training finished.')
