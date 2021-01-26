@@ -1,46 +1,44 @@
 import cProfile
 import pstats
+import time
+import os
 
 import gym
 import gym_marioai
-import os
 
 if __name__ == '__main__':
 
-    profile = cProfile.Profile()
-    profile.enable()
+    # profile = cProfile.Profile()
+    # profile.enable()
 
     # adjust the reward settings like so:
     reward_settings = gym_marioai.RewardSettings(timestep=-0.1,)
 
-    level_name = "easyLevel.lvl"
-    #adjust filepath when moved
-    marioai_file_path = os.path.dirname(os.path.abspath(os.path.join(os.getcwd(),os.pardir)))
-    file_path = marioai_file_path+ "/gym-marioai/levels/"+level_name
-
     env = gym.make('Marioai-v0', render=False,
                    reward_settings=reward_settings, 
-                   file_name=file_path)
+                   level_path=gym_marioai.levels.easy_level)
 
-    for e in range(10):
+    max_steps = 100000
+    steps = 0
+
+    start_time = time.time()
+
+    while steps < max_steps:
         s = env.reset()
         done = False
-        total_reward = 0
 
-        while not done:
-            env.render()
+        while not done and steps < max_steps:
             a = env.action_space.sample()
             s, r, done, info = env.step(a)
-            # print('state:\n', s, 'reward:', r)
+            steps += 1
 
-            total_reward += r
+        print(f'finished episode, {steps}/{max_steps} steps')
 
-        print(f'finished episode {e}, total_reward: {total_reward}')
-
-    profile.disable()
-    ps = pstats.Stats(profile)
-    ps.sort_stats('cumtime', 'calls')
-    ps.print_stats(100)
+    print(f'took {steps} steps in {time.time() - start_time} sec')
+    # profile.disable()
+    # ps = pstats.Stats(profile)
+    # ps.sort_stats('cumtime', 'calls')
+    # ps.print_stats(100)
 
     print('finished demo')
 

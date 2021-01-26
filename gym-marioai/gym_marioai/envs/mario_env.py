@@ -27,7 +27,7 @@ class MarioEnv(gym.Env):
                  level_length=80,
                  max_steps=0,
                  reward_settings=RewardSettings(),
-                 file_name="None"):
+                 level_path="None"):
         """
         Environment initialization
         """
@@ -40,7 +40,7 @@ class MarioEnv(gym.Env):
         self.rf_height:int = rf_height
         self.max_steps:int = max_steps
         self.reward_settings:RewardSettings = reward_settings
-        self.file_name:str = file_name
+        self.level_path:str = level_path
 
         # TODO read this dynamically?
         self.n_features:int = 4   # number of features in one receptive field cell
@@ -63,7 +63,7 @@ class MarioEnv(gym.Env):
             self.socket = ProtobufSocket(self.n_actions)
             self.socket.connect(host, port)
             self.socket.send_init(difficulty, seed, rf_width, rf_height,
-                                    level_length, file_name, render)
+                                  level_length, level_path, render)
 
         except ConnectionRefusedError as e:
             print(f'unable to connect to the server, is it running at '
@@ -71,7 +71,6 @@ class MarioEnv(gym.Env):
             raise e
 
     def __del__(self):
-        print('deleting environment...')
         self.socket.disconnect()
 
     def render(self, mode='human'):

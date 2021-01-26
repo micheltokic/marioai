@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="gym_marioai", # Replace with your own username
+    name="gym_marioai",
     version="0.0.1",
     author="",
     author_email="",
@@ -16,6 +16,8 @@ setup(
         'numpy', 
         'gym', 
         'protobuf'],
+
+    include_package_data=True
     # package_dir={
     #     'gym_marioai': 'src/gym_marioai'},
     # packages=['gym_marioai', 'gym_marioai.envs'],

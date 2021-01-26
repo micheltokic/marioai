@@ -1,6 +1,5 @@
 import gym
 import gym_marioai
-import os
 
 from agents import qlearning_agent
 from logger import Logger
@@ -42,29 +41,21 @@ def train(env, agent: qlearning_agent.Agent,
             logger.save()
             logger.save_model(agent.Q)
 
-
-        print(f'episode {e:4} terminated. epsilon: {agent.epsilon:3f}, Steps: {info["steps"]:4}\t' \
-              f'R: {total_reward:7.2f}\t' \
-              f'|O|: {len(agent.Q):4}\t' \
+        print(f'episode {e:4} terminated. epsilon: {agent.epsilon:3f}, Steps: {info["steps"]:4}\t'
+              f'R: {total_reward:7.2f}\t'
+              f'|O|: {len(agent.Q):4}\t'
               f'win: {info["win"]}')
-
 
 
 if __name__ == '__main__':
     level_name = 'easyLevel_7x5'
     logger = Logger(level_name)
 
-    #adjust filepath when moved
-    marioai_file_path = os.path.abspath(os.path.join(os.getcwd(),os.pardir))
-    file_path = marioai_file_path+ "/gym-marioai/levels/easyLevel.lvl"
-
-
-    #possible levels are: flatLevel.lvl, easyLevel.lvl, hardLevel.lvl or None for seed-based selection
     env = gym.make('Marioai-v0', render=False,
-            file_name=file_path,
-            rf_width=7, rf_height=5,
-            )
+                   level_path=gym_marioai.levels.easy_level,
+                   rf_width=7, rf_height=5)
+
     agent = qlearning_agent.Agent(env, alpha=0.2, 
-            epsilon_decay_length=TOTAL_EPISODES / 2)
+                                  epsilon_decay_length=TOTAL_EPISODES / 2)
     train(env, agent, logger, TOTAL_EPISODES)
     print('training finished.')
