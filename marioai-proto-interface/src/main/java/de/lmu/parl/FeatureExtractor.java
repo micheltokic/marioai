@@ -55,6 +55,14 @@ public class FeatureExtractor {
             }
         }
 
+        State.MarioPosition position;
+        if (mario.isOnGround()) {
+            position = State.MarioPosition.FLOOR;
+        } else {
+            position = isOverCliff(mario, level) ? State.MarioPosition.CLIFF : State.MarioPosition.AIR;
+        }
+        stateBuilder.setPosition(position);
+
         ////////////////////////////////////////////////////////
         // general additional information, not included in the receptive field
         ///////////////////////////////////////////////////////
@@ -68,38 +76,6 @@ public class FeatureExtractor {
 
         return stateBuilder.build();
     }
-
-//    public static byte[][][] rfLevelScene(Mario mario, byte[][] level, int rfw, int rfh) {
-//
-//        byte[][][] receptiveField = new byte[rfh][rfw][4]; // check all 4 corners of receptive field for level indices
-//
-//        int cellsLeft = rfw / 2;
-//        int cellsAbove = (rfh / 2) + 1;
-//
-//        for(int x = 0; x < rfw; x++) {
-//            for(int y = 0; y < rfh; y++) {
-//                int leftX = floatToIndex(mario.x -cellsLeft*cellSize + x*cellSize);
-//                int rightX = leftX + 1;
-//                int topY = floatToIndex(mario.y -cellsAbove*cellSize + y*cellSize);
-//                int botY = topY + 1;
-//
-//                if(!(leftX < 0 || topY < 0 || leftX >= level.length || topY >= level[0].length)){
-//                    receptiveField[y][x][0] = level[leftX][topY];
-//                }
-//                if(!(leftX < 0 || botY < 0 || leftX >= level.length || botY >= level[0].length)){
-//                    receptiveField[y][x][1] = level[leftX][botY];
-//                }
-//                if(!(rightX < 0 || topY < 0 || rightX >= level.length || topY >= level[0].length)){
-//                    receptiveField[y][x][2] = level[rightX][topY];
-//                }
-//                if(!(rightX < 0 || botY < 0 || rightX >= level.length || botY >= level[0].length)){
-//                    receptiveField[y][x][3] = level[rightX][botY];
-//                }
-//            }
-//        }
-//
-//        return receptiveField;
-//    }
 
     public byte[][] extractLevelScene(Mario mario, byte[][] level, int rfw, int rfh) {
 
@@ -189,10 +165,6 @@ public class FeatureExtractor {
         return false;
     }
 
-    private static boolean isGround(byte tile) {
-        return isObstacle(tile) || tile == GeneralizerLevelScene.BORDER_HILL;
-    }
-
     private static boolean isQuestionMark(byte tile) {
         switch (tile) {
             case 21:
@@ -203,7 +175,21 @@ public class FeatureExtractor {
         return false;
     }
 
+    private static boolean isGround(byte tile) {
+        return isObstacle(tile) || tile == GeneralizerLevelScene.BORDER_HILL;
+    }
 
+    private static boolean isOverCliff (Mario mario, byte[][] level) {
+        int marioX = floatToIndex(mario.x);
+        int marioY = floatToIndex(mario.y);
+
+        boolean overCliff = true;
+        for(int i=marioY; i<level[marioX].length; i++) {
+            byte tile = GeneralizerLevelScene.ZLevelGeneralization(level[marioX][i], 1);
+            overCliff = overCliff && !isGround(tile);
+        }
+        return overCliff;
+    }
 
     public static void main(String[] args) {
         MarioEnvironment env = MarioEnvironment.getInstance();
