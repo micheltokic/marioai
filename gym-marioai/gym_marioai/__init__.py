@@ -23,6 +23,12 @@ register(id='Marioai-v2',
          kwargs={
                  'level_path':levels.hard_level
          })
+
+register(id='Marioai-v3',
+         entry_point='gym_marioai.envs:MarioEnv',
+         kwargs={
+             'level_path':levels.cliff_level
+         })
 # define other versions
 # register(id='Marioai-v1',
 #         entry_point='gym_marioai.envs:MarioEnv',
