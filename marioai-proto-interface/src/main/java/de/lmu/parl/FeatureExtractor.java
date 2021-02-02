@@ -181,14 +181,16 @@ public class FeatureExtractor {
 
     private static boolean isOverCliff (Mario mario, byte[][] level) {
         int marioX = floatToIndex(mario.x);
-        int marioY = floatToIndex(mario.y);
+        if(marioX >= level.length) return false;
 
-        boolean overCliff = true;
+        int marioY = floatToIndex(mario.y);
         for(int i=marioY; i<level[marioX].length; i++) {
             byte tile = GeneralizerLevelScene.ZLevelGeneralization(level[marioX][i], 1);
-            overCliff = overCliff && !isGround(tile);
+            if(isGround(tile)) {
+                return false;
+            }
         }
-        return overCliff;
+        return true;
     }
 
     public static void main(String[] args) {
@@ -196,7 +198,7 @@ public class FeatureExtractor {
         int rfw = 11;
         int rfh = 5;
         MarioAIOptions options = new Controller().buildOptions(
-                rfw, rfh, 1000, 80, 0, true, "flatLevel.lvl"
+                rfw, rfh, 1000, 80, 0, true, "none"
         );
 
         env.reset(options);
