@@ -22,8 +22,8 @@ class MarioEnv(gym.Env):
                  render=False,
                  difficulty=0,
                  seed=1000,
-                 rf_width=3,
-                 rf_height=4,
+                 rf_width=11,
+                 rf_height=7,
                  level_length=80,
                  max_steps=0,
                  reward_settings=RewardSettings(),
@@ -58,6 +58,9 @@ class MarioEnv(gym.Env):
         self.mario_pos = None
         self.steps = 0
         self.best_x = 0
+
+        self.cliff_reward = False
+        self.cliff_pos = None
 
         try:
             self.socket = ProtobufSocket(self.n_actions)
@@ -99,6 +102,7 @@ class MarioEnv(gym.Env):
         info = self.__extract_info(state_msg)
 
         self.__update_cached_data(state_msg)
+        self.__check_cliffs(state_msg)
 
         return observation, reward, done, info
 
@@ -126,6 +130,9 @@ class MarioEnv(gym.Env):
         self.kills_by_fire = s.kills_by_fire
         self.kills_by_shell = s.kills_by_shell
         self.steps += 1
+
+        self.cliff_reward = False
+
 
     def __extract_observation(self, res: MarioMessage):
         """
@@ -165,10 +172,15 @@ class MarioEnv(gym.Env):
                 s.kills_by_stomp + s.kills_by_fire + s.kills_by_shell - \
                 self.kills_by_stomp - self.kills_by_fire - self.kills_by_shell) \
 
+        # reward mario for making it across a cliff
+        + self.reward_settings.cliff if self.cliff_reward else 0
+
         # bonus for winning
         + self.reward_settings.win * (s.game_status == WIN) \
-        + self.reward_settings.dead * (s.game_status == DEAD) 
-
+        + self.reward_settings.dead * (s.game_status == DEAD)
+        
+        if self.cliff_reward:
+            print('rewarding cliff')
         return reward
 
     def __extract_done(self, res: MarioMessage):
@@ -189,3 +201,21 @@ class MarioEnv(gym.Env):
                 'win': res.state.game_status == WIN,
                 'steps': self.steps,
                 }
+
+    def __check_cliffs(self, res: MarioMessage):
+        """
+        checks if mario made it across a cliff for extra rewards
+        """
+        pos = res.state.position
+        if pos == State.CLIFF:
+            self.cliff_pos = self.mario_pos
+        elif pos == State.FLOOR:
+            if not self.cliff_pos:
+                # do nothing, if mario has not been above a cliff
+                return
+            elif self.mario_pos > self.cliff_pos:
+                # compare coords if mario was above a cliff,
+                # and is now on the floor again
+                self.cliff_reward = True
+                self.cliff_pos = None
+        
