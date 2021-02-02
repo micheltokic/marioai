@@ -158,26 +158,27 @@ class MarioEnv(gym.Env):
         """
         s = res.state
 
-        reward = self.reward_settings.timestep \
-        + self.reward_settings.progress * max(0, s.mario_x - self.mario_pos[0]) \
-        # + self.reward_settings.progress * (s.mario_x - self.mario_pos[0]) \
+        reward = (self.reward_settings.timestep
+        + self.reward_settings.progress * max(0, s.mario_x - self.mario_pos[0])
+        # + self.reward_settings.progress * (s.mario_x - self.mario_pos[0])
 
         # reward for mario mode change. Modes: small=0, big=1, fire=2
         # this will be negative if mario gets downgraded and positive if mario
         # gets upgraded
-        + self.reward_settings.mario_mode * (s.mode - self.mario_mode) \
+        + self.reward_settings.mario_mode * (s.mode - self.mario_mode)
 
         # kills
-        + self.reward_settings.kill * ( \
-                s.kills_by_stomp + s.kills_by_fire + s.kills_by_shell - \
-                self.kills_by_stomp - self.kills_by_fire - self.kills_by_shell) \
+        + self.reward_settings.kill * (
+                s.kills_by_stomp + s.kills_by_fire + s.kills_by_shell -
+                self.kills_by_stomp - self.kills_by_fire - self.kills_by_shell)
 
         # reward mario for making it across a cliff
         + self.reward_settings.cliff if self.cliff_reward else 0
 
         # bonus for winning
-        + self.reward_settings.win * (s.game_status == WIN) \
+        + self.reward_settings.win * (s.game_status == WIN)
         + self.reward_settings.dead * (s.game_status == DEAD)
+        )
         
         if self.cliff_reward:
             print('rewarding cliff')
