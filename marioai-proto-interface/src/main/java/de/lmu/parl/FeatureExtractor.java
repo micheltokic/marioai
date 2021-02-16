@@ -4,10 +4,11 @@ import ch.idsia.benchmark.mario.engine.GeneralizerLevelScene;
 import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 import ch.idsia.tools.MarioAIOptions;
+import com.google.protobuf.ByteString;
 import de.lmu.parl.proto.MarioProtos;
 import de.lmu.parl.proto.MarioProtos.State;
 import de.lmu.parl.proto.MarioProtos.ReceptiveFieldCell;
-import org.junit.Test;
+
 
 public class FeatureExtractor {
 
@@ -27,7 +28,7 @@ public class FeatureExtractor {
         this.env = env;
     }
 
-    public State getState () {
+    public State getState (boolean compact) {
         Mario mario = env.getMario();
         byte[][] level = env.getLevel().map;
         int rfw = env.getReceptiveFieldWidth();
@@ -44,16 +45,25 @@ public class FeatureExtractor {
         extractEnemies(enemies, rfw, rfh);
 
         State.Builder stateBuilder = State.newBuilder();
-        for (int y = 0; y < rfh; y++){
-            for (int x = 0; x < rfw; x++) {
-                ReceptiveFieldCell.Builder rFBuilder = ReceptiveFieldCell.newBuilder();
-                rFBuilder.setCoin(rfCoins[y][x]);
-                rFBuilder.setEnemy(rfEnemies[y][x]);
-                rFBuilder.setObstacle(rfObstacles[y][x]);
-                rFBuilder.setItembox(rfQms[y][x]);
-                stateBuilder.addReceptiveFields(rFBuilder);
+
+        if (compact) {
+            // observation encoded as byte array
+            ByteString bytes = getRfCompact(rfObstacles, rfEnemies, rfCoins, rfQms, rfw, rfh);
+            stateBuilder.setRfByteArray(bytes);
+        } else {
+            // receptive field cells
+            for (int y = 0; y < rfh; y++){
+               for (int x = 0; x < rfw; x++) {
+                  ReceptiveFieldCell.Builder rFBuilder = ReceptiveFieldCell.newBuilder();
+                   rFBuilder.setCoin(rfCoins[y][x]);
+                   rFBuilder.setEnemy(rfEnemies[y][x]);
+                   rFBuilder.setObstacle(rfObstacles[y][x]);
+                   rFBuilder.setItembox(rfQms[y][x]);
+                   stateBuilder.addReceptiveFields(rFBuilder);
+               }
             }
         }
+
 
         State.MarioPosition position;
         if (mario.isOnGround()) {
@@ -75,6 +85,47 @@ public class FeatureExtractor {
                     .setModeValue(mario.getMode());
 
         return stateBuilder.build();
+    }
+
+    public ByteString getRfCompact(boolean[][] rfObstacles, boolean[][] rfEnemies, boolean[][] rfCoins, boolean[][] rfQms,
+                              int rfw, int rfh) {
+
+        int numBytes = (int) Math.ceil(((double) rfw * rfh * 4) / 8.0);
+
+        byte[] bytes = new byte[numBytes];
+
+        byte b1 = 1;
+        byte b2 = 2;
+        byte b3 = 4;
+        byte b4 = 8;
+        byte b5 = 16;
+        byte b6 = 32;
+        byte b7 = 64;
+        byte b8 = (byte) 128;
+
+        for (int y = 0; y < rfh; y++) {
+            for (int x = 0; x < rfw; x++) {
+                int cellIndex = y * rfw + x;
+                int i = cellIndex / 2;
+
+                if (cellIndex % 2 == 0) {
+                    // set the first 4 bits
+                    if (rfObstacles[y][x]) bytes[i] |= b1;
+                    if (rfEnemies[y][x]) bytes[i] |= b2;
+                    if (rfCoins[y][x]) bytes[i] |= b3;
+                    if (rfQms[y][x]) bytes[i] |= b4;
+
+                } else {
+                    // set the second 4 bits
+                    if (rfObstacles[y][x]) bytes[i] |= b5;
+                    if (rfEnemies[y][x])   bytes[i] |= b6;
+                    if (rfCoins[y][x])     bytes[i] |= b7;
+                    if (rfQms[y][x])       bytes[i] |= b8;
+                }
+            }
+        }
+
+        return ByteString.copyFrom(bytes);
     }
 
     public byte[][] extractLevelScene(Mario mario, byte[][] level, int rfw, int rfh) {
@@ -211,7 +262,7 @@ public class FeatureExtractor {
             env.performAction(new boolean[]{false, true, false, i%2==0, false, false});
             env.tick();
 
-            MarioProtos.State state = extractor.getState();
+            MarioProtos.State state = extractor.getState(false);
             int x = 0;
         }
         System.out.println("debug");

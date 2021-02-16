@@ -74,5 +74,6 @@ class Agent:
 
     def decay_epsilon(self):
         if self.epsilon > self.epsilon_end:
-            self.epsilon -= self.decay_step
+            # self.epsilon -= self.decay_step
+            self.epsilon = max(self.epsilon_end, self.epsilon-self.decay_step)
 

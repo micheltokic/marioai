@@ -9,9 +9,9 @@ target
 settings.json
 
 
-training/models/
-training/results/
-training/plots/
+training/models/*
+training/results/*
+training/plots/*
 
 
 
