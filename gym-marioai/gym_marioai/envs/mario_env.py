@@ -27,6 +27,7 @@ class MarioEnv(gym.Env):
                  level_length=80,
                  max_steps=0,
                  reward_settings=RewardSettings(),
+                 compact_observation=True,
                  level_path="None"):
         """
         Environment initialization
@@ -41,6 +42,7 @@ class MarioEnv(gym.Env):
         self.max_steps:int = max_steps
         self.reward_settings:RewardSettings = reward_settings
         self.level_path:str = level_path
+        self.compact_observation:bool = compact_observation
 
         # TODO read this dynamically?
         self.n_features:int = 4   # number of features in one receptive field cell
@@ -52,6 +54,11 @@ class MarioEnv(gym.Env):
         # observation space is a binary feature vector
         self.observation_space = spaces.MultiBinary([self.rf_width * self.rf_height,
                                                      self.n_features])
+
+        # use different observation feature extractor 
+        # depending on compact parameter
+        self.__extract_observation = self.__extract_observation_encoded \
+                if self.compact_observation else self.__extract_observation_default
 
         # cache some information about the current environent state
         self.mario_mode = None
@@ -66,7 +73,8 @@ class MarioEnv(gym.Env):
             self.socket = ProtobufSocket(self.n_actions)
             self.socket.connect(host, port)
             self.socket.send_init(difficulty, seed, rf_width, rf_height,
-                                  level_length, level_path, render)
+                                  level_length, level_path, render, 
+                                  compact_observation)
 
         except ConnectionRefusedError as e:
             print(f'unable to connect to the server, is it running at '
@@ -110,11 +118,12 @@ class MarioEnv(gym.Env):
         s = res.state
         self.mario_mode = s.mode
         self.mario_pos = (s.mario_x, s.mario_y)
-        self.best_x = s.mario_x
+        # self.best_x = s.mario_x
         self.kills_by_stomp = 0
         self.kills_by_fire = 0
         self.kills_by_shell = 0
         self.steps = 0 
+        self.cliff_reward = False
 
     def __update_cached_data(self, res: MarioMessage):
         """
@@ -124,7 +133,7 @@ class MarioEnv(gym.Env):
         s = res.state
         self.mario_mode = s.mode
         self.mario_pos = (s.mario_x, s.mario_y)
-        self.best_x = max(self.best_x, s.mario_x)
+        # self.best_x = max(self.best_x, s.mario_x)
 
         self.kills_by_stomp = s.kills_by_stomp
         self.kills_by_fire = s.kills_by_fire
@@ -133,8 +142,7 @@ class MarioEnv(gym.Env):
 
         self.cliff_reward = False
 
-
-    def __extract_observation(self, res: MarioMessage):
+    def __extract_observation_default(self, res: MarioMessage):
         """
         return a compact representation of the environment state
         returns a numpy array of shape rf_width * rf_height x n_features
@@ -150,6 +158,12 @@ class MarioEnv(gym.Env):
             obs[i, 3] = rf_cells[i].itembox
 
         return obs
+
+    def __extract_observation_encoded(self, res:MarioMessage):
+        """
+
+        """
+        return res.state.rfByteArray
 
     def __extract_reward(self, res: MarioMessage):
         """
@@ -173,7 +187,7 @@ class MarioEnv(gym.Env):
                 self.kills_by_stomp - self.kills_by_fire - self.kills_by_shell)
 
         # reward mario for making it across a cliff
-        + self.reward_settings.cliff if self.cliff_reward else 0
+        + (self.reward_settings.cliff if self.cliff_reward else 0)
 
         # bonus for winning
         + self.reward_settings.win * (s.game_status == WIN)

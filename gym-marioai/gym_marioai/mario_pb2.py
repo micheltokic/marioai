@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\021de.lmu.parl.protoB\013MarioProtos',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bmario.proto\x12\x07marioai\"\xc9\x01\n\x0cMarioMessage\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.marioai.MarioMessage.Type\x12\x1b\n\x04init\x18\x02 \x01(\x0b\x32\r.marioai.Init\x12\x1f\n\x06\x61\x63tion\x18\x03 \x01(\x0e\x32\x0f.marioai.Action\x12\x1d\n\x05state\x18\x04 \x01(\x0b\x32\x0e.marioai.State\"2\n\x04Type\x12\x08\n\x04INIT\x10\x00\x12\n\n\x06\x41\x43TION\x10\x01\x12\t\n\x05STATE\x10\x02\x12\t\n\x05RESET\x10\x03\"\x87\x01\n\x04Init\x12\x12\n\ndifficulty\x18\x01 \x01(\x05\x12\x0c\n\x04seed\x18\x02 \x01(\x05\x12\x11\n\tr_field_w\x18\x03 \x01(\x05\x12\x11\n\tr_field_h\x18\x04 \x01(\x05\x12\x14\n\x0clevel_length\x18\x05 \x01(\x05\x12\x0e\n\x06render\x18\x06 \x01(\x08\x12\x11\n\tfile_name\x18\x07 \x01(\t\"\xb8\x03\n\x05State\x12\x35\n\x10receptive_fields\x18\x01 \x03(\x0b\x32\x1b.marioai.ReceptiveFieldCell\x12.\n\x0bgame_status\x18\x02 \x01(\x0e\x32\x19.marioai.State.GameStatus\x12.\n\x08position\x18\x03 \x01(\x0e\x32\x1c.marioai.State.MarioPosition\x12&\n\x04mode\x18\x04 \x01(\x0e\x32\x18.marioai.State.MarioMode\x12\x16\n\x0ekills_by_stomp\x18\x05 \x01(\x05\x12\x15\n\rkills_by_fire\x18\x06 \x01(\x05\x12\x16\n\x0ekills_by_shell\x18\x07 \x01(\x05\x12\x0f\n\x07mario_x\x18\x08 \x01(\x05\x12\x0f\n\x07mario_y\x18\t \x01(\x05\",\n\nGameStatus\x12\x08\n\x04\x44\x45\x41\x44\x10\x00\x12\x07\n\x03WIN\x10\x01\x12\x0b\n\x07RUNNING\x10\x02\".\n\rMarioPosition\x12\t\n\x05\x46LOOR\x10\x00\x12\x07\n\x03\x41IR\x10\x01\x12\t\n\x05\x43LIFF\x10\x02\")\n\tMarioMode\x12\t\n\x05SMALL\x10\x00\x12\x07\n\x03\x42IG\x10\x01\x12\x08\n\x04\x46IRE\x10\x02\"T\n\x12ReceptiveFieldCell\x12\r\n\x05\x65nemy\x18\x01 \x01(\x08\x12\x10\n\x08obstacle\x18\x02 \x01(\x08\x12\x0c\n\x04\x63oin\x18\x03 \x01(\x08\x12\x0f\n\x07itembox\x18\x04 \x01(\x08*\x97\x01\n\x06\x41\x63tion\x12\x08\n\x04\x44OWN\x10\x00\x12\x08\n\x04JUMP\x10\x01\x12\x0e\n\nSPEED_JUMP\x10\x02\x12\x0f\n\x0bSPEED_RIGHT\x10\x03\x12\x0e\n\nSPEED_LEFT\x10\x04\x12\x0e\n\nJUMP_RIGHT\x10\x05\x12\r\n\tJUMP_LEFT\x10\x06\x12\x14\n\x10SPEED_JUMP_RIGHT\x10\x07\x12\x13\n\x0fSPEED_JUMP_LEFT\x10\x08\x42 \n\x11\x64\x65.lmu.parl.protoB\x0bMarioProtosb\x06proto3'
+  serialized_pb=b'\n\x0bmario.proto\x12\x07marioai\"\xc9\x01\n\x0cMarioMessage\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.marioai.MarioMessage.Type\x12\x1b\n\x04init\x18\x02 \x01(\x0b\x32\r.marioai.Init\x12\x1f\n\x06\x61\x63tion\x18\x03 \x01(\x0e\x32\x0f.marioai.Action\x12\x1d\n\x05state\x18\x04 \x01(\x0b\x32\x0e.marioai.State\"2\n\x04Type\x12\x08\n\x04INIT\x10\x00\x12\n\n\x06\x41\x43TION\x10\x01\x12\t\n\x05STATE\x10\x02\x12\t\n\x05RESET\x10\x03\"\xa4\x01\n\x04Init\x12\x12\n\ndifficulty\x18\x01 \x01(\x05\x12\x0c\n\x04seed\x18\x02 \x01(\x05\x12\x11\n\tr_field_w\x18\x03 \x01(\x05\x12\x11\n\tr_field_h\x18\x04 \x01(\x05\x12\x14\n\x0clevel_length\x18\x05 \x01(\x05\x12\x0e\n\x06render\x18\x06 \x01(\x08\x12\x11\n\tfile_name\x18\x07 \x01(\t\x12\x1b\n\x13\x63ompact_observation\x18\x08 \x01(\x08\"\xcd\x03\n\x05State\x12.\n\x0bgame_status\x18\x01 \x01(\x0e\x32\x19.marioai.State.GameStatus\x12.\n\x08position\x18\x02 \x01(\x0e\x32\x1c.marioai.State.MarioPosition\x12&\n\x04mode\x18\x03 \x01(\x0e\x32\x18.marioai.State.MarioMode\x12\x16\n\x0ekills_by_stomp\x18\x04 \x01(\x05\x12\x15\n\rkills_by_fire\x18\x05 \x01(\x05\x12\x16\n\x0ekills_by_shell\x18\x06 \x01(\x05\x12\x0f\n\x07mario_x\x18\x07 \x01(\x05\x12\x0f\n\x07mario_y\x18\x08 \x01(\x05\x12\x13\n\x0brfByteArray\x18\t \x01(\x0c\x12\x35\n\x10receptive_fields\x18\n \x03(\x0b\x32\x1b.marioai.ReceptiveFieldCell\",\n\nGameStatus\x12\x08\n\x04\x44\x45\x41\x44\x10\x00\x12\x07\n\x03WIN\x10\x01\x12\x0b\n\x07RUNNING\x10\x02\".\n\rMarioPosition\x12\t\n\x05\x46LOOR\x10\x00\x12\x07\n\x03\x41IR\x10\x01\x12\t\n\x05\x43LIFF\x10\x02\")\n\tMarioMode\x12\t\n\x05SMALL\x10\x00\x12\x07\n\x03\x42IG\x10\x01\x12\x08\n\x04\x46IRE\x10\x02\"T\n\x12ReceptiveFieldCell\x12\r\n\x05\x65nemy\x18\x01 \x01(\x08\x12\x10\n\x08obstacle\x18\x02 \x01(\x08\x12\x0c\n\x04\x63oin\x18\x03 \x01(\x08\x12\x0f\n\x07itembox\x18\x04 \x01(\x08*\x97\x01\n\x06\x41\x63tion\x12\x08\n\x04\x44OWN\x10\x00\x12\x08\n\x04JUMP\x10\x01\x12\x0e\n\nSPEED_JUMP\x10\x02\x12\x0f\n\x0bSPEED_RIGHT\x10\x03\x12\x0e\n\nSPEED_LEFT\x10\x04\x12\x0e\n\nJUMP_RIGHT\x10\x05\x12\r\n\tJUMP_LEFT\x10\x06\x12\x14\n\x10SPEED_JUMP_RIGHT\x10\x07\x12\x13\n\x0fSPEED_JUMP_LEFT\x10\x08\x42 \n\x11\x64\x65.lmu.parl.protoB\x0bMarioProtosb\x06proto3'
 )
 
 _ACTION = _descriptor.EnumDescriptor(
@@ -78,8 +78,8 @@ _ACTION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=896,
-  serialized_end=1047,
+  serialized_start=946,
+  serialized_end=1097,
 )
 _sym_db.RegisterEnumDescriptor(_ACTION)
 
@@ -155,8 +155,8 @@ _STATE_GAMESTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=672,
-  serialized_end=716,
+  serialized_start=722,
+  serialized_end=766,
 )
 _sym_db.RegisterEnumDescriptor(_STATE_GAMESTATUS)
 
@@ -185,8 +185,8 @@ _STATE_MARIOPOSITION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=718,
-  serialized_end=764,
+  serialized_start=768,
+  serialized_end=814,
 )
 _sym_db.RegisterEnumDescriptor(_STATE_MARIOPOSITION)
 
@@ -215,8 +215,8 @@ _STATE_MARIOMODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=766,
-  serialized_end=807,
+  serialized_start=816,
+  serialized_end=857,
 )
 _sym_db.RegisterEnumDescriptor(_STATE_MARIOMODE)
 
@@ -332,6 +332,13 @@ _INIT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='compact_observation', full_name='marioai.Init.compact_observation', index=7,
+      number=8, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -345,7 +352,7 @@ _INIT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=229,
-  serialized_end=364,
+  serialized_end=393,
 )
 
 
@@ -358,65 +365,72 @@ _STATE = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='receptive_fields', full_name='marioai.State.receptive_fields', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
+      name='game_status', full_name='marioai.State.game_status', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='game_status', full_name='marioai.State.game_status', index=1,
+      name='position', full_name='marioai.State.position', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='position', full_name='marioai.State.position', index=2,
+      name='mode', full_name='marioai.State.mode', index=2,
       number=3, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='mode', full_name='marioai.State.mode', index=3,
-      number=4, type=14, cpp_type=8, label=1,
+      name='kills_by_stomp', full_name='marioai.State.kills_by_stomp', index=3,
+      number=4, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='kills_by_stomp', full_name='marioai.State.kills_by_stomp', index=4,
+      name='kills_by_fire', full_name='marioai.State.kills_by_fire', index=4,
       number=5, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='kills_by_fire', full_name='marioai.State.kills_by_fire', index=5,
+      name='kills_by_shell', full_name='marioai.State.kills_by_shell', index=5,
       number=6, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='kills_by_shell', full_name='marioai.State.kills_by_shell', index=6,
+      name='mario_x', full_name='marioai.State.mario_x', index=6,
       number=7, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='mario_x', full_name='marioai.State.mario_x', index=7,
+      name='mario_y', full_name='marioai.State.mario_y', index=7,
       number=8, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='mario_y', full_name='marioai.State.mario_y', index=8,
-      number=9, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
+      name='rfByteArray', full_name='marioai.State.rfByteArray', index=8,
+      number=9, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='receptive_fields', full_name='marioai.State.receptive_fields', index=9,
+      number=10, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -435,8 +449,8 @@ _STATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=367,
-  serialized_end=807,
+  serialized_start=396,
+  serialized_end=857,
 )
 
 
@@ -488,8 +502,8 @@ _RECEPTIVEFIELDCELL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=809,
-  serialized_end=893,
+  serialized_start=859,
+  serialized_end=943,
 )
 
 _MARIOMESSAGE.fields_by_name['type'].enum_type = _MARIOMESSAGE_TYPE
@@ -497,10 +511,10 @@ _MARIOMESSAGE.fields_by_name['init'].message_type = _INIT
 _MARIOMESSAGE.fields_by_name['action'].enum_type = _ACTION
 _MARIOMESSAGE.fields_by_name['state'].message_type = _STATE
 _MARIOMESSAGE_TYPE.containing_type = _MARIOMESSAGE
-_STATE.fields_by_name['receptive_fields'].message_type = _RECEPTIVEFIELDCELL
 _STATE.fields_by_name['game_status'].enum_type = _STATE_GAMESTATUS
 _STATE.fields_by_name['position'].enum_type = _STATE_MARIOPOSITION
 _STATE.fields_by_name['mode'].enum_type = _STATE_MARIOMODE
+_STATE.fields_by_name['receptive_fields'].message_type = _RECEPTIVEFIELDCELL
 _STATE_GAMESTATUS.containing_type = _STATE
 _STATE_MARIOPOSITION.containing_type = _STATE
 _STATE_MARIOMODE.containing_type = _STATE

@@ -27,6 +27,7 @@ message Init {
   int32 level_length = 5;
   bool render = 6;
   string file_name = 7;
+  bool compact_observation = 8;
 }
 
 // message Action {
@@ -72,15 +73,17 @@ message State {
     FIRE = 2;
   }
 
-  repeated ReceptiveFieldCell receptive_fields = 1;
-  GameStatus game_status = 2;
-  MarioPosition position = 3;
-  MarioMode mode = 4;
-  int32 kills_by_stomp = 5;     // required for the reward function and general stats
-  int32 kills_by_fire = 6;
-  int32 kills_by_shell = 7;
-  int32 mario_x = 8;            // mario position to determine the progress
-  int32 mario_y = 9;
+  GameStatus game_status = 1;
+  MarioPosition position = 2;
+  MarioMode mode = 3;
+  int32 kills_by_stomp = 4;     // required for the reward function and general stats
+  int32 kills_by_fire = 5;
+  int32 kills_by_shell = 6;
+  int32 mario_x = 7;            // mario position to determine the progress
+  int32 mario_y = 8;
+
+  bytes rfByteArray = 9;
+  repeated ReceptiveFieldCell receptive_fields = 10;
 }
 
 message ReceptiveFieldCell {
