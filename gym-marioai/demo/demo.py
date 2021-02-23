@@ -1,4 +1,4 @@
-from gym_marioai.mario_pb2 import JUMP_RIGHT, SPEED_JUMP_RIGHT, SPEED_RIGHT
+from gym_marioai.mario_pb2 import DOWN, JUMP_RIGHT, SPEED_JUMP_RIGHT, SPEED_RIGHT
 import random
 
 import gym
@@ -12,15 +12,16 @@ if __name__ == '__main__':
     print(levels.hard_level)
 
     # adjust the reward settings like so:
-    reward_settings = gym_marioai.RewardSettings(timestep=-0.1,)
+    reward_settings = gym_marioai.RewardSettings(dead=-10000, timestep=0)
 
-    env = gym.make('Marioai-v0', render=True,
+    env = gym.make('Marioai-v0', render=False,
                    reward_settings=reward_settings,
-                   level_path=levels.easy_level,
+                   level_path=levels.cliff_level,
                    compact_observation=True,
+                   trace_length=3,
                    rf_width=20, rf_height=10)
 
-    for e in range(100):
+    for e in range(1):
         s = env.reset()
         done = False
         total_reward = 0
@@ -28,10 +29,11 @@ if __name__ == '__main__':
         while not done:
             env.render()
             # a = env.action_space.sample()
-            a = JUMP_RIGHT if random.randint(0,1) % 2 == 0 else SPEED_RIGHT
+            # a = JUMP_RIGHT if random.randint(0,1) % 2 == 0 else SPEED_RIGHT
+            a = DOWN
             s, r, done, info = env.step(a)
 
-            print(len(s), ':', s)
+            # print(len(s), ':', s)
 
             total_reward += r
 

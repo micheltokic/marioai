@@ -2,6 +2,7 @@
 
 """
 from typing import List
+from collections import deque
 import numpy as np
 import gym
 from gym import spaces
@@ -30,6 +31,7 @@ class MarioEnv(gym.Env):
                  max_steps=0,
                  reward_settings=RewardSettings(),
                  compact_observation=True,
+                 trace_length=1,
                  level_path="None"):
         """
         Environment initialization
@@ -44,7 +46,8 @@ class MarioEnv(gym.Env):
         self.max_steps:int = max_steps
         self.reward_settings:RewardSettings = reward_settings
         self.level_path:str = level_path
-        self.compact_observation:bool = compact_observation
+        self.trace_length: int = trace_length
+        self.compact_observation:bool = compact_observation or self.trace_length > 1 # always use compact when traces > 1
 
         # TODO read this dynamically?
         self.n_features:int = 4   # number of features in one receptive field cell
@@ -54,8 +57,9 @@ class MarioEnv(gym.Env):
         self.action_space = spaces.Discrete(self.n_actions)
 
         # observation space is a binary feature vector
-        self.observation_space = spaces.MultiBinary([self.rf_width * self.rf_height,
+        self.observation_space = spaces.MultiBinary(self.trace_length * [self.rf_width * self.rf_height,
                                                      self.n_features])
+        self.observation_trace = deque()
 
         # use different observation feature extractor 
         # depending on compact parameter
@@ -70,6 +74,7 @@ class MarioEnv(gym.Env):
         # store the last time the agent has been above floor or cliff 
         self.last_floor_x = None
         self.last_cliff_x = None
+        self.cliff_jumps = 0
 
         try:
             self.socket = ProtobufSocket(self.n_actions)
@@ -128,6 +133,8 @@ class MarioEnv(gym.Env):
         self.steps = 0 
         self.last_floor_x = None
         self.last_cliff_x = None
+        self.cliff_jumps = 0
+        self.observation_trace = deque()
 
     def __update_cached_data(self, res: MarioMessage):
         """
@@ -169,7 +176,11 @@ class MarioEnv(gym.Env):
         if compact_observation is set, this method is used to extract
         the observation, which is a byte arrary in this case
         """
-        return res.state.rfByteArray
+        if len(self.observation_trace) >= self.trace_length:
+            self.observation_trace.popleft()
+        hash = res.state.hash_code
+        self.observation_trace.append(hash)
+        return tuple(self.observation_trace)
 
     def __extract_reward(self, res: MarioMessage):
         """
@@ -207,8 +218,7 @@ class MarioEnv(gym.Env):
         )
         
         if has_overcome_cliff:
-            print(f'rewarding cliff. {self.last_floor_x} < {self.last_cliff_x}'\
-                  f' < {s.mario_x}')
+            self.cliff_jumps += 1
 
         return reward
 
