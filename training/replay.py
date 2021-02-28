@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     # possible levels are: flatLevel.lvl, easyLevel.lvl, hardLevel.lvl or None for seed-based selection
     env = gym.make('Marioai-v0', render=True,
-                   level_path=levels.cliff_level,
+                   level_path=levels.one_cliff_level,
                    reward_settings=R,
                    rf_width=20, rf_height=10)
 
