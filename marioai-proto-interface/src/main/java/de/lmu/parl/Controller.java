@@ -91,4 +91,8 @@ public class Controller {
         }
         return options;
     }
+
+    public void reset() {
+        featureExtractor.reset();
+    }
 }

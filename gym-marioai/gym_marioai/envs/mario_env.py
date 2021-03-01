@@ -49,6 +49,8 @@ class MarioEnv(gym.Env):
         self.trace_length: int = trace_length
         self.compact_observation:bool = compact_observation or self.trace_length > 1 # always use compact when traces > 1
 
+        self.received_states = {}
+
         # TODO read this dynamically?
         self.n_features:int = 4   # number of features in one receptive field cell
         self.n_actions:int = 9
@@ -180,6 +182,8 @@ class MarioEnv(gym.Env):
             self.observation_trace.popleft()
         hash = res.state.hash_code
         self.observation_trace.append(hash)
+        if hash not in self.received_states:
+            self.received_states[hash] = self.__extract_observation_default(res)
         return tuple(self.observation_trace)
 
     def __extract_reward(self, res: MarioMessage):
@@ -240,21 +244,3 @@ class MarioEnv(gym.Env):
                 'win': res.state.game_status == WIN,
                 'steps': self.steps,
                 }
-
-    # def __check_cliffs(self, res: MarioMessage):
-    #     """
-    #     checks if mario made it across a cliff for extra rewards
-    #     """
-    #     pos = res.state.position
-    #     if pos == State.CLIFF:
-    #         self.cliff_pos = self.mario_pos
-    #     elif pos == State.FLOOR:
-    #         if not self.cliff_pos:
-    #             # do nothing, if mario has not been above a cliff
-    #             return
-    #         elif self.mario_pos > self.cliff_pos:
-    #             # compare coords if mario was above a cliff,
-    #             # and is now on the floor again
-    #             self.cliff_reward = True
-    #             self.cliff_pos = None
-

@@ -6,10 +6,10 @@ import gym_marioai
 from gym_marioai import levels
 
 if __name__ == '__main__':
-    print('available levels:')
-    print(levels.easy_level)
-    print(levels.flat_level)
-    print(levels.hard_level)
+    # print('available levels:')
+    # print(levels.easy_level)
+    # print(levels.flat_level)
+    # print(levels.hard_level)
 
     # adjust the reward settings like so:
     reward_settings = gym_marioai.RewardSettings(dead=-10000, timestep=0)
@@ -18,10 +18,10 @@ if __name__ == '__main__':
                    reward_settings=reward_settings,
                    level_path=levels.cliff_level,
                    compact_observation=True,
-                   trace_length=3,
-                   rf_width=20, rf_height=10)
+                   trace_length=1,
+                   rf_width=7, rf_height=5)
 
-    for e in range(1):
+    for e in range(100):
         s = env.reset()
         done = False
         total_reward = 0
@@ -29,8 +29,8 @@ if __name__ == '__main__':
         while not done:
             env.render()
             # a = env.action_space.sample()
-            # a = JUMP_RIGHT if random.randint(0,1) % 2 == 0 else SPEED_RIGHT
-            a = DOWN
+            a = JUMP_RIGHT if random.randint(0,1) % 2 == 0 else SPEED_RIGHT
+            # a = DOWN
             s, r, done, info = env.step(a)
 
             # print(len(s), ':', s)
