@@ -82,7 +82,7 @@ message State {
   int32 mario_x = 7;            // mario position to determine the progress
   int32 mario_y = 8;
 
-  bytes rfByteArray = 9;
+  int32 hash_code = 9;
   repeated ReceptiveFieldCell receptive_fields = 10;
 }
 

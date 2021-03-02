@@ -9,8 +9,12 @@ import de.lmu.parl.proto.MarioProtos;
 import de.lmu.parl.proto.MarioProtos.State;
 import de.lmu.parl.proto.MarioProtos.ReceptiveFieldCell;
 
+import java.util.HashMap;
+
 
 public class FeatureExtractor {
+
+    private HashMap<Integer, Boolean> sentStates = new HashMap<>();
 
     public static final int cellSize = 16;
 
@@ -26,6 +30,10 @@ public class FeatureExtractor {
 
     public FeatureExtractor(MarioEnvironment env) {
         this.env = env;
+    }
+
+    public void reset() {
+        sentStates = new HashMap<>();
     }
 
     public State getState (boolean compact) {
@@ -46,24 +54,17 @@ public class FeatureExtractor {
 
         State.Builder stateBuilder = State.newBuilder();
 
-        if (compact) {
-            // observation encoded as byte array
-            ByteString bytes = getRfCompact(rfObstacles, rfEnemies, rfCoins, rfQms, rfw, rfh);
-            stateBuilder.setRfByteArray(bytes);
-        } else {
-            // receptive field cells
-            for (int y = 0; y < rfh; y++){
-               for (int x = 0; x < rfw; x++) {
-                  ReceptiveFieldCell.Builder rFBuilder = ReceptiveFieldCell.newBuilder();
-                   rFBuilder.setCoin(rfCoins[y][x]);
-                   rFBuilder.setEnemy(rfEnemies[y][x]);
-                   rFBuilder.setObstacle(rfObstacles[y][x]);
-                   rFBuilder.setItembox(rfQms[y][x]);
-                   stateBuilder.addReceptiveFields(rFBuilder);
-               }
-            }
+        // receptive field cells
+        for (int y = 0; y < rfh; y++){
+           for (int x = 0; x < rfw; x++) {
+              ReceptiveFieldCell.Builder rFBuilder = ReceptiveFieldCell.newBuilder();
+               rFBuilder.setCoin(rfCoins[y][x]);
+               rFBuilder.setEnemy(rfEnemies[y][x]);
+               rFBuilder.setObstacle(rfObstacles[y][x]);
+               rFBuilder.setItembox(rfQms[y][x]);
+               stateBuilder.addReceptiveFields(rFBuilder);
+           }
         }
-
 
         State.MarioPosition position;
         if (mario.isOnGround()) {
@@ -73,16 +74,39 @@ public class FeatureExtractor {
         }
         stateBuilder.setPosition(position);
 
+        int hashCode = stateBuilder.build().hashCode();
+
         ////////////////////////////////////////////////////////
         // general additional information, not included in the receptive field
         ///////////////////////////////////////////////////////
         stateBuilder.setKillsByFire(env.getKillsByFire())
-                    .setKillsByStomp(env.getKillsByStomp())
-                    .setKillsByShell(env.getKillsByShell())
-                    .setMarioX(mario.mapX)
-                    .setMarioY(mario.mapY)
-                    .setGameStatusValue(mario.getStatus())
-                    .setModeValue(mario.getMode());
+                .setKillsByStomp(env.getKillsByStomp())
+                .setKillsByShell(env.getKillsByShell())
+                .setMarioX(mario.mapX)
+                .setMarioY(mario.mapY)
+                .setGameStatusValue(mario.getStatus())
+                .setModeValue(mario.getMode());
+
+        if(compact) {
+            if(sentStates.containsKey(hashCode)) {
+                State.Builder returnStateBuilder = State.newBuilder();
+                returnStateBuilder.setPosition(position);
+                returnStateBuilder.setKillsByFire(env.getKillsByFire())
+                        .setKillsByStomp(env.getKillsByStomp())
+                        .setKillsByShell(env.getKillsByShell())
+                        .setMarioX(mario.mapX)
+                        .setMarioY(mario.mapY)
+                        .setGameStatusValue(mario.getStatus())
+                        .setModeValue(mario.getMode())
+                        .setHashCode(hashCode);
+                return returnStateBuilder.build();
+            } else {
+                // Use the same builder that was used for hash generation
+                // if state was sent for the first time
+                stateBuilder.setHashCode(hashCode);
+                sentStates.put(hashCode, true);
+            }
+        }
 
         return stateBuilder.build();
     }

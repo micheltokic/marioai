@@ -12,8 +12,13 @@ if __name__ == '__main__':
 
     rf_width = 20
     rf_height = 10
+    trace = 1
+    prog = 1
+    cliff = 1000
+    win = 0
+    dead = -100
 
-    level_name = f'cliffLevel_{rf_width}x{rf_height}'
+    level_name = f'cliffLevel_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}'
     result_name = level_name
 
     if len(sys.argv) == 2:
@@ -24,9 +29,10 @@ if __name__ == '__main__':
 
     logger = Logger(result_name, load_existing=True)
 
-    R = gym_marioai.RewardSettings(progress=0.2, timestep=-0.1,
-            cliff=100, 
-            dead=-10)
+    R = gym_marioai.RewardSettings(progress=prog, timestep=-1,
+                                   cliff=cliff,
+                                   win=win,
+                                   dead=dead)
 
     # possible levels are: flatLevel.lvl, easyLevel.lvl, hardLevel.lvl or None for seed-based selection
     env = gym.make('Marioai-v0', render=True,

@@ -78,6 +78,7 @@ public class MarioServer {
                 if (!sock.isClosed()) sock.close();
 
                 System.out.println("client connection closed.");
+                controller.reset();
             }
 
         } catch (IOException ex) {
