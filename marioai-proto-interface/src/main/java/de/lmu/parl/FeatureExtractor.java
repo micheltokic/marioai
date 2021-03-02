@@ -82,7 +82,6 @@ public class FeatureExtractor {
         hashCode = 31 * hashCode + Arrays.deepHashCode(rfEnemies);
         hashCode = 31 * hashCode + Arrays.deepHashCode(rfCoins);
         hashCode = 31 * hashCode + Arrays.deepHashCode(rfQms);
-        System.out.println(hashCode);
 
         ////////////////////////////////////////////////////////
         // general additional information, not included in the receptive field
