@@ -9,16 +9,16 @@ from logger import Logger
 
 
 if __name__ == '__main__':
-
     rf_width = 20
     rf_height = 10
     trace = 1
-    prog = 1
+    prog = 5
     cliff = 1000
     win = 0
     dead = -100
+    version = 1
 
-    level_name = f'cliffLevel_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}'
+    level_name = f'cliffLevel_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-{version}'
     result_name = level_name
 
     if len(sys.argv) == 2:
@@ -46,15 +46,13 @@ if __name__ == '__main__':
     # run the demonstration
     while True:
         done = False
-        state = env.reset()#.tobytes()
+        state = env.reset()
         steps = 0
         total_reward = 0
 
         while not done:
-            env.render()
             action = agent.select_action(state)
             state, reward, done, info = env.step(action)
-            # state = state.tobytes()
             total_reward += reward
             steps += 1
 

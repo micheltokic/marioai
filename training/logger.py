@@ -43,12 +43,11 @@ class Logger:
 
             if len(parts) == 1:
                 filename = filename + '-0'
-
-            elif len(parts) == 2:
-                assert parts[1].isnumeric(), \
-                        "invalid filename, has to be *-{int}"
-                number = int(parts[1])
-                filename = parts[0] + '-' + str(number + 1)
+            elif len(parts) > 1:
+                suffix = parts[-1]
+                assert suffix.isnumeric(), "invalid filename, has to be *-{int}"
+                number = int(suffix)
+                filename = '-'.join(parts[:-1]) + '-' + str(number + 1)
             else:
                 raise Exception()
 
