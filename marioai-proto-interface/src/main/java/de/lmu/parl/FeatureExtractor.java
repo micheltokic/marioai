@@ -9,6 +9,7 @@ import de.lmu.parl.proto.MarioProtos;
 import de.lmu.parl.proto.MarioProtos.State;
 import de.lmu.parl.proto.MarioProtos.ReceptiveFieldCell;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 
@@ -74,7 +75,14 @@ public class FeatureExtractor {
         }
         stateBuilder.setPosition(position);
 
-        int hashCode = stateBuilder.build().hashCode();
+        //int hashCode = stateBuilder.build().hashCode();
+        //int hashCode = new StateHash(rfObstacles, rfEnemies, rfCoins, rfQms).hashCode();
+        int hashCode = 17;
+        hashCode = 31 * hashCode + Arrays.deepHashCode(rfObstacles);
+        hashCode = 31 * hashCode + Arrays.deepHashCode(rfEnemies);
+        hashCode = 31 * hashCode + Arrays.deepHashCode(rfCoins);
+        hashCode = 31 * hashCode + Arrays.deepHashCode(rfQms);
+        System.out.println(hashCode);
 
         ////////////////////////////////////////////////////////
         // general additional information, not included in the receptive field

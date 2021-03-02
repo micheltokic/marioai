@@ -8,6 +8,23 @@ from logger import Logger
 SAVE_FREQUENCY = 100 
 TOTAL_EPISODES = 5000
 
+rf_width = 10
+rf_height = 5
+trace = 3
+prog = 2
+cliff = 10000
+win = -1000
+dead = 0
+
+level = 'earlyCliffLevel'
+path = None
+
+if level == 'cliffLevel':
+    path = gym_marioai.levels.cliff_level
+if level == 'oneCliffLevel':
+    path = gym_marioai.levels.one_cliff_level
+if level == 'earlyCliffLevel':
+    path = gym_marioai.levels.early_cliff_level
 
 def train(env, agent: qlearning_agent.Agent, 
           logger: Logger, n_episodes:int):
@@ -83,15 +100,7 @@ def train_compact_observation(env, agent: qlearning_agent.Agent,
 
 
 if __name__ == '__main__':
-    rf_width = 20
-    rf_height = 10
-    trace = 1
-    prog = 5
-    cliff = 1000
-    win = 0
-    dead = -100
-
-    level_name = f'cliffLevel_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-0'
+    level_name = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-0'
     logger = Logger(level_name)
 
     R = gym_marioai.RewardSettings(progress=prog, timestep=-1,
@@ -99,8 +108,10 @@ if __name__ == '__main__':
                                    win=win,
                                    dead=dead)
 
+    
+
     env = gym.make('Marioai-v0', render=False,
-                   level_path=gym_marioai.levels.cliff_level,
+                   level_path=path,
                    reward_settings=R,
                    compact_observation=True,
                    trace_length=trace,

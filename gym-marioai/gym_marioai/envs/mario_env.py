@@ -50,6 +50,7 @@ class MarioEnv(gym.Env):
         self.compact_observation:bool = compact_observation or self.trace_length > 1 # always use compact when traces > 1
 
         self.received_states = {}
+        self.last_hash = 0
 
         # TODO read this dynamically?
         self.n_features:int = 4   # number of features in one receptive field cell
@@ -110,8 +111,22 @@ class MarioEnv(gym.Env):
         perform action in the environment and return new state, reward,
         done and info
         """
+        # count = 1
+        # self.socket.send_action(action)
+        # state_msg = self.socket.receive()
+        # while state_msg.state.hash_code == self.last_hash and count <=3:
+        #     self.socket.send_action(action)
+        #     state_msg = self.socket.receive()
+        #     count += 1
         self.socket.send_action(action)
         state_msg = self.socket.receive()
+        if state_msg.state.hash_code == self.last_hash:
+            self.socket.send_action(action)
+            state_msg = self.socket.receive()
+        if state_msg.state.hash_code == self.last_hash:
+            self.socket.send_action(action)
+            state_msg = self.socket.receive()
+        self.last_hash = state_msg.state.hash_code
 
         observation = self.__extract_observation(state_msg)
         reward = self.__extract_reward(state_msg)
@@ -182,8 +197,8 @@ class MarioEnv(gym.Env):
             self.observation_trace.popleft()
         hash = res.state.hash_code
         self.observation_trace.append(hash)
-        if hash not in self.received_states:
-            self.received_states[hash] = self.__extract_observation_default(res)
+        # if hash not in self.received_states:
+        #     self.received_states[hash] = self.__extract_observation_default(res)
         return tuple(self.observation_trace)
 
     def __extract_reward(self, res: MarioMessage):
@@ -201,7 +216,7 @@ class MarioEnv(gym.Env):
                        and self.last_cliff_x < s.mario_x
 
         reward = (self.reward_settings.timestep
-        + self.reward_settings.progress * max(0, s.mario_x - self.mario_pos[0])
+        + self.reward_settings.progress * (s.mario_x - self.mario_pos[0])
 
         # reward for mario mode change. Modes: small=0, big=1, fire=2
         # this will be negative if mario gets downgraded and positive if mario

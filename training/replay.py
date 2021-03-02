@@ -7,18 +7,13 @@ from gym_marioai import levels
 from agents import qlearning_agent
 from logger import Logger
 
+from main import rf_height, rf_width, trace, prog, cliff, level, win, dead, path
+
+version = 1
 
 if __name__ == '__main__':
-    rf_width = 20
-    rf_height = 10
-    trace = 1
-    prog = 5
-    cliff = 1000
-    win = 0
-    dead = -100
-    version = 1
 
-    level_name = f'cliffLevel_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-{version}'
+    level_name = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-{version}'
     result_name = level_name
 
     if len(sys.argv) == 2:
@@ -36,9 +31,11 @@ if __name__ == '__main__':
 
     # possible levels are: flatLevel.lvl, easyLevel.lvl, hardLevel.lvl or None for seed-based selection
     env = gym.make('Marioai-v0', render=True,
-                   level_path=levels.one_cliff_level,
+                   level_path=path,
                    reward_settings=R,
-                   rf_width=20, rf_height=10)
+                   compact_observation=True,
+                   trace_length=trace,
+                   rf_width=rf_width, rf_height=rf_height)
 
     agent = qlearning_agent.Agent(env, epsilon_start=0)
     agent.Q = logger.load_model()
@@ -53,6 +50,7 @@ if __name__ == '__main__':
         while not done:
             action = agent.select_action(state)
             state, reward, done, info = env.step(action)
+            print(state)
             total_reward += reward
             steps += 1
 
