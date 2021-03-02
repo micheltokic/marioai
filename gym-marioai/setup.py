@@ -14,8 +14,8 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'numpy', 
-        'gym', 
-        'protobuf'],
+        'gym>=0.17.2', 
+        'protobuf==3.14.0'],
 
     include_package_data=True
     # package_dir={
