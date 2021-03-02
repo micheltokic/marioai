@@ -1,12 +1,13 @@
 import gym
 import gym_marioai
+import numpy as np
 
 from agents import qlearning_agent
 from logger import Logger
 
 
 SAVE_FREQUENCY = 100 
-TOTAL_EPISODES = 5000
+TOTAL_EPISODES = 10000
 
 rf_width = 10
 rf_height = 5
@@ -25,6 +26,7 @@ if level == 'oneCliffLevel':
     path = gym_marioai.levels.one_cliff_level
 if level == 'earlyCliffLevel':
     path = gym_marioai.levels.early_cliff_level
+
 
 def train(env, agent: qlearning_agent.Agent, 
           logger: Logger, n_episodes:int):
@@ -71,6 +73,10 @@ def train_compact_observation(env, agent: qlearning_agent.Agent,
     train the Q learning agent, using the compact observation (byte list)
     """
 
+    all_rewards = np.zeros([100])
+    all_wins = np.zeros([100])
+    all_steps = np.zeros([100])
+
     for e in range(n_episodes):
         done = False
         info = {}
@@ -88,27 +94,29 @@ def train_compact_observation(env, agent: qlearning_agent.Agent,
         logger.append(total_reward, info['steps'], info['win'])
         agent.decay_epsilon()
 
+        all_rewards[e % 100] = total_reward
+        all_wins[e % 100] = 1 if info['win'] else 0
+        all_steps[e % 100] = info['steps']
+
         if e % SAVE_FREQUENCY == 0:
             logger.save()
             logger.save_model(agent.Q)
 
-        if (e+1) % 100 == 0:
-            print(f'episode {e:4} terminated. epsilon: {agent.epsilon:3f}, Steps: {info["steps"]:4}\t'
-                  f'R: {total_reward:7.2f}\t'
+        if e % 100 == 0 and e > 0:
+            print(f'episode {e:4} terminated. epsilon: {agent.epsilon:3f}, avg Steps: {all_steps.mean():4.2f}\t'
+                  f'avg R: {all_rewards.mean():7.2f}\t'
                   f'|O|: {len(agent.Q):4}\t'
-                  f'win: {info["win"]}')
+                  f'success rate: {all_wins.mean()}')
 
 
 if __name__ == '__main__':
     level_name = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-0'
     logger = Logger(level_name)
 
-    R = gym_marioai.RewardSettings(progress=prog, timestep=-1,
+    R = gym_marioai.RewardSettings(progress=prog, timestep=-0.1,
                                    cliff=cliff,
                                    win=win,
                                    dead=dead)
-
-    
 
     env = gym.make('Marioai-v0', render=False,
                    level_path=path,
@@ -117,7 +125,7 @@ if __name__ == '__main__':
                    trace_length=trace,
                    rf_width=rf_width, rf_height=rf_height)
 
-    agent = qlearning_agent.Agent(env, alpha=0.2, epsilon_start=0.5,
+    agent = qlearning_agent.Agent(env, alpha=0.2, epsilon_start=0.2,
                                   epsilon_end=0.1, epsilon_decay_length=TOTAL_EPISODES / 2)
     train_compact_observation(env, agent, logger, TOTAL_EPISODES)
     print('training finished.')
