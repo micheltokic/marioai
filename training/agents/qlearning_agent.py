@@ -10,7 +10,7 @@ class QTable:
         self.capacity = initial_capacity
         self.num_states = 0
         self.state_index_map = {}
-        self.table:np.array = np.zeros([initial_capacity, n_actions])
+        self.table = np.zeros([initial_capacity, n_actions])
 
     def __contains__(self, state):
         """ 'in' operator """
@@ -35,21 +35,20 @@ class QTable:
 
 class Agent:
 
-    def __init__(self, env, alpha=0.1, gamma=0.99, 
-            epsilon_start=0.5, epsilon_end=0.001,
-            epsilon_decay_length=10000, # in episodes
-            initial_capacity=10):
+    def __init__(self, env, alpha=0.1, gamma=0.99, lmbda=0.75,
+                 epsilon_start=0.5, epsilon_end=0.001,
+                 epsilon_decay_length=10000, # in episodes
+                 initial_capacity=10):
         self.alpha = alpha
         self.gamma = gamma
-
-        # self.epsilon_start = epsilon_start
-        # self.epsilon_decay_length = epsilon_decay_length
+        self.lmbda = lmbda
         self.epsilon = epsilon_start
         self.epsilon_end = epsilon_end
         self.decay_step = (epsilon_start - epsilon_end) / epsilon_decay_length
 
         self.env = env
         self.Q = QTable(env.action_space.n, initial_capacity)
+        self.etrace = {}
 
     def select_action(self, state):
         if not state in self.Q:
@@ -70,7 +69,28 @@ class Agent:
 
         td_error = reward + self.gamma * np.max(self.Q[next_state]) \
                     - self.Q[state][action]
-        self.Q[state][action] += self.alpha * td_error 
+
+        self.etrace[(state, action)] = 1
+
+        if self.Q[state][action] == np.max(self.Q[state]):
+            # if action was greedy in state, perform q update and decay the 
+            # eligibility traces
+            for (s, a), eligibility in self.etrace.items():
+                self.Q[s][a] += self.alpha * eligibility * td_error
+
+                if abs(self.Q[s][a]) > 10000:
+                    print('error!!!')
+
+                self.etrace[(s,a)] *= self.gamma * self.lmbda
+        else:
+            # else perform q updates and clear the etraces
+            for (s, a), eligibility in self.etrace.items():
+                self.Q[s][a] += self.alpha * eligibility * td_error
+                if abs(self.Q[s][a]) > 10000:
+                    print('error!!!')
+            self.etrace = {}
+
+        # self.Q[state][action] += self.alpha * td_error 
 
     def decay_epsilon(self):
         if self.epsilon > self.epsilon_end:
