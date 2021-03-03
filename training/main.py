@@ -1,24 +1,61 @@
+import numpy as np
 import gym
 import gym_marioai
-import numpy as np
-
-from agents import qlearning_agent
 from logger import Logger
 
 
-SAVE_FREQUENCY = 100 
-PRINT_FREQUENCY = 100
-TOTAL_EPISODES = 10000
+class QTable:
+    """
+    data structure to store the Q function for hashable state representations
+    """
+    def __init__(self, n_actions, initial_capacity=100):
+        self.capacity = initial_capacity
+        self.num_states = 0
+        self.state_index_map = {}
+        self.table = np.zeros([initial_capacity, n_actions])
 
-rf_width = 10
-rf_height = 5
-trace = 1
-prog = 2
-cliff = 100
-win = -10
-dead = -10 
+    def __contains__(self, state):
+        """ 'in' operator """
+        return state in self.state_index_map
 
-level = 'earlyCliffLevel'
+    def __len__(self):
+        return self.num_states
+
+    def __getitem__(self, state):
+        """ access state directly using [] notation """
+        if state not in self.state_index_map:
+            self.init_state(state)
+
+        return self.table[self.state_index_map[state]]
+
+    def init_state(self, state):
+        if self.num_states == self.capacity:
+            # need to increase capacity
+            self.table = np.concatenate((self.table, np.zeros_like(self.table)))
+            self.capacity *= 2
+
+        self.state_index_map[state] = self.num_states
+        self.num_states += 1
+
+
+#####################################
+#   Training Parameters
+#####################################
+n_episodes = 10000
+alpha = 0.1
+gamma = 0.99
+lmbda = 0.75
+epsilon_start = 0.5
+epsilon_end = 0.01
+epsilon_decay_length = n_episodes / 2
+decay_step = (epsilon_start - epsilon_end) / epsilon_decay_length
+
+SAVE_FREQ = 100
+
+#####################################
+#   Environment/Reward Settings
+#####################################
+level = 'oneCliffLevel'
 path = None
 
 if level == 'cliffLevel':
@@ -28,106 +65,147 @@ if level == 'oneCliffLevel':
 if level == 'earlyCliffLevel':
     path = gym_marioai.levels.early_cliff_level
 
+trace = 2
+rf_width = 20
+rf_height = 10
+prog = 1
+timestep = -1
+cliff = 1000
+win = -10
+dead = -10
 
-def train(env, agent: qlearning_agent.Agent, 
-          logger: Logger, n_episodes:int):
+training = True
+replay_version = 1
+
+
+def replay(version):
     """
-    train the Q learning agent with default observation, 
-    which is a numpy bool array
+    replay. loads model, does not store model or logs
     """
+    log_path = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-{version}'
+    logger = Logger(log_path, True)
+    Q = logger.load_model()
 
-    for e in range(n_episodes):
-        done = False
-        info = {}
-        total_reward = 0
-
-        # convert to bytes so it can be used as dictionary key
-        # (np array is not hashable)
-        state = env.reset()
-        state = state.tobytes()
-
-        while not done:
-            action = agent.select_action(state)
-            next_state, reward, done, info = env.step(action)
-            next_state = next_state.tobytes()
-            total_reward += reward
-            agent.update_Q(state, action, reward, next_state)
-            state = next_state
-
-        # episode has finished
-        logger.append(total_reward, info['steps'], info['win'])
-        agent.decay_epsilon()
-
-        if e % SAVE_FREQUENCY == 0:
-            logger.save()
-            logger.save_model(agent.Q)
-
-        print(f'episode {e:4} terminated. epsilon: {agent.epsilon:3f}, Steps: {info["steps"]:4}\t'
-              f'R: {total_reward:7.2f}\t'
-              f'|O|: {len(agent.Q):4}\t'
-              f'win: {info["win"]}')
-        
-
-def train_compact_observation(env, agent: qlearning_agent.Agent, 
-                              logger: Logger, n_episodes: int):
-    """
-    train the Q learning agent, using the compact observation (byte list)
-    """
-
-    all_rewards = np.zeros([PRINT_FREQUENCY])
-    all_wins = np.zeros([PRINT_FREQUENCY])
-    all_steps = np.zeros([PRINT_FREQUENCY])
-
-    for e in range(n_episodes):
-        done = False
-        info = {}
-        total_reward = 0
-        state = env.reset()
-
-        while not done:
-            action = agent.select_action(state)
-            next_state, reward, done, info = env.step(action)
-            total_reward += reward
-            agent.update_Q(state, action, reward, next_state)
-            state = next_state
-
-        # episode has finished
-        logger.append(total_reward, info['steps'], info['win'])
-        agent.decay_epsilon()
-
-        all_rewards[e % PRINT_FREQUENCY] = total_reward
-        all_wins[e % PRINT_FREQUENCY] = 1 if info['win'] else 0
-        all_steps[e % PRINT_FREQUENCY] = info['steps']
-
-        if e % SAVE_FREQUENCY == 0:
-            logger.save()
-            logger.save_model(agent.Q)
-
-        if e % PRINT_FREQUENCY == 0 and e > 0:
-            print(f'episode {e:4} terminated. epsilon: {agent.epsilon:3f}, avg Steps: {all_steps.mean():4.2f}\t'
-                  f'avg R: {all_rewards.mean():7.2f}\t'
-                  f'|O|: {len(agent.Q):4}\t'
-                  f'success rate: {all_wins.mean()}')
-            print(np.mean(agent.Q.table[:agent.Q.num_states]))
-
-
-if __name__ == '__main__':
-    level_name = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-0'
-    logger = Logger(level_name)
-
-    R = gym_marioai.RewardSettings(progress=prog, timestep=-0.1,
-                                   cliff=cliff,
-                                   win=win,
-                                   dead=dead)
-
-    env = gym.make('Marioai-v0', render=False,
+    reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep,
+                                                 cliff=cliff, win=win, dead=dead)
+    env = gym.make('Marioai-v0', render=True,
                    level_path=path,
-                   reward_settings=R,
+                   reward_settings=reward_settings,
                    compact_observation=True,
                    trace_length=trace,
                    rf_width=rf_width, rf_height=rf_height)
 
-    agent = qlearning_agent.Agent(env, alpha=0.2, epsilon_start=0.5,
-                                  epsilon_end=0.1, epsilon_decay_length=TOTAL_EPISODES / 2)
-    train_compact_observation(env, agent, logger, TOTAL_EPISODES)
-    print('training finished.')
+    ####################################
+    #      Main Loop
+    ####################################
+    while True:
+        done = False
+        info = {}
+        total_reward = 0
+        steps = 0
+        state = env.reset()
+
+        while not done:
+            action = int(np.argmax(Q[state]))  # greedy
+            state, reward, done, info = env.step(action)
+            total_reward += reward
+            steps += 1
+
+        print(f'finished episode. reward: {total_reward:4.2f}\t steps: {steps:4.2f}\t'
+              f'win: {info["win"]}')
+
+
+def train():
+    """
+    training
+    """
+    log_path = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-0'
+    logger = Logger(log_path)
+    Q = QTable(9, 128)
+    etrace = {}
+    epsilon = epsilon_start
+
+    ###################################
+    #       environment setup
+    ###################################
+    reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep, cliff=cliff, win=win, dead=dead)
+    env = gym.make('Marioai-v0', render=False,
+                   level_path=path,
+                   reward_settings=reward_settings,
+                   compact_observation=True,
+                   trace_length=trace,
+                   rf_width=rf_width, rf_height=rf_height)
+
+    # collect some training statistics
+    all_rewards = np.zeros([SAVE_FREQ])
+    all_wins = np.zeros([SAVE_FREQ])
+    all_steps = np.zeros([SAVE_FREQ])
+
+    ####################################
+    #      Training Loop
+    ####################################
+    for e in range(n_episodes):
+        done = False
+        info = {}
+        total_reward = 0
+        steps = 0
+
+        state = env.reset()
+        # choose a' from a Policy derived from Q
+        if np.random.rand() < epsilon:
+            action = env.action_space.sample()
+        else:
+            action = int(np.argmax(Q[state]))  # greedy
+
+        while not done:
+            next_state, reward, done, info = env.step(action)
+            total_reward += reward
+
+            # choose a' from a Policy derived from Q
+            best_next_action = int(np.argmax(Q[next_state]))  # greedy
+            if np.random.rand() < epsilon:
+                next_action = env.action_space.sample()
+            else:
+                next_action = best_next_action
+
+            # calculate the TD error
+            td_error = reward + gamma * Q[next_state][best_next_action] - Q[state][action]
+
+            # reset eligibility trace for (s,a) using replacing strategy
+            etrace[(state, action)] = 1
+
+            # perform Q update
+            if best_next_action == next_action:
+                for (s, a), eligibility in etrace.items():
+                    Q[s][a] += alpha * eligibility * td_error
+                    etrace[(s, a)] *= gamma * lmbda
+            else:
+                for (s, a), eligibility in etrace.items():
+                    Q[s][a] += alpha * eligibility * td_error
+                etrace = {}
+
+            steps += 1
+            action = next_action
+            state = next_state
+
+        # episode finished
+        epsilon = max(epsilon_end, epsilon - decay_step)            # decay epsilon
+        logger.append(total_reward, info['steps'], info['win'])
+
+        all_rewards[e % SAVE_FREQ] = total_reward
+        all_wins[e % SAVE_FREQ] = 1 if info['win'] else 0
+        all_steps[e % SAVE_FREQ] = info['steps']
+
+        if e % SAVE_FREQ == 0 and e > 0:
+            logger.save()
+            logger.save_model(Q)
+            print(f'finished episode {e}. epsilon: {epsilon:.3f}\t avg reward: {all_rewards.mean():>4.2f}\t'
+                  f'avg steps: {all_steps.mean():>4.2f}\t'
+                  f'win rate: {all_wins.mean():3.2f}')
+
+
+if __name__ == '__main__':
+    if training:
+        train()
+    else:
+        replay(replay_version)
