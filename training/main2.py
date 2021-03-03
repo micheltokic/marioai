@@ -41,13 +41,14 @@ class QTable:
 #####################################
 #   Training Parameters
 #####################################
-n_episodes = 5000
-alpha = 0.2
+n_episodes = 10000
+alpha = 0.1
 gamma = 0.99
 lmbda = 0.75
-epsilon_start = 0.2
+epsilon_start = 0.5
 epsilon_end = 0.01
 epsilon_decay_length = n_episodes / 2
+decay_step = (epsilon_start - epsilon_end) / epsilon_decay_length
 
 SAVE_FREQ = 100
 
@@ -68,35 +69,42 @@ rf_width = 20
 rf_height = 10
 prog = 1
 timestep = -1
-cliff = 100
+cliff = 1000
 win = -10
 dead = -10
 
+replay = True
+replay_version = 2
+version = replay_version if replay else 0
 
 if __name__ == '__main__':
 
-    log_path = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-0'
-    logger = Logger(log_path)
-    Q = QTable(9, 128)
+    log_path = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-{version}'
+    logger = Logger(log_path, load_existing=replay)
+    Q = logger.load_model() if replay else QTable(9, 128)
     etrace = {}
-    epsilon = epsilon_start
+    epsilon = 0 if replay else epsilon_start
 
     ###################################
     #       environment setup
     ###################################
     R = gym_marioai.RewardSettings(progress=prog, timestep=timestep,
                                    cliff=cliff, win=win, dead=dead)
-    env = gym.make('Marioai-v0', render=False,
+    env = gym.make('Marioai-v0', render=replay,
                    level_path=path,
                    reward_settings=R,
                    compact_observation=True,
                    trace_length=trace,
                    rf_width=rf_width, rf_height=rf_height)
 
+    # collect some training statistics
+    all_rewards = np.zeros([SAVE_FREQ])
+    all_wins = np.zeros([SAVE_FREQ])
+    all_steps = np.zeros([SAVE_FREQ])
+
     ####################################
     #      Training Loop
     ####################################
-    all_rewards = np.zeros([SAVE_FREQ])
     for e in range(n_episodes):
         done = False
         info = {}
@@ -121,27 +129,45 @@ if __name__ == '__main__':
             else:
                 next_action = best_next_action
 
-            # calculate the TD error
-            td_error = reward + gamma * Q[next_state][best_next_action] - Q[state][action]
+            if not replay:
+                # calculate the TD error
+                td_error = reward + gamma * Q[next_state][best_next_action] - Q[state][action]
 
-            # reset etrace using replacing strategy
-            etrace[(state, action)] = 1
+                # reset etrace using replacing strategy
+                etrace[(state, action)] = 1
 
-            # perform Q update
-            if best_next_action == next_action:
-                for (s, a), eligibility in etrace.items():
-                    Q[s][a] += alpha * eligibility * td_error
-                    etrace[(s, a)] *= gamma * lmbda
-            else:
-                for (s, a), eligibility in etrace.items():
-                    Q[s][a] += alpha * eligibility * td_error
-                etrace = {}
+                # perform Q update
+                if best_next_action == next_action:
+                    for (s, a), eligibility in etrace.items():
+                        Q[s][a] += alpha * eligibility * td_error
+                        etrace[(s, a)] *= gamma * lmbda
+                else:
+                    for (s, a), eligibility in etrace.items():
+                        Q[s][a] += alpha * eligibility * td_error
+                    etrace = {}
 
             steps += 1
             action = next_action
             state = next_state
 
+        if not replay:
+            epsilon = max(epsilon_end, epsilon - decay_step)
+
         all_rewards[e % SAVE_FREQ] = total_reward
+        all_wins[e % SAVE_FREQ] = 1 if info['win'] else 0
+        all_steps[e % SAVE_FREQ] = info['steps']
+
+        logger.append(total_reward, info['steps'], info['win'])
 
         if e % SAVE_FREQ == 0 and e > 0:
-            print(f'finished episode. {e}, mean reward: {all_rewards.mean()}')
+            print(f'finished episode {e}. epsilon: {epsilon:.3f},\tavg reward: {all_rewards.mean():4.2f},\t'
+                  f'avg steps: {all_steps.mean():4.2f}\t'
+                  f'win rate: {all_wins.mean():3.2f}')
+            logger.save()
+            logger.save_model(Q)
+
+        if replay:
+            print(f'finished episode {e}. epsilon: {epsilon:.3f},\treward: {total_reward:4.2f},\t'
+                  f'steps: {steps:4.2f}\t'
+                  f'win: {info["win"]}')
+
