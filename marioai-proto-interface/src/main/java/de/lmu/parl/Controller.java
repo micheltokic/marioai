@@ -25,7 +25,7 @@ public class Controller {
                 .build();
     }
 
-    public void handleInitMessage(MarioMessage msg) {
+    public MarioMessage handleInitMessage(MarioMessage msg) {
         Init init = msg.getInit();
 
         // cache options
@@ -37,6 +37,8 @@ public class Controller {
 
         env.reset(options);
         env.tick();
+
+        return createStateMessage();
     }
 
     public MarioMessage handleResetMessage() {

@@ -65,6 +65,7 @@ class MarioEnv(gym.Env):
         self.repeat_action_until_new_observation: int = repeat_action_until_new_observation
         self.enabled_actions = enabled_actions
 
+        # add class attributes for every enabled action in uppercase letters to this instance
         for i, a in enumerate(self.enabled_actions):
             setattr(self, all_action_names[a], i)
 
@@ -103,6 +104,7 @@ class MarioEnv(gym.Env):
             self.socket.send_init(difficulty, seed, rf_width, rf_height,
                                   level_length, level_path, render, 
                                   compact_observation)
+            self.socket.receive()
 
         except ConnectionRefusedError as e:
             print(f'unable to connect to the server, is it running at '
@@ -115,11 +117,31 @@ class MarioEnv(gym.Env):
     def render(self, mode='human'):
         pass
 
-    def reset(self):
+    def reset(self, seed=None, difficulty=None, level_path="None", render=None):
         """
         reset the environment, return new initial state
         """
-        self.socket.send_reset()
+        re_init = False
+        if seed is not None:
+            self.seed = seed
+            re_init = True
+        if difficulty is not None:
+            self.difficulty = difficulty
+            re_init = True
+        if level_path != "None":
+            self.level_path = level_path
+            re_init = True
+        if render is not None:
+            self._render = render
+            re_init = True
+
+        if re_init:
+            self.socket.send_init(self.difficulty, self.seed, self.rf_width, self.rf_height,
+                                  self.level_length, self.level_path, self._render,
+                                  self.compact_observation)
+        else:
+            self.socket.send_reset()
+
         state_msg = self.socket.receive()
         self.__reset_cached_data(state_msg)
         return self.__extract_observation(state_msg)

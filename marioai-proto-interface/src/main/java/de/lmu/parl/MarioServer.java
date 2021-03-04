@@ -38,7 +38,8 @@ public class MarioServer {
 
                 switch (msg.getType()) {
                     case INIT:
-                        controller.handleInitMessage(msg);
+                        controller.handleInitMessage(msg).writeDelimitedTo(out);
+                        out.flush();
                         break;
                     case RESET:
                         controller.handleResetMessage().writeDelimitedTo(out);
