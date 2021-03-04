@@ -18,6 +18,8 @@ RUNNING = State.GameStatus.RUNNING
 FLOOR = State.FLOOR
 CLIFF = State.CLIFF
 
+all_action_names = ('LEFT', 'RIGHT', 'UP', 'DOWN', 'JUMP', 'SPEED_JUMP', 'SPEED_RIGHT', 'SPEED_LEFT', 'JUMP_RIGHT',\
+                    'JUMP_LEFT', 'SPEED_JUMP_RIGHT', 'SPEED_JUMP_LEFT', 'NOTHING')
 default_actions = (pb.DOWN,
                    pb.JUMP,
                    pb.SPEED_JUMP,
@@ -62,6 +64,9 @@ class MarioEnv(gym.Env):
         self.compact_observation:bool = compact_observation# or self.trace_length > 1 # always use compact when traces > 1
         self.repeat_action_until_new_observation: int = repeat_action_until_new_observation
         self.enabled_actions = enabled_actions
+
+        for i, a in enumerate(self.enabled_actions):
+            setattr(self, all_action_names[a], i)
 
         self.received_states = {}
         self.last_hash = 0
@@ -153,6 +158,7 @@ class MarioEnv(gym.Env):
         self.kills_by_stomp = 0
         self.kills_by_fire = 0
         self.kills_by_shell = 0
+        self.coins = 0
         self.steps = 0 
         self.last_floor_x = -1
         self.last_cliff_x = -1
@@ -170,6 +176,7 @@ class MarioEnv(gym.Env):
         self.kills_by_stomp = s.kills_by_stomp
         self.kills_by_fire = s.kills_by_fire
         self.kills_by_shell = s.kills_by_shell
+        self.coins = s.coins
         self.steps += 1
 
         if s.position == FLOOR:
@@ -241,6 +248,9 @@ class MarioEnv(gym.Env):
         + self.reward_settings.kill * (
                 s.kills_by_stomp + s.kills_by_fire + s.kills_by_shell -
                 self.kills_by_stomp - self.kills_by_fire - self.kills_by_shell)
+
+        # collected coins
+        + self.reward_settings.coin * (s.coins - self.coins)
 
         # reward mario for making it across a cliff
         + (self.reward_settings.cliff if has_overcome_cliff else 0)

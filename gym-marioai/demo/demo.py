@@ -1,4 +1,3 @@
-from gym_marioai.mario_pb2 import DOWN, JUMP_RIGHT, SPEED_JUMP_RIGHT, SPEED_LEFT, SPEED_RIGHT
 import random
 
 import gym
@@ -6,10 +5,6 @@ import gym_marioai
 from gym_marioai import levels
 
 if __name__ == '__main__':
-    # print('available levels:')
-    # print(levels.easy_level)
-    # print(levels.flat_level)
-    # print(levels.hard_level)
 
     # adjust the reward settings like so:
     reward_settings = gym_marioai.RewardSettings(dead=-10000, timestep=0)
@@ -28,11 +23,8 @@ if __name__ == '__main__':
 
         while not done:
             env.render()
-            # a = env.action_space.sample()
-            a = JUMP_RIGHT if random.randint(0,1) % 2 == 0 else SPEED_RIGHT
-            # a = SPEED_LEFT
+            a = env.JUMP_RIGHT if random.randint(0,1) % 2 == 0 else env.SPEED_RIGHT
             s, r, done, info = env.step(a)
-            # print(len(s), ':', s)
 
             total_reward += r
 

@@ -14,10 +14,10 @@ public class ActionMap {
         //        KEY_JUMP = 3;
         //        KEY_SPEED = 4;
         //        KEY_UP = 5;
-
-        actionMap.put(MarioProtos.Action.LEFT, new boolean[]{false, false, true, false, false, false});
-        actionMap.put(MarioProtos.Action.RIGHT, new boolean[]{false, false, false, true, false, false});
-        actionMap.put(MarioProtos.Action.UP, new boolean[]{false, false, false, true, false, false});
+                                                          // left, right, down, jump, speed, up
+        actionMap.put(MarioProtos.Action.LEFT, new boolean[]{true, false, false, false, false, false});
+        actionMap.put(MarioProtos.Action.RIGHT, new boolean[]{false, true, false, true, false, false});
+        actionMap.put(MarioProtos.Action.UP, new boolean[]{false, false, false, false, false, true});
         actionMap.put(MarioProtos.Action.DOWN, new boolean[]{false, false, true, false, false, false});
         actionMap.put(MarioProtos.Action.JUMP, new boolean[]{false, false, false, true, false, false});
 
@@ -29,6 +29,6 @@ public class ActionMap {
         actionMap.put(MarioProtos.Action.JUMP_LEFT, new boolean[]{true, false, false, true, false, false});
         actionMap.put(MarioProtos.Action.SPEED_JUMP_RIGHT, new boolean[]{false, true, false, true, true, false});
         actionMap.put(MarioProtos.Action.SPEED_JUMP_LEFT, new boolean[]{true, false, false, true, true, false});
-        actionMap.put(MarioProtos.Action.NOTHING, new boolean[]{true, false, false, true, true, false});
+        actionMap.put(MarioProtos.Action.NOTHING, new boolean[]{false, false, false, false, false, false});
     }
 }

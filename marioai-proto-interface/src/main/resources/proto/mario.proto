@@ -83,12 +83,13 @@ message State {
   int32 kills_by_stomp = 4;     // required for the reward function and general stats
   int32 kills_by_fire = 5;
   int32 kills_by_shell = 6;
-  int32 mario_x = 7;            // mario position to determine the progress
-  int32 mario_y = 8;
+  int32 coins = 7;
+  int32 mario_x = 8;            // mario position to determine the progress
+  int32 mario_y = 9;
 
-  int32 hash_code = 9;
+  int32 hash_code = 10;
+  bytes rf_bytes = 11;
   //repeated ReceptiveFieldCell receptive_fields = 10;
-  bytes rf_bytes = 10;
 }
 
 message ReceptiveFieldCell {

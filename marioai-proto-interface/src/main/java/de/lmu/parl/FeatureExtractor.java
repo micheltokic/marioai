@@ -79,6 +79,7 @@ public class FeatureExtractor {
         stateBuilder.setKillsByFire(env.getKillsByFire())
                 .setKillsByStomp(env.getKillsByStomp())
                 .setKillsByShell(env.getKillsByShell())
+                .setCoins(Mario.coins)
                 .setMarioX(mario.mapX)
                 .setMarioY(mario.mapY)
                 .setPosition(position)

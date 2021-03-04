@@ -9,6 +9,7 @@ class RewardSettings:
                 timestep=-.1,
                 mario_mode=10,
                 kill=1,
+                coin=1,
                 win=100,
                 dead=-100,
                 cliff=25):
@@ -17,6 +18,7 @@ class RewardSettings:
         self.timestep = timestep
         self.mario_mode = mario_mode
         self.kill = kill
+        self.coin = coin
         self.win = win
         self.dead = dead
         self.cliff = cliff
