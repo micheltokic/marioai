@@ -32,7 +32,6 @@ if __name__ == '__main__':
             a = JUMP_RIGHT if random.randint(0,1) % 2 == 0 else SPEED_RIGHT
             # a = SPEED_LEFT
             s, r, done, info = env.step(a)
-
             # print(len(s), ':', s)
 
             total_reward += r

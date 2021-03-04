@@ -1,7 +1,6 @@
 """
 
 """
-from typing import List
 from collections import deque
 import numpy as np
 import gym
@@ -176,15 +175,18 @@ class MarioEnv(gym.Env):
         return a compact representation of the environment state
         returns a numpy array of shape rf_width * rf_height x n_features
         """
-        obs = np.zeros((self.rf_width * self.rf_height,
-                        self.n_features), dtype=np.bool)
-        rf_cells = res.state.receptive_fields
+        obs = np.frombuffer(res.state.rf_bytes, dtype=np.int8)
+        # print(obs)
 
-        for i in range(self.rf_width * self.rf_height):
-            obs[i, 0] = rf_cells[i].enemy
-            obs[i, 1] = rf_cells[i].obstacle
-            obs[i, 2] = rf_cells[i].coin
-            obs[i, 3] = rf_cells[i].itembox
+        # obs = np.zeros((self.rf_width * self.rf_height,
+        #                 self.n_features), dtype=np.bool)
+        # rf_cells = res.state.receptive_fields
+
+        # for i in range(self.rf_width * self.rf_height):
+        #     obs[i, 0] = rf_cells[i].enemy
+        #     obs[i, 1] = rf_cells[i].obstacle
+        #     obs[i, 2] = rf_cells[i].coin
+        #     obs[i, 3] = rf_cells[i].itembox
 
         return obs
 

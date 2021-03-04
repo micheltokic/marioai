@@ -55,45 +55,52 @@ public class FeatureExtractor {
 
         State.Builder stateBuilder = State.newBuilder();
 
-        // receptive field cells
-        for (int y = 0; y < rfh; y++){
-           for (int x = 0; x < rfw; x++) {
-              ReceptiveFieldCell.Builder rFBuilder = ReceptiveFieldCell.newBuilder();
-               rFBuilder.setCoin(rfCoins[y][x]);
-               rFBuilder.setEnemy(rfEnemies[y][x]);
-               rFBuilder.setObstacle(rfObstacles[y][x]);
-               rFBuilder.setItembox(rfQms[y][x]);
-               stateBuilder.addReceptiveFields(rFBuilder);
-           }
-        }
-
+        ////////////////////////////////////////////////////////
+        // general information, not included in the observation
+        // but used to calculate reward etc.
+        ///////////////////////////////////////////////////////
         State.MarioPosition position;
         if (mario.isOnGround()) {
             position = State.MarioPosition.FLOOR;
         } else {
             position = isOverCliff(mario, level) ? State.MarioPosition.CLIFF : State.MarioPosition.AIR;
         }
-        stateBuilder.setPosition(position);
-
-        //int hashCode = stateBuilder.build().hashCode();
-        //int hashCode = new StateHash(rfObstacles, rfEnemies, rfCoins, rfQms).hashCode();
-        int hashCode = 17;
-        hashCode = 31 * hashCode + Arrays.deepHashCode(rfObstacles);
-        hashCode = 31 * hashCode + Arrays.deepHashCode(rfEnemies);
-        hashCode = 31 * hashCode + Arrays.deepHashCode(rfCoins);
-        hashCode = 31 * hashCode + Arrays.deepHashCode(rfQms);
-
-        ////////////////////////////////////////////////////////
-        // general additional information, not included in the receptive field
-        ///////////////////////////////////////////////////////
         stateBuilder.setKillsByFire(env.getKillsByFire())
                 .setKillsByStomp(env.getKillsByStomp())
                 .setKillsByShell(env.getKillsByShell())
                 .setMarioX(mario.mapX)
                 .setMarioY(mario.mapY)
+                .setPosition(position)
                 .setGameStatusValue(mario.getStatus())
                 .setModeValue(mario.getMode());
 
+        if (compact) {
+            //int hashCode = stateBuilder.build().hashCode();
+            //int hashCode = new StateHash(rfObstacles, rfEnemies, rfCoins, rfQms).hashCode();
+            int hashCode = 17;
+            hashCode = 31 * hashCode + Arrays.deepHashCode(rfObstacles);
+            hashCode = 31 * hashCode + Arrays.deepHashCode(rfEnemies);
+            hashCode = 31 * hashCode + Arrays.deepHashCode(rfCoins);
+            hashCode = 31 * hashCode + Arrays.deepHashCode(rfQms);
+
+            if (sentStates.containsKey(hashCode)) {
+                stateBuilder.setHashCode(hashCode);
+                return stateBuilder.build();
+            } else {
+                stateBuilder.setHashCode(hashCode);
+                sentStates.put(hashCode, true);
+            }
+        }
+
+        ///////////////////////////////////////
+        // add receptive field information
+        ///////////////////////////////////////
+        ByteString bs = getRfByteString(rfEnemies, rfObstacles, rfCoins, rfQms, rfw, rfh);
+        stateBuilder.setRfBytes(bs);
+
+        return stateBuilder.build();
+
+        /*
         if(compact) {
             if(sentStates.containsKey(hashCode)) {
                 State.Builder returnStateBuilder = State.newBuilder();
@@ -114,45 +121,30 @@ public class FeatureExtractor {
                 sentStates.put(hashCode, true);
             }
         }
-
-        return stateBuilder.build();
+        */
     }
 
-    public ByteString getRfCompact(boolean[][] rfObstacles, boolean[][] rfEnemies, boolean[][] rfCoins, boolean[][] rfQms,
-                              int rfw, int rfh) {
-
-        int numBytes = (int) Math.ceil(((double) rfw * rfh * 4) / 8.0);
-
+    /**
+     * creates a byte vector of the receptive field information
+     * the order is:
+     * 0. enemy
+     * 1. obstacle
+     * 2. coin
+     * 3. itembox
+     */
+    public ByteString getRfByteString(boolean[][] rfEnemies, boolean[][] rfObstacles,
+                                      boolean[][] rfCoins, boolean[][] rfQms,
+                                      int rfw, int rfh) {
+        int numBytes = rfw * rfh * 4;
         byte[] bytes = new byte[numBytes];
-
-        byte b1 = 1;
-        byte b2 = 2;
-        byte b3 = 4;
-        byte b4 = 8;
-        byte b5 = 16;
-        byte b6 = 32;
-        byte b7 = 64;
-        byte b8 = (byte) 128;
 
         for (int y = 0; y < rfh; y++) {
             for (int x = 0; x < rfw; x++) {
-                int cellIndex = y * rfw + x;
-                int i = cellIndex / 2;
-
-                if (cellIndex % 2 == 0) {
-                    // set the first 4 bits
-                    if (rfObstacles[y][x]) bytes[i] |= b1;
-                    if (rfEnemies[y][x]) bytes[i] |= b2;
-                    if (rfCoins[y][x]) bytes[i] |= b3;
-                    if (rfQms[y][x]) bytes[i] |= b4;
-
-                } else {
-                    // set the second 4 bits
-                    if (rfObstacles[y][x]) bytes[i] |= b5;
-                    if (rfEnemies[y][x])   bytes[i] |= b6;
-                    if (rfCoins[y][x])     bytes[i] |= b7;
-                    if (rfQms[y][x])       bytes[i] |= b8;
-                }
+                int byteIndexStart = (y * rfw + x) * 4;
+                bytes[byteIndexStart] = (byte) (rfEnemies[y][x] ? 1 : 0);
+                bytes[byteIndexStart+1] = (byte) (rfObstacles[y][x] ? 1 : 0);
+                bytes[byteIndexStart+2] = (byte) (rfCoins[y][x] ? 1 : 0);
+                bytes[byteIndexStart+3] = (byte) (rfQms[y][x] ? 1 : 0);
             }
         }
 
