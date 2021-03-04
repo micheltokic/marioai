@@ -83,7 +83,8 @@ message State {
   int32 mario_y = 8;
 
   int32 hash_code = 9;
-  repeated ReceptiveFieldCell receptive_fields = 10;
+  //repeated ReceptiveFieldCell receptive_fields = 10;
+  bytes rf_bytes = 10;
 }
 
 message ReceptiveFieldCell {
