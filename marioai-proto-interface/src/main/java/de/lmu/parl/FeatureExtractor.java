@@ -53,6 +53,17 @@ public class FeatureExtractor {
         extractMapTiles(levelScene);
         extractEnemies(enemies, rfw, rfh);
 
+        /////////////////////////////////////////////////
+        // calculate the receptive field hash
+        /////////////////////////////////////////////////
+        //int hashCode = stateBuilder.build().hashCode();
+        //int hashCode = new StateHash(rfObstacles, rfEnemies, rfCoins, rfQms).hashCode();
+        int hashCode = 17;
+        hashCode = 31 * hashCode + Arrays.deepHashCode(rfObstacles);
+        hashCode = 31 * hashCode + Arrays.deepHashCode(rfEnemies);
+        hashCode = 31 * hashCode + Arrays.deepHashCode(rfCoins);
+        hashCode = 31 * hashCode + Arrays.deepHashCode(rfQms);
+
         State.Builder stateBuilder = State.newBuilder();
 
         ////////////////////////////////////////////////////////
@@ -72,22 +83,16 @@ public class FeatureExtractor {
                 .setMarioY(mario.mapY)
                 .setPosition(position)
                 .setGameStatusValue(mario.getStatus())
-                .setModeValue(mario.getMode());
+                .setModeValue(mario.getMode())
+                .setHashCode(hashCode);
 
         if (compact) {
-            //int hashCode = stateBuilder.build().hashCode();
-            //int hashCode = new StateHash(rfObstacles, rfEnemies, rfCoins, rfQms).hashCode();
-            int hashCode = 17;
-            hashCode = 31 * hashCode + Arrays.deepHashCode(rfObstacles);
-            hashCode = 31 * hashCode + Arrays.deepHashCode(rfEnemies);
-            hashCode = 31 * hashCode + Arrays.deepHashCode(rfCoins);
-            hashCode = 31 * hashCode + Arrays.deepHashCode(rfQms);
 
             if (sentStates.containsKey(hashCode)) {
-                stateBuilder.setHashCode(hashCode);
+                //stateBuilder.setHashCode(hashCode);
                 return stateBuilder.build();
             } else {
-                stateBuilder.setHashCode(hashCode);
+                //stateBuilder.setHashCode(hashCode);
                 sentStates.put(hashCode, true);
             }
         }

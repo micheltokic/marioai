@@ -75,7 +75,7 @@ win = -10
 dead = -10
 
 training = True
-replay_version = 1
+replay_version = 2
 
 
 def replay(version):
@@ -104,10 +104,12 @@ def replay(version):
         total_reward = 0
         steps = 0
         state = env.reset()
+        #state = tuple([s.tobytes() for s in state])
 
         while not done:
             action = int(np.argmax(Q[state]))  # greedy
             state, reward, done, info = env.step(action)
+            #state = tuple([s.tobytes() for s in state])
             total_reward += reward
             steps += 1
 
@@ -151,6 +153,7 @@ def train():
         steps = 0
 
         state = env.reset()
+        #state = tuple([s.tobytes() for s in state])
         # choose a' from a Policy derived from Q
         if np.random.rand() < epsilon:
             action = env.action_space.sample()
@@ -159,6 +162,7 @@ def train():
 
         while not done:
             next_state, reward, done, info = env.step(action)
+            #next_state = tuple([s.tobytes() for s in next_state])
             total_reward += reward
 
             # choose a' from a Policy derived from Q

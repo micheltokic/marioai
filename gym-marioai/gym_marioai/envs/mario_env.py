@@ -31,6 +31,7 @@ class MarioEnv(gym.Env):
                  reward_settings=RewardSettings(),
                  compact_observation=True,
                  trace_length=1,
+                 repeat_action_until_new_observation=2,
                  level_path="None"):
         """
         Environment initialization
@@ -46,7 +47,8 @@ class MarioEnv(gym.Env):
         self.reward_settings:RewardSettings = reward_settings
         self.level_path:str = level_path
         self.trace_length: int = trace_length
-        self.compact_observation:bool = compact_observation or self.trace_length > 1 # always use compact when traces > 1
+        self.compact_observation:bool = compact_observation# or self.trace_length > 1 # always use compact when traces > 1
+        self.repeat_action_until_new_observation: int = repeat_action_until_new_observation
 
         self.received_states = {}
         self.last_hash = 0
@@ -110,21 +112,15 @@ class MarioEnv(gym.Env):
         perform action in the environment and return new state, reward,
         done and info
         """
-        # count = 1
-        # self.socket.send_action(action)
-        # state_msg = self.socket.receive()
-        # while state_msg.state.hash_code == self.last_hash and count <=3:
-        #     self.socket.send_action(action)
-        #     state_msg = self.socket.receive()
-        #     count += 1
         self.socket.send_action(action)
         state_msg = self.socket.receive()
-        if state_msg.state.hash_code == self.last_hash:
+
+        # optional: repeat the same action until state_msg changes
+        for _ in range(self.repeat_action_until_new_observation):
+            if state_msg.state.hash_code != self.last_hash: break
             self.socket.send_action(action)
             state_msg = self.socket.receive()
-        if state_msg.state.hash_code == self.last_hash:
-            self.socket.send_action(action)
-            state_msg = self.socket.receive()
+
         self.last_hash = state_msg.state.hash_code
 
         observation = self.__extract_observation(state_msg)
@@ -175,33 +171,39 @@ class MarioEnv(gym.Env):
         return a compact representation of the environment state
         returns a numpy array of shape rf_width * rf_height x n_features
         """
-        obs = np.frombuffer(res.state.rf_bytes, dtype=np.int8)
-        # print(obs)
-
         # obs = np.zeros((self.rf_width * self.rf_height,
         #                 self.n_features), dtype=np.bool)
         # rf_cells = res.state.receptive_fields
-
         # for i in range(self.rf_width * self.rf_height):
         #     obs[i, 0] = rf_cells[i].enemy
         #     obs[i, 1] = rf_cells[i].obstacle
         #     obs[i, 2] = rf_cells[i].coin
         #     obs[i, 3] = rf_cells[i].itembox
 
-        return obs
+        if self.trace_length == 1:
+            return np.frombuffer(res.state.rf_bytes, dtype=np.int8)
+        else:
+            if len(self.observation_trace) >= self.trace_length:
+                self.observation_trace.popleft()
+            obs = np.frombuffer(res.state.rf_bytes, dtype=np.int8)
+            self.observation_trace.append(obs)
+            return tuple(self.observation_trace)
 
     def __extract_observation_encoded(self, res:MarioMessage):
         """
         if compact_observation is set, this method is used to extract
         the observation, which is a byte arrary in this case
         """
-        if len(self.observation_trace) >= self.trace_length:
-            self.observation_trace.popleft()
-        hash = res.state.hash_code
-        self.observation_trace.append(hash)
-        # if hash not in self.received_states:
-        #     self.received_states[hash] = self.__extract_observation_default(res)
-        return tuple(self.observation_trace)
+        if self.trace_length == 1:
+            return res.state.hash_code
+        else:
+            if len(self.observation_trace) >= self.trace_length:
+                self.observation_trace.popleft()
+            hash = res.state.hash_code
+            self.observation_trace.append(hash)
+            # if hash not in self.received_states:
+            #     self.received_states[hash] = self.__extract_observation_default(res)
+            return tuple(self.observation_trace)
 
     def __extract_reward(self, res: MarioMessage):
         """
