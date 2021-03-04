@@ -40,17 +40,21 @@ message Init {
 // }
 
 enum Action {
-  DOWN = 0;
-  JUMP = 1;
+  LEFT = 0;
+  RIGHT = 1;
+  UP = 2;
+  DOWN = 3;
+  JUMP = 4;
   //
-  SPEED_JUMP = 2;
-  SPEED_RIGHT = 3;
-  SPEED_LEFT = 4;
+  SPEED_JUMP = 5;
+  SPEED_RIGHT = 6;
+  SPEED_LEFT = 7;
   //
-  JUMP_RIGHT = 5;
-  JUMP_LEFT = 6;
-  SPEED_JUMP_RIGHT = 7;
-  SPEED_JUMP_LEFT = 8;
+  JUMP_RIGHT = 8;
+  JUMP_LEFT = 9;
+  SPEED_JUMP_RIGHT = 10;
+  SPEED_JUMP_LEFT = 11;
+  NOTHING = 12;
 }
 
 message State {

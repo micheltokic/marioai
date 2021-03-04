@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\021de.lmu.parl.protoB\013MarioProtos',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bmario.proto\x12\x07marioai\"\xc9\x01\n\x0cMarioMessage\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.marioai.MarioMessage.Type\x12\x1b\n\x04init\x18\x02 \x01(\x0b\x32\r.marioai.Init\x12\x1f\n\x06\x61\x63tion\x18\x03 \x01(\x0e\x32\x0f.marioai.Action\x12\x1d\n\x05state\x18\x04 \x01(\x0b\x32\x0e.marioai.State\"2\n\x04Type\x12\x08\n\x04INIT\x10\x00\x12\n\n\x06\x41\x43TION\x10\x01\x12\t\n\x05STATE\x10\x02\x12\t\n\x05RESET\x10\x03\"\xa4\x01\n\x04Init\x12\x12\n\ndifficulty\x18\x01 \x01(\x05\x12\x0c\n\x04seed\x18\x02 \x01(\x05\x12\x11\n\tr_field_w\x18\x03 \x01(\x05\x12\x11\n\tr_field_h\x18\x04 \x01(\x05\x12\x14\n\x0clevel_length\x18\x05 \x01(\x05\x12\x0e\n\x06render\x18\x06 \x01(\x08\x12\x11\n\tfile_name\x18\x07 \x01(\t\x12\x1b\n\x13\x63ompact_observation\x18\x08 \x01(\x08\"\xa6\x03\n\x05State\x12.\n\x0bgame_status\x18\x01 \x01(\x0e\x32\x19.marioai.State.GameStatus\x12.\n\x08position\x18\x02 \x01(\x0e\x32\x1c.marioai.State.MarioPosition\x12&\n\x04mode\x18\x03 \x01(\x0e\x32\x18.marioai.State.MarioMode\x12\x16\n\x0ekills_by_stomp\x18\x04 \x01(\x05\x12\x15\n\rkills_by_fire\x18\x05 \x01(\x05\x12\x16\n\x0ekills_by_shell\x18\x06 \x01(\x05\x12\x0f\n\x07mario_x\x18\x07 \x01(\x05\x12\x0f\n\x07mario_y\x18\x08 \x01(\x05\x12\x11\n\thash_code\x18\t \x01(\x05\x12\x10\n\x08rf_bytes\x18\n \x01(\x0c\",\n\nGameStatus\x12\x08\n\x04\x44\x45\x41\x44\x10\x00\x12\x07\n\x03WIN\x10\x01\x12\x0b\n\x07RUNNING\x10\x02\".\n\rMarioPosition\x12\t\n\x05\x46LOOR\x10\x00\x12\x07\n\x03\x41IR\x10\x01\x12\t\n\x05\x43LIFF\x10\x02\")\n\tMarioMode\x12\t\n\x05SMALL\x10\x00\x12\x07\n\x03\x42IG\x10\x01\x12\x08\n\x04\x46IRE\x10\x02\"T\n\x12ReceptiveFieldCell\x12\r\n\x05\x65nemy\x18\x01 \x01(\x08\x12\x10\n\x08obstacle\x18\x02 \x01(\x08\x12\x0c\n\x04\x63oin\x18\x03 \x01(\x08\x12\x0f\n\x07itembox\x18\x04 \x01(\x08*\x97\x01\n\x06\x41\x63tion\x12\x08\n\x04\x44OWN\x10\x00\x12\x08\n\x04JUMP\x10\x01\x12\x0e\n\nSPEED_JUMP\x10\x02\x12\x0f\n\x0bSPEED_RIGHT\x10\x03\x12\x0e\n\nSPEED_LEFT\x10\x04\x12\x0e\n\nJUMP_RIGHT\x10\x05\x12\r\n\tJUMP_LEFT\x10\x06\x12\x14\n\x10SPEED_JUMP_RIGHT\x10\x07\x12\x13\n\x0fSPEED_JUMP_LEFT\x10\x08\x42 \n\x11\x64\x65.lmu.parl.protoB\x0bMarioProtosb\x06proto3'
+  serialized_pb=b'\n\x0bmario.proto\x12\x07marioai\"\xc9\x01\n\x0cMarioMessage\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.marioai.MarioMessage.Type\x12\x1b\n\x04init\x18\x02 \x01(\x0b\x32\r.marioai.Init\x12\x1f\n\x06\x61\x63tion\x18\x03 \x01(\x0e\x32\x0f.marioai.Action\x12\x1d\n\x05state\x18\x04 \x01(\x0b\x32\x0e.marioai.State\"2\n\x04Type\x12\x08\n\x04INIT\x10\x00\x12\n\n\x06\x41\x43TION\x10\x01\x12\t\n\x05STATE\x10\x02\x12\t\n\x05RESET\x10\x03\"\xa4\x01\n\x04Init\x12\x12\n\ndifficulty\x18\x01 \x01(\x05\x12\x0c\n\x04seed\x18\x02 \x01(\x05\x12\x11\n\tr_field_w\x18\x03 \x01(\x05\x12\x11\n\tr_field_h\x18\x04 \x01(\x05\x12\x14\n\x0clevel_length\x18\x05 \x01(\x05\x12\x0e\n\x06render\x18\x06 \x01(\x08\x12\x11\n\tfile_name\x18\x07 \x01(\t\x12\x1b\n\x13\x63ompact_observation\x18\x08 \x01(\x08\"\xa6\x03\n\x05State\x12.\n\x0bgame_status\x18\x01 \x01(\x0e\x32\x19.marioai.State.GameStatus\x12.\n\x08position\x18\x02 \x01(\x0e\x32\x1c.marioai.State.MarioPosition\x12&\n\x04mode\x18\x03 \x01(\x0e\x32\x18.marioai.State.MarioMode\x12\x16\n\x0ekills_by_stomp\x18\x04 \x01(\x05\x12\x15\n\rkills_by_fire\x18\x05 \x01(\x05\x12\x16\n\x0ekills_by_shell\x18\x06 \x01(\x05\x12\x0f\n\x07mario_x\x18\x07 \x01(\x05\x12\x0f\n\x07mario_y\x18\x08 \x01(\x05\x12\x11\n\thash_code\x18\t \x01(\x05\x12\x10\n\x08rf_bytes\x18\n \x01(\x0c\",\n\nGameStatus\x12\x08\n\x04\x44\x45\x41\x44\x10\x00\x12\x07\n\x03WIN\x10\x01\x12\x0b\n\x07RUNNING\x10\x02\".\n\rMarioPosition\x12\t\n\x05\x46LOOR\x10\x00\x12\x07\n\x03\x41IR\x10\x01\x12\t\n\x05\x43LIFF\x10\x02\")\n\tMarioMode\x12\t\n\x05SMALL\x10\x00\x12\x07\n\x03\x42IG\x10\x01\x12\x08\n\x04\x46IRE\x10\x02\"T\n\x12ReceptiveFieldCell\x12\r\n\x05\x65nemy\x18\x01 \x01(\x08\x12\x10\n\x08obstacle\x18\x02 \x01(\x08\x12\x0c\n\x04\x63oin\x18\x03 \x01(\x08\x12\x0f\n\x07itembox\x18\x04 \x01(\x08*\xc1\x01\n\x06\x41\x63tion\x12\x08\n\x04LEFT\x10\x00\x12\t\n\x05RIGHT\x10\x01\x12\x06\n\x02UP\x10\x02\x12\x08\n\x04\x44OWN\x10\x03\x12\x08\n\x04JUMP\x10\x04\x12\x0e\n\nSPEED_JUMP\x10\x05\x12\x0f\n\x0bSPEED_RIGHT\x10\x06\x12\x0e\n\nSPEED_LEFT\x10\x07\x12\x0e\n\nJUMP_RIGHT\x10\x08\x12\r\n\tJUMP_LEFT\x10\t\x12\x14\n\x10SPEED_JUMP_RIGHT\x10\n\x12\x13\n\x0fSPEED_JUMP_LEFT\x10\x0b\x12\x0b\n\x07NOTHING\x10\x0c\x42 \n\x11\x64\x65.lmu.parl.protoB\x0bMarioProtosb\x06proto3'
 )
 
 _ACTION = _descriptor.EnumDescriptor(
@@ -31,47 +31,67 @@ _ACTION = _descriptor.EnumDescriptor(
   create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
-      name='DOWN', index=0, number=0,
+      name='LEFT', index=0, number=0,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='JUMP', index=1, number=1,
+      name='RIGHT', index=1, number=1,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='SPEED_JUMP', index=2, number=2,
+      name='UP', index=2, number=2,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='SPEED_RIGHT', index=3, number=3,
+      name='DOWN', index=3, number=3,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='SPEED_LEFT', index=4, number=4,
+      name='JUMP', index=4, number=4,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='JUMP_RIGHT', index=5, number=5,
+      name='SPEED_JUMP', index=5, number=5,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='JUMP_LEFT', index=6, number=6,
+      name='SPEED_RIGHT', index=6, number=6,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='SPEED_JUMP_RIGHT', index=7, number=7,
+      name='SPEED_LEFT', index=7, number=7,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='SPEED_JUMP_LEFT', index=8, number=8,
+      name='JUMP_RIGHT', index=8, number=8,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='JUMP_LEFT', index=9, number=9,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='SPEED_JUMP_RIGHT', index=10, number=10,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='SPEED_JUMP_LEFT', index=11, number=11,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='NOTHING', index=12, number=12,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
@@ -79,20 +99,24 @@ _ACTION = _descriptor.EnumDescriptor(
   containing_type=None,
   serialized_options=None,
   serialized_start=907,
-  serialized_end=1058,
+  serialized_end=1100,
 )
 _sym_db.RegisterEnumDescriptor(_ACTION)
 
 Action = enum_type_wrapper.EnumTypeWrapper(_ACTION)
-DOWN = 0
-JUMP = 1
-SPEED_JUMP = 2
-SPEED_RIGHT = 3
-SPEED_LEFT = 4
-JUMP_RIGHT = 5
-JUMP_LEFT = 6
-SPEED_JUMP_RIGHT = 7
-SPEED_JUMP_LEFT = 8
+LEFT = 0
+RIGHT = 1
+UP = 2
+DOWN = 3
+JUMP = 4
+SPEED_JUMP = 5
+SPEED_RIGHT = 6
+SPEED_LEFT = 7
+JUMP_RIGHT = 8
+JUMP_LEFT = 9
+SPEED_JUMP_RIGHT = 10
+SPEED_JUMP_LEFT = 11
+NOTHING = 12
 
 
 _MARIOMESSAGE_TYPE = _descriptor.EnumDescriptor(

@@ -9,6 +9,7 @@ from gym import spaces
 from ..protobuf_socket import ProtobufSocket
 from ..mario_pb2 import MarioMessage, State
 from ..reward_settings import RewardSettings
+from .. import mario_pb2 as pb
 
 
 WIN = State.GameStatus.WIN
@@ -16,6 +17,16 @@ DEAD = State.GameStatus.DEAD
 RUNNING = State.GameStatus.RUNNING
 FLOOR = State.FLOOR
 CLIFF = State.CLIFF
+
+default_actions = (pb.DOWN,
+                   pb.JUMP,
+                   pb.SPEED_JUMP,
+                   pb.SPEED_RIGHT,
+                   pb.SPEED_LEFT,
+                   pb.JUMP_RIGHT,
+                   pb.JUMP_LEFT,
+                   pb.SPEED_JUMP_RIGHT,
+                   pb.SPEED_JUMP_LEFT)
 
 
 class MarioEnv(gym.Env):
@@ -32,6 +43,7 @@ class MarioEnv(gym.Env):
                  compact_observation=True,
                  trace_length=1,
                  repeat_action_until_new_observation=2,
+                 enabled_actions=default_actions,
                  level_path="None"):
         """
         Environment initialization
@@ -49,13 +61,13 @@ class MarioEnv(gym.Env):
         self.trace_length: int = trace_length
         self.compact_observation:bool = compact_observation# or self.trace_length > 1 # always use compact when traces > 1
         self.repeat_action_until_new_observation: int = repeat_action_until_new_observation
+        self.enabled_actions = enabled_actions
 
         self.received_states = {}
         self.last_hash = 0
 
-        # TODO read this dynamically?
         self.n_features:int = 4   # number of features in one receptive field cell
-        self.n_actions:int = 9
+        self.n_actions:int = len(self.enabled_actions)
 
         # define action space
         self.action_space = spaces.Discrete(self.n_actions)
@@ -76,12 +88,12 @@ class MarioEnv(gym.Env):
         self.steps = 0
 
         # store the last time the agent has been above floor or cliff 
-        self.last_floor_x = None
-        self.last_cliff_x = None
+        self.last_floor_x = -1
+        self.last_cliff_x = -1
         self.cliff_jumps = 0
 
         try:
-            self.socket = ProtobufSocket(self.n_actions)
+            self.socket = ProtobufSocket(self.enabled_actions)
             self.socket.connect(host, port)
             self.socket.send_init(difficulty, seed, rf_width, rf_height,
                                   level_length, level_path, render, 
@@ -114,13 +126,12 @@ class MarioEnv(gym.Env):
         """
         self.socket.send_action(action)
         state_msg = self.socket.receive()
-
-        # optional: repeat the same action until state_msg changes
         for _ in range(self.repeat_action_until_new_observation):
-            if state_msg.state.hash_code != self.last_hash: break
-            self.socket.send_action(action)
-            state_msg = self.socket.receive()
-
+            if state_msg.state.hash_code == self.last_hash:
+                self.socket.send_action(action)
+                state_msg = self.socket.receive()
+            else:
+                break
         self.last_hash = state_msg.state.hash_code
 
         observation = self.__extract_observation(state_msg)
@@ -143,8 +154,8 @@ class MarioEnv(gym.Env):
         self.kills_by_fire = 0
         self.kills_by_shell = 0
         self.steps = 0 
-        self.last_floor_x = None
-        self.last_cliff_x = None
+        self.last_floor_x = -1
+        self.last_cliff_x = -1
         self.cliff_jumps = 0
         self.observation_trace = deque()
 
@@ -215,7 +226,6 @@ class MarioEnv(gym.Env):
         # determine if mario has just jumped over a cliff.
         # if yes, he obtains the cliff reward
         has_overcome_cliff = s.position == FLOOR\
-                       and None not in (self.last_floor_x, self.last_cliff_x)\
                        and self.last_floor_x < self.last_cliff_x\
                        and self.last_cliff_x < s.mario_x
 
@@ -262,4 +272,5 @@ class MarioEnv(gym.Env):
         return {
                 'win': res.state.game_status == WIN,
                 'steps': self.steps,
+                'cliff_jumps': self.cliff_jumps
                 }

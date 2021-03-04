@@ -3,7 +3,7 @@ import socket
 from google.protobuf.internal.decoder import _DecodeVarint32
 from google.protobuf.internal.encoder import _VarintBytes
 
-from .mario_pb2 import MarioMessage
+from .mario_pb2 import MarioMessage, Action
 
 
 def serialize(msg:MarioMessage):
@@ -15,7 +15,7 @@ def serialize(msg:MarioMessage):
     return _VarintBytes(msg.ByteSize()) + msg.SerializeToString()
 
 
-def create_action_message(action:int):
+def create_action_message(action:Action):
     """ create and serialize an action message """
     msg = MarioMessage()
     msg.type = MarioMessage.Type.ACTION
@@ -35,14 +35,13 @@ class ProtobufSocket:
     A wrapper for a TCP socket which provides methods to send and receive 
     protobuf messages of our MarioMessage protobuf specification.
     """
-    def __init__(self, n_actions:int):
+    def __init__(self, enabled_actions):
         self.sock = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)
 
         # pre-parse and cache often used messages
         self.reset_msg = create_reset_message()
-        self.action_messages = [create_action_message(i) for i in \
-                                range(n_actions)]
+        self.action_messages = [create_action_message(pba) for pba in enabled_actions]
 
     def connect(self, host, port):
         self.sock.connect((host, port))
