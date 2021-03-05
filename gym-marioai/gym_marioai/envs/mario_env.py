@@ -211,23 +211,21 @@ class MarioEnv(gym.Env):
         return a compact representation of the environment state
         returns a numpy array of shape rf_width * rf_height x n_features
         """
-        # obs = np.zeros((self.rf_width * self.rf_height,
-        #                 self.n_features), dtype=np.bool)
-        # rf_cells = res.state.receptive_fields
-        # for i in range(self.rf_width * self.rf_height):
-        #     obs[i, 0] = rf_cells[i].enemy
-        #     obs[i, 1] = rf_cells[i].obstacle
-        #     obs[i, 2] = rf_cells[i].coin
-        #     obs[i, 3] = rf_cells[i].itembox
+        code = res.state.hash_code
+        if not code in self.received_states:
+            obs = np.frombuffer(res.state.rf_bytes, dtype=np.int8)
+            if obs.size == 0: # byte string is empty, in case all RF cells are 0 -> len=0
+                obs = np.zeros(self.rf_height * self.rf_width * 4, dtype=np.int8) 
+            self.received_states[code] = obs
 
         if self.trace_length == 1:
-            return np.frombuffer(res.state.rf_bytes, dtype=np.int8)
+            return self.received_states[code]
         else:
             if len(self.observation_trace) >= self.trace_length:
                 self.observation_trace.popleft()
-            obs = np.frombuffer(res.state.rf_bytes, dtype=np.int8)
+            obs = self.received_states[code]
             self.observation_trace.append(obs)
-            return tuple(self.observation_trace)
+            return np.concatenate(self.observation_trace)
 
     def __extract_observation_encoded(self, res:MarioMessage):
         """
@@ -241,8 +239,6 @@ class MarioEnv(gym.Env):
                 self.observation_trace.popleft()
             hash = res.state.hash_code
             self.observation_trace.append(hash)
-            # if hash not in self.received_states:
-            #     self.received_states[hash] = self.__extract_observation_default(res)
             return tuple(self.observation_trace)
 
     def __extract_reward(self, res: MarioMessage):

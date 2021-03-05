@@ -8,20 +8,16 @@ import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 import ch.idsia.tools.MarioAIOptions;
 
 
-
-
-
 public class Controller {
 
     private MarioEnvironment env = MarioEnvironment.getInstance();
     private FeatureExtractor featureExtractor = new FeatureExtractor(env);
     private MarioAIOptions options;
-    private boolean compactObservation = true;
 
     private MarioMessage createStateMessage() {
         return MarioMessage.newBuilder()
                 .setType(MarioMessage.Type.STATE)
-                .setState(featureExtractor.getState(compactObservation))
+                .setState(featureExtractor.getState())
                 .build();
     }
 
@@ -32,8 +28,6 @@ public class Controller {
         options = buildOptions(
                 init.getRFieldW(), init.getRFieldH(), init.getSeed(),
                 init.getLevelLength(), init.getDifficulty(), init.getRender(), init.getFileName());
-
-        compactObservation = init.getCompactObservation();
 
         env.reset(options);
         env.tick();

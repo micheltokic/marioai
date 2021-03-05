@@ -3,11 +3,8 @@ package de.lmu.parl;
 import ch.idsia.benchmark.mario.engine.GeneralizerLevelScene;
 import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
-import ch.idsia.tools.MarioAIOptions;
 import com.google.protobuf.ByteString;
-import de.lmu.parl.proto.MarioProtos;
 import de.lmu.parl.proto.MarioProtos.State;
-import de.lmu.parl.proto.MarioProtos.ReceptiveFieldCell;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,7 +34,7 @@ public class FeatureExtractor {
         sentStates = new HashMap<>();
     }
 
-    public State getState (boolean compact) {
+    public State getState () {
         Mario mario = env.getMario();
         byte[][] level = env.getLevel().map;
         int rfw = env.getReceptiveFieldWidth();
@@ -56,8 +53,6 @@ public class FeatureExtractor {
         /////////////////////////////////////////////////
         // calculate the receptive field hash
         /////////////////////////////////////////////////
-        //int hashCode = stateBuilder.build().hashCode();
-        //int hashCode = new StateHash(rfObstacles, rfEnemies, rfCoins, rfQms).hashCode();
         int hashCode = 17;
         hashCode = 31 * hashCode + Arrays.deepHashCode(rfObstacles);
         hashCode = 31 * hashCode + Arrays.deepHashCode(rfEnemies);
@@ -87,47 +82,14 @@ public class FeatureExtractor {
                 .setModeValue(mario.getMode())
                 .setHashCode(hashCode);
 
-        if (compact) {
-
-            if (sentStates.containsKey(hashCode)) {
-                //stateBuilder.setHashCode(hashCode);
-                return stateBuilder.build();
-            } else {
-                //stateBuilder.setHashCode(hashCode);
-                sentStates.put(hashCode, true);
-            }
+        if (!sentStates.containsKey(hashCode)) {
+            // mark hash code as seen
+            sentStates.put(hashCode, true);
+            // add receptive field information
+            ByteString bs = getRfByteString(rfEnemies, rfObstacles, rfCoins, rfQms, rfw, rfh);
+            stateBuilder.setRfBytes(bs);
         }
-
-        ///////////////////////////////////////
-        // add receptive field information
-        ///////////////////////////////////////
-        ByteString bs = getRfByteString(rfEnemies, rfObstacles, rfCoins, rfQms, rfw, rfh);
-        stateBuilder.setRfBytes(bs);
-
         return stateBuilder.build();
-
-        /*
-        if(compact) {
-            if(sentStates.containsKey(hashCode)) {
-                State.Builder returnStateBuilder = State.newBuilder();
-                returnStateBuilder.setPosition(position);
-                returnStateBuilder.setKillsByFire(env.getKillsByFire())
-                        .setKillsByStomp(env.getKillsByStomp())
-                        .setKillsByShell(env.getKillsByShell())
-                        .setMarioX(mario.mapX)
-                        .setMarioY(mario.mapY)
-                        .setGameStatusValue(mario.getStatus())
-                        .setModeValue(mario.getMode())
-                        .setHashCode(hashCode);
-                return returnStateBuilder.build();
-            } else {
-                // Use the same builder that was used for hash generation
-                // if state was sent for the first time
-                stateBuilder.setHashCode(hashCode);
-                sentStates.put(hashCode, true);
-            }
-        }
-        */
     }
 
     /**
@@ -271,29 +233,5 @@ public class FeatureExtractor {
             }
         }
         return true;
-    }
-
-    public static void main(String[] args) {
-        MarioEnvironment env = MarioEnvironment.getInstance();
-        int rfw = 11;
-        int rfh = 5;
-        MarioAIOptions options = new Controller().buildOptions(
-                rfw, rfh, 1000, 80, 0, true, "none"
-        );
-
-        env.reset(options);
-        for (int i = 0; i < 100; i++) {
-            FeatureExtractor extractor = new FeatureExtractor(env);
-
-            float[] marioFloatPos = env.getMarioFloatPos();
-            float[] enemiesFloat = env.getEnemiesFloatPos();
-
-            env.performAction(new boolean[]{false, true, false, i%2==0, false, false});
-            env.tick();
-
-            MarioProtos.State state = extractor.getState(false);
-            int x = 0;
-        }
-        System.out.println("debug");
     }
 }
