@@ -15,7 +15,8 @@ setup(
     install_requires=[
         'numpy', 
         'gym>=0.17.2', 
-        'protobuf==3.14.0'],
+        'protobuf==3.14.0',
+        'keyboard'],
 
     include_package_data=True
     # package_dir={
