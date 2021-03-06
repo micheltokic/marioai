@@ -51,7 +51,7 @@ class ProtobufSocket:
 
     def send_init(self, difficulty, seed:int, 
             rf_width:int, rf_height:int, level_length:int,
-            level_path:str, render:bool, compact_observation):
+            level_path:str, render:bool):
         """ send an INIT message """
 
         msg = MarioMessage()
@@ -63,7 +63,6 @@ class ProtobufSocket:
         msg.init.r_field_h = rf_height
         msg.init.level_length = level_length
         msg.init.file_name = level_path
-        msg.init.compact_observation = compact_observation
         self.sock.send(serialize(msg))
 
     def send_reset(self):

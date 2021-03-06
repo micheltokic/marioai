@@ -102,8 +102,7 @@ class MarioEnv(gym.Env):
             self.socket = ProtobufSocket(self.enabled_actions)
             self.socket.connect(host, port)
             self.socket.send_init(difficulty, seed, rf_width, rf_height,
-                                  level_length, level_path, render, 
-                                  compact_observation)
+                                  level_length, level_path, render)
             self.socket.receive()
 
         except ConnectionRefusedError as e:
@@ -137,8 +136,7 @@ class MarioEnv(gym.Env):
 
         if re_init:
             self.socket.send_init(self.difficulty, self.seed, self.rf_width, self.rf_height,
-                                  self.level_length, self.level_path, self._render,
-                                  self.compact_observation)
+                                  self.level_length, self.level_path, self._render)
         else:
             self.socket.send_reset()
 
