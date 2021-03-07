@@ -109,8 +109,10 @@ class MarioEnv(gym.Env):
                   f'{host}:{port}?\n')
             raise e
 
-    def __del__(self):
+    def teardown(self):
+        print('closing socket connection...')
         self.socket.disconnect()
+        print('socket disconnected.')
 
     def render(self, mode='human'):
         pass

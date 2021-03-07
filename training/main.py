@@ -18,8 +18,8 @@ class QTable:
         """ 'in' operator """
         return state in self.state_index_map
 
-    def __len__(self):
-        return self.num_states
+    #def __len__(self):
+    #    return self.num_states
 
     def __getitem__(self, state):
         """ access state directly using [] notation """
@@ -75,7 +75,7 @@ win = -20
 dead = -10
 
 
-training = False
+training = True
 replay_version = 0
 
 

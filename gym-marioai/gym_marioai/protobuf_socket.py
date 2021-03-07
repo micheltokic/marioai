@@ -99,7 +99,11 @@ class ProtobufSocket:
         try:
             self.sock.shutdown(socket.SHUT_RDWR)
             self.sock.close()
-        except OSError:
+            print('socket connection closed successfully.')
+        except OSError as e:
+            print('error')
+            print(e)
+
             pass
 
     # def receive_daniel(self):
