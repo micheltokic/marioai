@@ -52,8 +52,8 @@ class MarioEnv(gym.Env):
         """
 
         self._render:bool = render
-        self.difficulty = difficulty
-        self.seed = seed
+        self.difficulty:int = difficulty
+        self.seed:int = seed
         self.level_length:int = level_length
         self.rf_width:int = rf_width
         self.rf_height:int = rf_height
@@ -103,7 +103,6 @@ class MarioEnv(gym.Env):
             self.socket.connect(host, port)
             self.socket.send_init(difficulty, seed, rf_width, rf_height,
                                   level_length, level_path, render)
-            self.socket.receive()
 
         except ConnectionRefusedError as e:
             print(f'unable to connect to the server, is it running at '
@@ -135,11 +134,11 @@ class MarioEnv(gym.Env):
             re_init = True
 
         if re_init:
-            self.socket.send_init(self.difficulty, self.seed, self.rf_width, self.rf_height,
+            self.socket.send_init(self.difficulty, self.seed,
+                                  self.rf_width, self.rf_height,
                                   self.level_length, self.level_path, self._render)
-        else:
-            self.socket.send_reset()
 
+        self.socket.send_reset()
         state_msg = self.socket.receive()
         self.__reset_cached_data(state_msg)
         return self.__extract_observation(state_msg)
@@ -210,18 +209,19 @@ class MarioEnv(gym.Env):
         returns a numpy array of shape rf_width * rf_height x n_features
         """
         code = res.state.hash_code
-        if not code in self.received_states:
+
+        if code in self.received_states:
+            obs = self.received_states[code]
+        else:
             obs = np.frombuffer(res.state.rf_bytes, dtype=np.int8)
-            if obs.size == 0: # byte string is empty, in case all RF cells are 0 -> len=0
-                obs = np.zeros(self.rf_height * self.rf_width * 4, dtype=np.int8) 
             self.received_states[code] = obs
 
+
         if self.trace_length == 1:
-            return self.received_states[code]
+            return obs
         else:
             if len(self.observation_trace) >= self.trace_length:
                 self.observation_trace.popleft()
-            obs = self.received_states[code]
             self.observation_trace.append(obs)
             return np.concatenate(self.observation_trace)
 

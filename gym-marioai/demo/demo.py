@@ -12,7 +12,7 @@ if __name__ == '__main__':
     env = gym.make('Marioai-v0', render=True,
                    reward_settings=reward_settings,
                    level_path=levels.early_cliff_level,
-                   compact_observation=False,
+                   compact_observation=True,
                    trace_length=3,
                    rf_width=7, rf_height=5)
 
