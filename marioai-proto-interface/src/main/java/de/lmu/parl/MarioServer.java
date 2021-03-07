@@ -38,8 +38,7 @@ public class MarioServer {
 
                 switch (msg.getType()) {
                     case INIT:
-                        controller.handleInitMessage(msg).writeDelimitedTo(out);
-                        out.flush();
+                        controller.handleInitMessage(msg);
                         break;
                     case RESET:
                         controller.handleResetMessage().writeDelimitedTo(out);
@@ -49,9 +48,6 @@ public class MarioServer {
                         controller.handleActionMessage(msg).writeDelimitedTo(out);
                         out.flush();
                         break;
-                    //case RENDER:
-                    //    msgHandler.handleRenderMessage(msg);
-                    //    break;
                 }
             } catch (IOException e) {
                 System.out.println("IOException occurred during client handling, closing connection");

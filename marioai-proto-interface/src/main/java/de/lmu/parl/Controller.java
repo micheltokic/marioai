@@ -21,7 +21,7 @@ public class Controller {
                 .build();
     }
 
-    public MarioMessage handleInitMessage(MarioMessage msg) {
+    public void handleInitMessage(MarioMessage msg) {
         Init init = msg.getInit();
 
         // cache options
@@ -31,8 +31,6 @@ public class Controller {
 
         env.reset(options);
         env.tick();
-
-        return createStateMessage();
     }
 
     public MarioMessage handleResetMessage() {
@@ -49,13 +47,6 @@ public class Controller {
 
         return createStateMessage();
     }
-
-    /*
-    public void handleRenderMessage(MarioMessage msg) {
-        // render() may contain a mode
-        // render the environment
-    }
-     */
 
     public MarioAIOptions buildOptions(int rfw, int rfh, int randSeed, int levelLength, int difficulty, boolean render, String fileName) {
         int viewHeight=320; // pixels
