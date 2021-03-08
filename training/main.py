@@ -55,7 +55,7 @@ SAVE_FREQ = 100
 #####################################
 #   Environment/Reward Settings
 #####################################
-level = 'oneCliffLevel'
+level = 'earlyCliffLevel'
 path = None
 
 if level == 'cliffLevel':
@@ -65,17 +65,17 @@ if level == 'oneCliffLevel':
 if level == 'earlyCliffLevel':
     path = gym_marioai.levels.early_cliff_level
 
-trace = 2
+trace = 3
 rf_width = 20
 rf_height = 10
 prog = 1
 timestep = -1
 cliff = 1000
-win = -20
+win = -100
 dead = -10
 
 
-training = True
+training = False
 replay_version = 0
 
 
