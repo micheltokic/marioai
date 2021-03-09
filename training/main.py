@@ -46,7 +46,7 @@ alpha = 0.1
 gamma = 0.99
 lmbda = 0.75
 epsilon_start = 0.5
-epsilon_end = 0.001
+epsilon_end = 0.01
 epsilon_decay_length = n_episodes / 2
 decay_step = (epsilon_start - epsilon_end) / epsilon_decay_length
 
@@ -55,7 +55,7 @@ SAVE_FREQ = 100
 #####################################
 #   Environment/Reward Settings
 #####################################
-level = 'earlyCliffLevel'
+level = 'oneCliffLevel'
 path = None
 
 if level == 'cliffLevel':
@@ -65,18 +65,18 @@ if level == 'oneCliffLevel':
 if level == 'earlyCliffLevel':
     path = gym_marioai.levels.early_cliff_level
 
-trace = 3
+trace = 2
 rf_width = 20
 rf_height = 10
 prog = 1
 timestep = -1
 cliff = 1000
-win = -100
+win = -10
 dead = -10
 
 
 training = False
-replay_version = 0
+replay_version = 1 
 
 
 def replay(version):
@@ -157,7 +157,8 @@ def train():
         steps = 0
 
         # exponential decay
-        epsilon = (epsilon_end / epsilon_start) ** (e / n_episodes) * epsilon_start
+        # epsilon = (epsilon_end / epsilon_start) ** (e / n_episodes) * epsilon_start
+        epsilon = max(epsilon_end, epsilon_start - decay_step * e)
 
         state = env.reset()
         #state = tuple([s.tobytes() for s in state])

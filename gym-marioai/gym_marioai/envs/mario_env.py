@@ -150,6 +150,26 @@ class MarioEnv(gym.Env):
         perform action in the environment and return new state, reward,
         done and info
         """
+        # self.socket.send_action(action)
+        # state_msg = self.socket.receive()
+        # if state_msg.state.hash_code == self.last_hash:
+        #     self.socket.send_action(action)
+        #     state_msg = self.socket.receive()
+        # if state_msg.state.hash_code == self.last_hash:
+        #     self.socket.send_action(action)
+        #     state_msg = self.socket.receive()
+        # self.last_hash = state_msg.state.hash_code
+
+        # observation = self.__extract_observation(state_msg)
+        # reward = self.__extract_reward(state_msg)
+        # done = self.__extract_done(state_msg)
+        # info = self.__extract_info(state_msg)
+
+        # self.__update_cached_data(state_msg)
+
+        # return observation, reward, done, info
+
+        # the current code:
         self.socket.send_action(action)
         state_msg = self.socket.receive()
         for _ in range(self.repeat_action_until_new_observation):
