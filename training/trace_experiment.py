@@ -174,10 +174,12 @@ if __name__ == '__main__':
         time.sleep(5)
         run_experiment(args.trace, port, args.index)
 
-    except:
+    except Exception as e:
+        print(e)
         server_process.kill()
         print('finished.')
 
+    server_process.kill()
 
 
 
