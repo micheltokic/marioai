@@ -60,7 +60,7 @@ def run_experiment(trace, port, i):
 
     # create the environment
     env = gym.make('Marioai-v0', port=port,
-                    render=False,
+                   render=False,
                    level_path=path,
                    reward_settings=reward_settings,
                    compact_observation=True,

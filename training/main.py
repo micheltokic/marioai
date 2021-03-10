@@ -2,46 +2,46 @@ import numpy as np
 import gym
 import gym_marioai
 from logger import Logger
+from qlearner import QLearner
 
+#class QTable:
+#    """
+#    data structure to store the Q function for hashable state representations
+#    """
+#    def __init__(self, n_actions, initial_capacity=100):
+#        self.capacity = initial_capacity
+#        self.num_states = 0
+#        self.state_index_map = {}
+#        self.table = np.zeros([initial_capacity, n_actions])
 
-class QTable:
-    """
-    data structure to store the Q function for hashable state representations
-    """
-    def __init__(self, n_actions, initial_capacity=100):
-        self.capacity = initial_capacity
-        self.num_states = 0
-        self.state_index_map = {}
-        self.table = np.zeros([initial_capacity, n_actions])
+#    def __contains__(self, state):
+#        """ 'in' operator """
+#        return state in self.state_index_map
 
-    def __contains__(self, state):
-        """ 'in' operator """
-        return state in self.state_index_map
+#    #def __len__(self):
+#    #    return self.num_states
 
-    #def __len__(self):
-    #    return self.num_states
+#    def __getitem__(self, state):
+#        """ access state directly using [] notation """
+#        if state not in self.state_index_map:
+#            self.init_state(state)
 
-    def __getitem__(self, state):
-        """ access state directly using [] notation """
-        if state not in self.state_index_map:
-            self.init_state(state)
+#        return self.table[self.state_index_map[state]]
 
-        return self.table[self.state_index_map[state]]
+#    def init_state(self, state):
+#        if self.num_states == self.capacity:
+#            # need to increase capacity
+#            self.table = np.concatenate((self.table, np.zeros_like(self.table)))
+#            self.capacity *= 2
 
-    def init_state(self, state):
-        if self.num_states == self.capacity:
-            # need to increase capacity
-            self.table = np.concatenate((self.table, np.zeros_like(self.table)))
-            self.capacity *= 2
-
-        self.state_index_map[state] = self.num_states
-        self.num_states += 1
+#        self.state_index_map[state] = self.num_states
+#        self.num_states += 1
 
 
 #####################################
 #   Training Parameters
 #####################################
-n_episodes = 10000
+n_episodes = 15000
 alpha = 0.1
 gamma = 0.99
 lmbda = 0.75
@@ -76,7 +76,7 @@ dead = -10
 
 
 training = False
-replay_version = 1 
+replay_version = 11 
 
 
 def replay(version):
@@ -85,7 +85,7 @@ def replay(version):
     """
     log_path = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-{version}'
     logger = Logger(log_path, True)
-    Q = logger.load_model()
+    # Q = logger.load_model()
 
     reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep,
                                                  cliff=cliff, win=win, dead=dead)
@@ -95,6 +95,9 @@ def replay(version):
                    compact_observation=True,
                    trace_length=trace,
                    rf_width=rf_width, rf_height=rf_height)
+
+    agent = QLearner(env, alpha, gamma, lmbda)
+    agent.Q = logger.load_model()
 
     ####################################
     #      Main Loop
@@ -108,7 +111,8 @@ def replay(version):
         #state = tuple([s.tobytes() for s in state])
 
         while not done:
-            action = int(np.argmax(Q[state]))  # greedy
+            action = agent.choose_action(state)
+            # action = int(np.argmax(Q[state]))  # greedy
             state, reward, done, info = env.step(action)
             #state = tuple([s.tobytes() for s in state])
             total_reward += reward
@@ -144,8 +148,11 @@ def train():
     ####################################
     #       Q-learner setup
     #####################################
-    Q = QTable(env.n_actions, 128)
-    etrace = {}
+
+    agent = QLearner(env, alpha, gamma, lmbda)
+
+    # Q = QTable(env.n_actions, 128)
+    # etrace = {}
 
     ####################################
     #      Training Loop
@@ -163,10 +170,11 @@ def train():
         state = env.reset()
         #state = tuple([s.tobytes() for s in state])
         # choose a' from a Policy derived from Q
-        if np.random.rand() < epsilon:
-            action = env.action_space.sample()
-        else:
-            action = int(np.argmax(Q[state]))  # greedy
+        action = agent.choose_action(state, epsilon)
+        # if np.random.rand() < epsilon:
+        #     action = env.action_space.sample()
+        # else:
+        #     action = int(np.argmax(Q[state]))  # greedy
 
         while not done:
             next_state, reward, done, info = env.step(action)
@@ -174,27 +182,30 @@ def train():
             total_reward += reward
 
             # choose a' from a Policy derived from Q
-            best_next_action = int(np.argmax(Q[next_state]))  # greedy
-            if np.random.rand() < epsilon:
-                next_action = env.action_space.sample()
-            else:
-                next_action = best_next_action
+            next_action = agent.choose_action(next_state, epsilon)
+            # best_next_action = int(np.argmax(Q[next_state]))  # greedy
+            # if np.random.rand() < epsilon:
+            #     next_action = env.action_space.sample()
+            # else:
+            #     next_action = best_next_action
+
+            agent.learn(state, action, reward, next_state, next_action)
 
             # calculate the TD error
-            td_error = reward + gamma * Q[next_state][best_next_action] - Q[state][action]
+            # td_error = reward + gamma * Q[next_state][best_next_action] - Q[state][action]
 
-            # reset eligibility trace for (s,a) using replacing strategy
-            etrace[(state, action)] = 1
+            # # reset eligibility trace for (s,a) using replacing strategy
+            # etrace[(state, action)] = 1
 
-            # perform Q update
-            if best_next_action == next_action:
-                for (s, a), eligibility in etrace.items():
-                    Q[s][a] += alpha * eligibility * td_error
-                    etrace[(s, a)] *= gamma * lmbda
-            else:
-                for (s, a), eligibility in etrace.items():
-                    Q[s][a] += alpha * eligibility * td_error
-                etrace = {}
+            # # perform Q update
+            # if best_next_action == next_action:
+            #     for (s, a), eligibility in etrace.items():
+            #         Q[s][a] += alpha * eligibility * td_error
+            #         etrace[(s, a)] *= gamma * lmbda
+            # else:
+            #     for (s, a), eligibility in etrace.items():
+            #         Q[s][a] += alpha * eligibility * td_error
+            #     etrace = {}
 
             steps += 1
             action = next_action
@@ -210,11 +221,11 @@ def train():
 
         if e % SAVE_FREQ == 0 and e > 0:
             logger.save()
-            logger.save_model(Q)
+            logger.save_model(agent.Q)
             print(f'finished episode {e}. epsilon: {epsilon:.3f}\t avg reward: {all_rewards.mean():>4.2f}\t'
                   f'avg steps: {all_steps.mean():>4.2f}\t'
                   f'win rate: {all_wins.mean():3.2f}\t cliff jumps: {all_gap_jumps.mean():.1f} \t'
-                  f'states: {Q.num_states}')
+                  f'states: {agent.Q.num_states}')
 
 
 if __name__ == '__main__':

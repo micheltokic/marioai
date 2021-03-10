@@ -14,12 +14,15 @@ def smoothen(arr, w):
     ma_vec = (cumsum_vec[w:] - cumsum_vec[:-w]) / w
     return ma_vec
 
-def plot(trace):
+
+def plot_all_runs(trace, w=100):
+    """
+    plot all runs of a single trace parameter.
+    uses a smoothing for the curves
+    """
     paths = [f'./experiment_results/trace{trace}_run{i}.json' for i in range(n_experiments)] 
     paths = [p for p in paths if os.path.exists(p)]
-    print(paths)
 
-    all_data = []
     all_steps = []
     all_rewards = []
     all_jumps = []
@@ -27,25 +30,63 @@ def plot(trace):
     for path in paths:
         with open(path, 'r') as f:
             data = json.load(f)
-            # all_data.append(data)
             all_steps.append(data['all_steps'])
             all_rewards.append(data['all_rewards'])
             all_jumps.append(data['all_jumps'])
 
-            if 0 in all_steps:
-                print(all_steps.index(0))
+    # all_steps = np.array(all_steps).mean(axis=0)
+    # all_rewards = np.array(all_rewards).mean(axis=0)
+    all_jumps = np.array(all_jumps)
 
-    all_steps = np.array(all_steps).mean(axis=0)
-    all_rewards = np.array(all_rewards).mean(axis=0)
-    all_jumps = np.array(all_jumps).mean(axis=0)
+    for i, jumps in enumerate(all_jumps):
+        plt.plot(smoothen(jumps, w), label=f'run {i}')
+
+    # std = all_jumps.std(0)
+    # mean = all_jumps.mean(0)
+    # plt.fill_between(np.arange(0, n_episodes), mean-std, mean+std)
+
+    plt.legend()
+    plt.xlabel("episode")
+    plt.ylabel("avg cliff jumps per episode")
+    plt.grid()
+    plt.savefig(f'./experiment_results/trace_{trace}_all_runs.png', bbox_inches='tight')
+    plt.show()
 
 
+def plot():
+    for trace in [1,2,3]:
+        paths = [f'./experiment_results/trace{trace}_run{i}.json' for i in range(n_experiments)] 
+        paths = [p for p in paths if os.path.exists(p)]
 
-    # plt.plot(all_rewards.mean(axis=0))
-    plt.plot(smoothen(all_rewards, 10))
-    plt.plot(smoothen(all_rewards, 100))
+        # all_steps = []
+        # all_rewards = []
+        all_jumps = []
+
+        for path in paths:
+            with open(path, 'r') as f:
+                data = json.load(f)
+                # all_steps.append(data['all_steps'])
+                # all_rewards.append(data['all_rewards'])
+                all_jumps.append(data['all_jumps'])
+
+        # all_steps = np.array(all_steps).mean(axis=0)
+        # all_rewards = np.array(all_rewards).mean(axis=0)
+        all_jumps = np.array(all_jumps)
+
+        mean = all_jumps.mean(0)
+        # std = all_jumps.std(0)
+        # plt.fill_between(np.arange(0, n_episodes), mean-std, mean+std)
+
+        plt.plot(smoothen(mean, 50), label=f'trace {trace}')
+
+    plt.legend()
+    plt.xlabel("episode")
+    plt.ylabel("avg cliff jumps per episode")
+    plt.grid()
+    plt.savefig('./experiment_results/traces_1-3.png', bbox_inches='tight')
     plt.show()
 
 
 if __name__ == '__main__':
-    plot(1)
+    plot_all_runs(2)
+    plot()
