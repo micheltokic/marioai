@@ -4,39 +4,6 @@ import gym_marioai
 from logger import Logger
 from qlearner import QLearner
 
-#class QTable:
-#    """
-#    data structure to store the Q function for hashable state representations
-#    """
-#    def __init__(self, n_actions, initial_capacity=100):
-#        self.capacity = initial_capacity
-#        self.num_states = 0
-#        self.state_index_map = {}
-#        self.table = np.zeros([initial_capacity, n_actions])
-
-#    def __contains__(self, state):
-#        """ 'in' operator """
-#        return state in self.state_index_map
-
-#    #def __len__(self):
-#    #    return self.num_states
-
-#    def __getitem__(self, state):
-#        """ access state directly using [] notation """
-#        if state not in self.state_index_map:
-#            self.init_state(state)
-
-#        return self.table[self.state_index_map[state]]
-
-#    def init_state(self, state):
-#        if self.num_states == self.capacity:
-#            # need to increase capacity
-#            self.table = np.concatenate((self.table, np.zeros_like(self.table)))
-#            self.capacity *= 2
-
-#        self.state_index_map[state] = self.num_states
-#        self.num_states += 1
-
 
 #####################################
 #   Training Parameters
@@ -76,7 +43,7 @@ dead = -10
 
 
 training = False
-replay_version = 11 
+replay_version = 12 
 
 
 def replay(version):
@@ -85,7 +52,6 @@ def replay(version):
     """
     log_path = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-{version}'
     logger = Logger(log_path, True)
-    # Q = logger.load_model()
 
     reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep,
                                                  cliff=cliff, win=win, dead=dead)
@@ -108,13 +74,10 @@ def replay(version):
         total_reward = 0
         steps = 0
         state = env.reset()
-        #state = tuple([s.tobytes() for s in state])
 
         while not done:
             action = agent.choose_action(state)
-            # action = int(np.argmax(Q[state]))  # greedy
             state, reward, done, info = env.step(action)
-            #state = tuple([s.tobytes() for s in state])
             total_reward += reward
             steps += 1
 
@@ -148,11 +111,7 @@ def train():
     ####################################
     #       Q-learner setup
     #####################################
-
     agent = QLearner(env, alpha, gamma, lmbda)
-
-    # Q = QTable(env.n_actions, 128)
-    # etrace = {}
 
     ####################################
     #      Training Loop
@@ -163,50 +122,16 @@ def train():
         total_reward = 0
         steps = 0
 
-        # exponential decay
-        # epsilon = (epsilon_end / epsilon_start) ** (e / n_episodes) * epsilon_start
         epsilon = max(epsilon_end, epsilon_start - decay_step * e)
-
         state = env.reset()
-        #state = tuple([s.tobytes() for s in state])
-        # choose a' from a Policy derived from Q
         action = agent.choose_action(state, epsilon)
-        # if np.random.rand() < epsilon:
-        #     action = env.action_space.sample()
-        # else:
-        #     action = int(np.argmax(Q[state]))  # greedy
 
         while not done:
             next_state, reward, done, info = env.step(action)
-            #next_state = tuple([s.tobytes() for s in next_state])
-            total_reward += reward
-
-            # choose a' from a Policy derived from Q
             next_action = agent.choose_action(next_state, epsilon)
-            # best_next_action = int(np.argmax(Q[next_state]))  # greedy
-            # if np.random.rand() < epsilon:
-            #     next_action = env.action_space.sample()
-            # else:
-            #     next_action = best_next_action
-
             agent.learn(state, action, reward, next_state, next_action)
 
-            # calculate the TD error
-            # td_error = reward + gamma * Q[next_state][best_next_action] - Q[state][action]
-
-            # # reset eligibility trace for (s,a) using replacing strategy
-            # etrace[(state, action)] = 1
-
-            # # perform Q update
-            # if best_next_action == next_action:
-            #     for (s, a), eligibility in etrace.items():
-            #         Q[s][a] += alpha * eligibility * td_error
-            #         etrace[(s, a)] *= gamma * lmbda
-            # else:
-            #     for (s, a), eligibility in etrace.items():
-            #         Q[s][a] += alpha * eligibility * td_error
-            #     etrace = {}
-
+            total_reward += reward
             steps += 1
             action = next_action
             state = next_state

@@ -79,13 +79,16 @@ class MarioEnv(gym.Env):
         self.action_space = spaces.Discrete(self.n_actions)
 
         if self.compact_observation:
+            low = np.iinfo(np.int32).min
+            high = np.iinfo(np.int32).max
+
             # hash values as observation
             if self.trace_length == 1:
-                self.observation_space = spaces.Box(low=-np.inf, high=np.inf) 
+                self.observation_space = spaces.Box(low, high, shape=(1,), dtype=np.int32) 
             else:
                 # typle of hash values
                 self.observation_space = spaces.Tuple(spaces=[
-                    spaces.Box(low=-np.inf, high=np.inf) for _ in range(self.trace_length)])
+                    spaces.Box(low, high, shape=(1,), dtype=np.int32) for _ in range(self.trace_length)])
         else: 
             # observation space is a binary feature vector
             self.observation_space = spaces.MultiBinary(self.trace_length * [self.rf_width * self.rf_height,
