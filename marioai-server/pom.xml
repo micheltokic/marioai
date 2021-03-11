@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.lmu.parl</groupId>
-    <artifactId>marioai-proto-interface</artifactId>
+    <artifactId>marioai-server</artifactId>
     <version>0.1-SNAPSHOT</version>
 
     <properties>
@@ -32,11 +32,11 @@
             <artifactId>marioai</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <artifactId>teachingbox-core</artifactId>
-            <groupId>org.sf.teachingbox</groupId>
-            <version>1.2.3</version>
-        </dependency>
+        <!-- <dependency> -->
+        <!--     <artifactId>teachingbox-core</artifactId> -->
+        <!--     <groupId>org.sf.teachingbox</groupId> -->
+        <!--     <version>1.2.3</version> -->
+        <!-- </dependency> -->
         <dependency>
             <groupId>org.jline</groupId>
             <artifactId>jline</artifactId>

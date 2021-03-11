@@ -42,7 +42,7 @@ class MarioEnv(gym.Env):
                  level_length=80,
                  max_steps=0,
                  reward_settings=RewardSettings(),
-                 compact_observation=True,
+                 compact_observation=False,
                  trace_length=1,
                  repeat_action_until_new_observation=2,
                  enabled_actions=default_actions,
@@ -61,7 +61,7 @@ class MarioEnv(gym.Env):
         self.reward_settings:RewardSettings = reward_settings
         self.level_path:str = level_path
         self.trace_length: int = trace_length
-        self.compact_observation:bool = compact_observation# or self.trace_length > 1 # always use compact when traces > 1
+        self.compact_observation:bool = compact_observation
         self.repeat_action_until_new_observation: int = repeat_action_until_new_observation
         self.enabled_actions = enabled_actions
 
@@ -78,9 +78,18 @@ class MarioEnv(gym.Env):
         # define action space
         self.action_space = spaces.Discrete(self.n_actions)
 
-        # observation space is a binary feature vector
-        self.observation_space = spaces.MultiBinary(self.trace_length * [self.rf_width * self.rf_height,
-                                                     self.n_features])
+        if self.compact_observation:
+            # hash values as observation
+            if self.trace_length == 1:
+                self.observation_space = spaces.Box(low=-np.inf, high=np.inf) 
+            else:
+                # typle of hash values
+                self.observation_space = spaces.Tuple(spaces=[
+                    spaces.Box(low=-np.inf, high=np.inf) for _ in range(self.trace_length)])
+        else: 
+            # observation space is a binary feature vector
+            self.observation_space = spaces.MultiBinary(self.trace_length * [self.rf_width * self.rf_height,
+                                                         self.n_features])
         self.observation_trace = deque()
 
         # use different observation feature extractor 
@@ -110,7 +119,6 @@ class MarioEnv(gym.Env):
             raise e
 
     def teardown(self):
-        print('closing socket connection...')
         self.socket.disconnect()
         print('socket disconnected.')
 
@@ -122,14 +130,15 @@ class MarioEnv(gym.Env):
         reset the environment, return new initial state
         """
         re_init = False
-        if seed is not None:
-            self.seed = seed
-            re_init = True
         if difficulty is not None:
             self.difficulty = difficulty
             re_init = True
         if level_path != "None":
             self.level_path = level_path
+            re_init = True
+        if seed is not None:
+            self.seed = seed
+            self.level_path = "None"    # needs to be unset for seed to work
             re_init = True
         if render is not None:
             self._render = render
@@ -150,26 +159,6 @@ class MarioEnv(gym.Env):
         perform action in the environment and return new state, reward,
         done and info
         """
-        # self.socket.send_action(action)
-        # state_msg = self.socket.receive()
-        # if state_msg.state.hash_code == self.last_hash:
-        #     self.socket.send_action(action)
-        #     state_msg = self.socket.receive()
-        # if state_msg.state.hash_code == self.last_hash:
-        #     self.socket.send_action(action)
-        #     state_msg = self.socket.receive()
-        # self.last_hash = state_msg.state.hash_code
-
-        # observation = self.__extract_observation(state_msg)
-        # reward = self.__extract_reward(state_msg)
-        # done = self.__extract_done(state_msg)
-        # info = self.__extract_info(state_msg)
-
-        # self.__update_cached_data(state_msg)
-
-        # return observation, reward, done, info
-
-        # the current code:
         self.socket.send_action(action)
         state_msg = self.socket.receive()
         for _ in range(self.repeat_action_until_new_observation):

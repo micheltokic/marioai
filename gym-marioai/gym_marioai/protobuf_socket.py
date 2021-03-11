@@ -104,37 +104,3 @@ class ProtobufSocket:
             print('error')
             print(e)
 
-            pass
-
-    # def receive_daniel(self):
-    #     """ daniels version """
-    #     chunks = []
-    #     bytes_recd = 0
-    #     msg_len = 0
-    #     length = []
-    #     length_read = False
-
-    #     while not length_read:
-    #         chunk = self.sock.recv(1)
-    #         if chunk == b'':
-    #             raise RuntimeError("socket connection broken")
-    #         length.append(chunk)
-    #         try:
-    #             ln = b''.join(length)
-    #             msg_len, _ = _DecodeVarint32(ln, 0)
-    #             length_read = True
-    #         except:
-    #             pass
-
-    #     while bytes_recd < msg_len:
-    #         chunk = self.sock.recv(msg_len)
-    #         if chunk == b'':
-    #             raise RuntimeError("socket connection broken")
-    #         chunks.append(chunk)
-    #         bytes_recd = bytes_recd + len(chunk)
-
-    #     proto_msg = MarioMessage()
-    #     proto_msg.ParseFromString(b''.join(chunks))
-    #     return proto_msg
-
-
