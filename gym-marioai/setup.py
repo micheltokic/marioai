@@ -18,7 +18,14 @@ setup(
         'protobuf==3.14.0',
         'keyboard'],
 
-    include_package_data=True
+    include_package_data=True,
+
+    entry_points={
+        'console_scripts': [
+            'marioai-server-cli=gym_marioai.server.cli:main',
+            ]
+        }
+
     # package_dir={
     #     'gym_marioai': 'src/gym_marioai'},
     # packages=['gym_marioai', 'gym_marioai.envs'],
