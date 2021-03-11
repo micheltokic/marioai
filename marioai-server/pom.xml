@@ -4,7 +4,7 @@
 
     <groupId>de.lmu.parl</groupId>
     <artifactId>marioai-server</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,6 +81,7 @@
             <!-- </plugin> -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <configuration>
                     <archive>
                         <manifest>

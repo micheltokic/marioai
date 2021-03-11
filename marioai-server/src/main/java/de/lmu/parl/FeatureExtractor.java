@@ -227,8 +227,12 @@ public class FeatureExtractor {
 
         int marioY = floatToIndex(mario.y);
         for(int i=marioY; i<level[marioX].length; i++) {
-            byte tile = GeneralizerLevelScene.ZLevelGeneralization(level[marioX][i], 1);
-            if(isGround(tile)) {
+            try {
+                byte tile = GeneralizerLevelScene.ZLevelGeneralization(level[marioX][i], 1);
+                if(isGround(tile)) {
+                    return false;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
                 return false;
             }
         }
