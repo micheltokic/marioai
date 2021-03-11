@@ -16,7 +16,7 @@ public class ActionMap {
         //        KEY_UP = 5;
                                                           // left, right, down, jump, speed, up
         actionMap.put(MarioProtos.Action.LEFT, new boolean[]{true, false, false, false, false, false});
-        actionMap.put(MarioProtos.Action.RIGHT, new boolean[]{false, true, false, true, false, false});
+        actionMap.put(MarioProtos.Action.RIGHT, new boolean[]{false, true, false, false, false, false});
         actionMap.put(MarioProtos.Action.UP, new boolean[]{false, false, false, false, false, true});
         actionMap.put(MarioProtos.Action.DOWN, new boolean[]{false, false, true, false, false, false});
         actionMap.put(MarioProtos.Action.JUMP, new boolean[]{false, false, false, true, false, false});
