@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.lmu.parl</groupId>
+    <artifactId>marioai-server</artifactId>
+    <version>0.1</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+        <!--
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.56.Final</version>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>marioai</groupId>
+            <artifactId>marioai</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
+        <!-- <dependency> -->
+        <!--     <artifactId>teachingbox-core</artifactId> -->
+        <!--     <groupId>org.sf.teachingbox</groupId> -->
+        <!--     <version>1.2.3</version> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!--     <groupId>org.jline</groupId> -->
+        <!--     <artifactId>jline</artifactId> -->
+        <!--     <version>3.13.0</version> -->
+        <!-- </dependency> -->
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.os72</groupId>
+                <artifactId>protoc-jar-maven-plugin</artifactId>
+                <version>3.1.0.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <protocVersion>3.1.0</protocVersion>
+                            <inputDirectories>
+                                <include>src/main/resources</include>
+                            </inputDirectories>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- <plugin> -->
+            <!--     <!-1- Build an executable JAR -1-> -->
+            <!--     <groupId>org.apache.maven.plugins</groupId> -->
+            <!--     <artifactId>maven-jar-plugin</artifactId> -->
+            <!--     <version>3.2.0</version> -->
+            <!--     <configuration> -->
+            <!--         <archive> -->
+            <!--             <manifest> -->
+            <!--                 <!-1- <addClasspath>true</addClasspath> -1-> -->
+            <!--                 <mainClass>de.lmu.parl.MarioServer</mainClass> -->
+            <!--                 <addClasspath>true</addClasspath> -->
+            <!--             </manifest> -->
+            <!--         </archive> -->
+            <!--     </configuration> -->
+            <!-- </plugin> -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>de.lmu.parl.MarioServer</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <!--
+                according to
+                https://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
+                we need to add <execution> below to compile the jar with dependencies
+                -->
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

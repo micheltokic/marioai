@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package marioai;
+
+option java_package = "de.lmu.parl.proto";
+option java_outer_classname = "MarioProtos";
+
+message MarioMessage {
+  enum Type { 
+    INIT = 0;
+    ACTION = 1;
+    STATE = 2;
+    RESET = 3;
+    //RENDER = 4;
+  }
+  Type type = 1;
+  Init init = 2;
+  Action action = 3;
+  State state = 4;
+}
+
+message Init {
+  int32 difficulty = 1;
+  int32 seed = 2;
+  int32 r_field_w = 3;
+  int32 r_field_h = 4;
+  int32 level_length = 5;
+  bool render = 6;
+  string file_name = 7;
+}
+
+// message Action {
+//   bool up = 1;
+//   bool right = 2;
+//   bool down = 3;
+//   bool left = 4;
+//   bool speed = 5;
+//   bool jump = 6;
+// }
+
+enum Action {
+  LEFT = 0;
+  RIGHT = 1;
+  UP = 2;
+  DOWN = 3;
+  JUMP = 4;
+  //
+  SPEED_JUMP = 5;
+  SPEED_RIGHT = 6;
+  SPEED_LEFT = 7;
+  //
+  JUMP_RIGHT = 8;
+  JUMP_LEFT = 9;
+  SPEED_JUMP_RIGHT = 10;
+  SPEED_JUMP_LEFT = 11;
+  NOTHING = 12;
+}
+
+message State {
+  enum GameStatus {
+    DEAD = 0;
+    WIN = 1;
+    RUNNING = 2;
+  }
+  enum MarioPosition {
+    FLOOR = 0;
+    AIR = 1;
+    CLIFF = 2;
+    // ...
+  }
+
+  enum MarioMode {
+    // keep order!
+    SMALL = 0;
+    BIG = 1;
+    FIRE = 2;
+  }
+
+  GameStatus game_status = 1;
+  MarioPosition position = 2;
+  MarioMode mode = 3;
+  int32 kills_by_stomp = 4;     // required for the reward function and general stats
+  int32 kills_by_fire = 5;
+  int32 kills_by_shell = 6;
+  int32 coins = 7;
+  int32 mario_x = 8;            // mario position to determine the progress
+  int32 mario_y = 9;
+
+  int32 hash_code = 10;
+  bytes rf_bytes = 11;
+  //repeated ReceptiveFieldCell receptive_fields = 10;
+}
+
+message ReceptiveFieldCell {
+  bool enemy = 1;
+  bool obstacle = 2;
+  bool coin = 3;
+  bool itembox = 4;
+  // ...
+}
