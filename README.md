@@ -7,6 +7,10 @@ This instruction will help you to get the environment up and running.
 It is necessary to start the java server first, and then initiate the connection on the python side.  
 A precompiled version of the server .jar is included in the gym_marioai package. You will require Java 1.8 to execute it.
 
+# Youtube video:
+Watch a video of how Mario learns behavior using this library: https://www.youtube.com/watch?v=oVZokBoSE-I
+
+
 ### 1) Requirements
  * Java runtime 1.8 (```java -version``` should output something like ```... version "1.8.*"```).  
  * python 3.7, pip
@@ -99,3 +103,4 @@ Provides the possibility to change the level parameters on a reset. This is usef
  * the python proto needs to be recompiled manually, e.g. using the ```makepythonproto``` bash script
 
 (to publish modifications on marioai-server, you will probably want to update the precompiled .jar in the python package as well.) 
+
