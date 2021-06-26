@@ -10,16 +10,16 @@ class Logger:
 
     def __init__(self, filename:str, load_existing=False):
         self.parent_dir = os.path.dirname(os.path.realpath(__file__))
-        self.result_dir = self.parent_dir + '/results/'
-        self.model_dir = self.parent_dir + '/models/'
+        self.result_dir = os.path.join(self.parent_dir, 'results')
+        self.model_dir = os.path.join(self.parent_dir, 'models')
 
         if load_existing:
             self.filename = filename
         else:
             self.filename = self.find_unused_filename(filename)
 
-        self.log_path = self.result_dir + self.filename + '.json'
-        self.model_path = self.model_dir + self.filename + '.p'
+        self.log_path = os.path.join(self.result_dir, self.filename + '.json')
+        self.model_path = os.path.join(self.model_dir, self.filename + '.p')
 
         self.data = { 
                 'episodes':0,
@@ -38,7 +38,7 @@ class Logger:
             self.save()
 
     def find_unused_filename(self, filename):
-        while os.path.isfile(self.result_dir + filename + '.json'):
+        while os.path.isfile(os.path.join(self.result_dir, filename + '.json')):
             parts = filename.split('-')
 
             if len(parts) == 1:
@@ -60,6 +60,7 @@ class Logger:
         self.data['episodes'] += 1
 
     def save(self):
+        os.makedirs(os.path.dirname(self.log_path), exist_ok=True)
         with open(self.log_path, 'w') as f:
             json.dump(self.data, f)
 
@@ -68,6 +69,7 @@ class Logger:
             self.data = json.load(f) 
 
     def save_model(self, model):
+        os.makedirs(os.path.dirname(self.model_path), exist_ok=True)
         pickle.dump(model, open(self.model_path, 'wb'))
 
     def load_model(self):
