@@ -1,13 +1,22 @@
 import os
 
-__path = os.path.dirname(os.path.realpath(__file__)) + '/'
+__path = os.path.dirname(os.path.abspath(__file__))
 
-easy_level = __path + 'easyLevel.lvl'
-flat_level = __path + 'flatLevel.lvl'
-hard_level = __path + 'hardLevel.lvl'
-cliff_level = __path + 'cliffLevel.lvl'
-one_cliff_level = __path + 'oneCliffLevel.lvl'
-coin_level = __path + "coinLevel.lvl"
-enemy_level = __path + "enemyLevel.lvl"
-early_cliff_level = __path + "earlyCliffLevel.lvl"
-none = "None"
+
+def level(name):
+    return os.path.join(__path, name)
+
+
+block_level = level('blockLevel.lvl')
+block_and_coin_level = level('blockAndCoinLevel.lvl')
+cannon_level = level('cannonLevel.lvl')
+test_level = level('testLevel.lvl')
+easy_level = level('easyLevel.lvl')
+flat_level = level('flatLevel.lvl')
+hard_level = level('hardLevel.lvl')
+cliff_level = level('cliffLevel.lvl')
+one_cliff_level = level('oneCliffLevel.lvl')
+coin_level = level('coinLevel.lvl')
+enemy_level = level('enemyLevel.lvl')
+early_cliff_level = level('earlyCliffLevel.lvl')
+none = 'None'
