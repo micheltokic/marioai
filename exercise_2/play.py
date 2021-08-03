@@ -1,3 +1,6 @@
+
+# here the player can play to generate data
+
 from os import system, times
 import os
 from gym_setup import Env

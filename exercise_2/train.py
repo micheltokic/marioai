@@ -1,3 +1,5 @@
+# use qlearning with the already generated data
+
 from os import error
 from qlearner import QLearner
 import numpy as np
