@@ -68,8 +68,8 @@ class QLearner:
             self.etrace = {}
 
     def train(self, state, action, reward, next_state, next_action):
-        # TODO: Implement user input training
-        pass
+        # TODO: Implement user input training, this is WIP
+        self.Q[next_state][next_action] = self.Q[next_state][next_action] + 1
 
     def save(self, path):
         pickle.dump(self.Q, open(path, 'wb'))
