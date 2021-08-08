@@ -23,7 +23,7 @@ class Env:
         self.open()
         self.all_actions = (0,1,2,3,4,5,6,7,8,9,10,11,12)
         self.env = gym.make('Marioai-v0', render=visible,
-                    level_path=levels.easy_level,
+                    level_path=levels.hard_level,
                     compact_observation=True,
                     reward_settings=reward_settings,
                     enabled_actions=self.all_actions,
