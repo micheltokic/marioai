@@ -96,28 +96,28 @@ class GamepadController:
                         self.UpDPad = event.state
 
     def read(self):
-        if (keyboard.is_pressed('shift+space+right')) or (self.RightDPad == 1 and self.B == 1 and self.A ==1):
+        if (self.RightDPad == 1 and self.B == 1 and self.A == 1):
             return self.env.SPEED_JUMP_RIGHT
-        if keyboard.is_pressed('shift+space+left') or (self.LeftDPad == -11 and self.B == 1 and self.A ==1):
+        if (self.LeftDPad == -1 and self.B == 1 and self.A == 1):
             return self.env.SPEED_JUMP_LEFT
 
-        elif keyboard.is_pressed('space+right') or (self.RightDPad == 1 and self.A ==1):
+        elif (self.RightDPad == 1 and self.B == 1):
             return self.env.JUMP_RIGHT
-        elif keyboard.is_pressed('space+left') or (self.LeftDPad == -1 and self.A ==1):
+        elif (self.LeftDPad == -1 and self.B == 1):
             return self.env.JUMP_LEFT
 
-        if keyboard.is_pressed('shift+right') or (self.RightDPad == 1 and self.B ==1):
+        if (self.RightDPad == 1 and self.A == 1):
             return self.env.SPEED_RIGHT
-        if keyboard.is_pressed('shift+left') or (self.LeftDPad == -1 and self.B ==1):
+        if (self.LeftDPad == -1 and self.A == 1):
             return self.env.SPEED_LEFT
 
-        elif keyboard.is_pressed('right') or (self.RightDPad == 1):
+        elif (self.RightDPad == 1):
             return self.env.RIGHT
-        elif keyboard.is_pressed('left') or (self.LeftDPad == -1):
+        elif (self.LeftDPad == -1):
             return self.env.LEFT
-        elif keyboard.is_pressed('down') or (self.DownDPad == 1):
+        elif (self.DownDPad == 1):
             return self.env.DOWN
-        elif keyboard.is_pressed('space') or (self.A == 1):
+        elif (self.B == 1):
             return self.env.JUMP
         else:
             return self.env.NOTHING
