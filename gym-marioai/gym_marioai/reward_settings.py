@@ -6,13 +6,13 @@ class RewardSettings:
 
     def __init__(self, 
                 progress=1,
-                timestep=-.1,
+                timestep=-.05,
                 mario_mode=10,
-                kill=1,
-                coin=1,
-                win=100,
+                kill=25,
+                coin=25,
+                win=250,
                 dead=-100,
-                cliff=25):
+                cliff=10):
 
         self.progress = progress
         self.timestep = timestep
