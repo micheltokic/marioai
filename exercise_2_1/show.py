@@ -4,7 +4,7 @@ from d3rlpy.algos.dqn import DQN
 from gym_setup import Env
 from gym_marioai import levels
 
-env = Env(visible=False)
+env = Env(visible=True)
 env = env.get_env()
 
 dqn = DQN()

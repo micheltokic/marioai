@@ -16,16 +16,16 @@ actions = np.array([])
 rewards = np.array([])
 terminals = np.array([])
 
+if USE_GAMEPAD:
+    controller = GamepadController(env)
+else:
+    controller = KeyboardController(env)
 
 while True:
     state = env.reset()
     done = False
     total_reward = 0
     action = env.NOTHING
-    if USE_GAMEPAD:
-        controller = GamepadController(env)
-    else:
-        controller = KeyboardController(env)
 
     while not done:
         next_state, reward, done, info = env.step(action)

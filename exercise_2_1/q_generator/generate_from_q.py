@@ -1,6 +1,6 @@
+from d3rlpy.dataset import MDPDataset
 import numpy as np
-import gym
-import gym_marioai
+from gym_setup import Env
 from logger import Logger
 from qlearner import QLearner
 
@@ -17,53 +17,32 @@ epsilon_end = 0.01
 epsilon_decay_length = n_episodes / 2
 decay_step = (epsilon_start - epsilon_end) / epsilon_decay_length
 
-SAVE_FREQ = 100
-
-#####################################
-#   Environment/Reward Settings
-#####################################
-level = 'oneCliffLevel'
-path = None
-
-if level == 'cliffLevel':
-    path = gym_marioai.levels.cliff_level
-if level == 'oneCliffLevel':
-    path = gym_marioai.levels.one_cliff_level
-if level == 'earlyCliffLevel':
-    path = gym_marioai.levels.early_cliff_level
-
-trace = 2
-rf_width = 20
-rf_height = 10
-prog = 2
-timestep = -0.5
-cliff = 1
-win = 250
-dead = -10
-
+SAVE_FREQ = 50
 
 training = True
-replay_version = 12 
+
+log_path = f'model'
 
 
-def replay(version):
+def replay():
     """
     replay. loads model, does not store model or logs
     """
-    log_path = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-{version}'
     logger = Logger(log_path, True)
 
-    reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep,
-                                                 cliff=cliff, win=win, dead=dead)
-    env = gym.make('Marioai-v0', render=True,
-                   level_path=path,
-                   reward_settings=reward_settings,
-                   compact_observation=True,
-                   trace_length=trace,
-                   rf_width=rf_width, rf_height=rf_height)
+
+    env = Env(visible=False)
+    env = env.get_env()
 
     agent = QLearner(env, alpha, gamma, lmbda)
     agent.Q = logger.load_model()
+
+
+    observations = np.array([])
+    actions = np.array([])
+    rewards = np.array([])
+    terminals = np.array([])
+
 
     ####################################
     #      Main Loop
@@ -81,15 +60,21 @@ def replay(version):
             total_reward += reward
             steps += 1
 
-        print(f'finished episode. reward: {total_reward:4.2f}\t steps: {steps:4.2f}\t'
-              f'win: {info["win"]}\t gap jumps: {info["cliff_jumps"]}')
+            observations = np.append(observations, state)
+            actions = np.append(actions, action)
+            rewards = np.append(rewards, reward)
+            terminals = np.append(terminals, done)
+
+            if steps % 50 == 0 and steps != 0:
+                dataset = MDPDataset(np.reshape(observations, (-1, 1)), np.reshape(actions, (-1, 1)), np.reshape(
+                rewards, (-1, 1)), np.reshape(terminals, (-1, 1)), discrete_action=True, episode_terminals=None)
+                dataset.dump('exercise_2_1/data/q_data.h5')
 
 
 def train():
     """
     training
     """
-    log_path = f'{level}_{rf_width}x{rf_height}_trace{trace}_prog{prog}_cliff{cliff}_win{win}_dead{dead}-0'
     logger = Logger(log_path)
     # collect some training statistics
     all_rewards = np.zeros([SAVE_FREQ])
@@ -100,13 +85,8 @@ def train():
     ###################################
     #       environment setup
     ###################################
-    reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep, cliff=cliff, win=win, dead=dead)
-    env = gym.make('Marioai-v0', render=False,
-                   level_path=path,
-                   reward_settings=reward_settings,
-                   compact_observation=True,
-                   trace_length=trace,
-                   rf_width=rf_width, rf_height=rf_height)
+    env = Env(visible=False)
+    env = env.get_env()
 
     ####################################
     #       Q-learner setup
@@ -142,14 +122,13 @@ def train():
         all_rewards[e % SAVE_FREQ] = total_reward
         all_wins[e % SAVE_FREQ] = 1 if info['win'] else 0
         all_steps[e % SAVE_FREQ] = info['steps']
-        all_gap_jumps[e % SAVE_FREQ] = info['cliff_jumps']
 
         if e % SAVE_FREQ == 0 and e > 0:
             logger.save()
             logger.save_model(agent.Q)
             print(f'finished episode {e}. epsilon: {epsilon:.3f}\t avg reward: {all_rewards.mean():>4.2f}\t'
                   f'avg steps: {all_steps.mean():>4.2f}\t'
-                  f'win rate: {all_wins.mean():3.2f}\t cliff jumps: {all_gap_jumps.mean():.1f} \t'
+                  f'win rate: {all_wins.mean():3.2f}\t  \t'
                   f'states: {agent.Q.num_states}')
 
 
@@ -157,4 +136,4 @@ if __name__ == '__main__':
     if training:
         train()
     else:
-        replay(replay_version)
+        replay()
