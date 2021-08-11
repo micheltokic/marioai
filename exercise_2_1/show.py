@@ -2,12 +2,14 @@
 # here the player can play to generate data
 from d3rlpy.algos.dqn import DQN
 from gym_setup import Env
+import d3rlpy
 from gym_marioai import levels
 
 env = Env(visible=True)
 env = env.get_env()
 
 dqn = DQN()
+#dqn = d3rlpy.algos.DoubleDQN()
 dqn.build_with_env(env)
 dqn.load_model('exercise_2_1/data/model.pt')
 
