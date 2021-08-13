@@ -1,6 +1,6 @@
 from d3rlpy.dataset import MDPDataset
 import numpy as np
-from gym_setup import Env
+from exercise_2_1.gym_setup import Env
 from logger import Logger
 from qlearner import QLearner
 
