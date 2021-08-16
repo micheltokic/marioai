@@ -24,53 +24,6 @@ training = True
 log_path = f'model'
 
 
-def replay():
-    """
-    replay. loads model, does not store model or logs
-    """
-    logger = Logger(log_path, True)
-
-
-    env = Env(visible=False)
-    env = env.get_env()
-
-    agent = QLearner(env, alpha, gamma, lmbda)
-    agent.Q = logger.load_model()
-
-
-    observations = np.array([])
-    actions = np.array([])
-    rewards = np.array([])
-    terminals = np.array([])
-
-
-    ####################################
-    #      Main Loop
-    ####################################
-    while True:
-        done = False
-        info = {}
-        total_reward = 0
-        steps = 0
-        state = env.reset()
-
-        while not done:
-            action = agent.choose_action(state)
-            state, reward, done, info = env.step(action)
-            total_reward += reward
-            steps += 1
-
-            observations = np.append(observations, state)
-            actions = np.append(actions, action)
-            rewards = np.append(rewards, reward)
-            terminals = np.append(terminals, done)
-
-            if steps % 50 == 0 and steps != 0:
-                dataset = MDPDataset(np.reshape(observations, (-1, 1)), np.reshape(actions, (-1, 1)), np.reshape(
-                rewards, (-1, 1)), np.reshape(terminals, (-1, 1)), discrete_action=True, episode_terminals=None)
-                dataset.dump('exercise_2_1/data/q_data.h5')
-
-
 def train():
     """
     training
@@ -81,6 +34,13 @@ def train():
     all_wins = np.zeros([SAVE_FREQ])
     all_steps = np.zeros([SAVE_FREQ])
     all_gap_jumps = np.zeros([SAVE_FREQ])
+
+    
+    observations = np.array([])
+    actions = np.array([])
+    rewards = np.array([])
+    terminals = np.array([])
+
 
     ###################################
     #       environment setup
@@ -116,6 +76,11 @@ def train():
             action = next_action
             state = next_state
 
+            observations = np.append(observations, state)
+            actions = np.append(actions, action)
+            rewards = np.append(rewards, reward)
+            terminals = np.append(terminals, done)
+
         # episode finished
         logger.append(total_reward, info['steps'], info['win'])
 
@@ -131,9 +96,11 @@ def train():
                   f'win rate: {all_wins.mean():3.2f}\t  \t'
                   f'states: {agent.Q.num_states}')
 
+            dataset = MDPDataset(np.reshape(observations, (-1, 1)), np.reshape(actions, (-1, 1)), np.reshape(
+            rewards, (-1, 1)), np.reshape(terminals, (-1, 1)), discrete_action=True, episode_terminals=None)
+            dataset.dump('exercise_2_1/data/q_data.h5')
+
 
 if __name__ == '__main__':
-    if training:
         train()
-    else:
-        replay()
+
