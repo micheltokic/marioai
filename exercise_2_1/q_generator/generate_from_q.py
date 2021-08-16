@@ -10,9 +10,9 @@ from qlearner import QLearner
 #####################################
 n_episodes = 15000
 alpha = 0.1
-gamma = 0.99
-lmbda = 0.75
-epsilon_start = 0.5
+gamma = 0.9
+lmbda = 0.758
+epsilon_start = 0.33
 epsilon_end = 0.01
 epsilon_decay_length = n_episodes / 2
 decay_step = (epsilon_start - epsilon_end) / epsilon_decay_length

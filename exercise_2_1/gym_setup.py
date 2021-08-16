@@ -4,12 +4,12 @@ import gym_marioai
 
 # reward function params
 prog = 2
-timestep = -0.2
-cliff = 10
-kill = 50
-coin = 50
+timestep = -1
+cliff = 5
+kill = 1
+coin = 1
 win = 500
-dead = -100
+dead = -10
 
 reward_settings = gym_marioai.RewardSettings(
     progress=prog, timestep=timestep, cliff=cliff, win=win, dead=dead, kill = kill, coin = coin)

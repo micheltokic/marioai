@@ -6,11 +6,11 @@ from d3rlpy.dataset import MDPDataset
 env = Env(visible=False, port='8082')
 env = env.get_env()
 
-random_dataset = MDPDataset.load('exercise_2_1/data/q_data.h5')
+random_dataset = MDPDataset.load('exercise_2_1/data/player_data.h5')
 
 # prepare algorithm
-opt = d3rlpy.models.optimizers.AdamFactory(optim_cls = 'Adam', betas = (0.9, 0.999), eps = 0.1, weight_decay = 0, asmgrad = False)
-dqn = d3rlpy.algos.DQN(learning_rate=3e-4, gamma=0.89, optim_factory= opt)
+opt = d3rlpy.models.optimizers.AdamFactory(optim_cls = 'Adam', betas = (0.9, 0.999), eps = 0.33, weight_decay = 0, asmgrad = False)
+dqn = d3rlpy.algos.DQN(learning_rate=0.5, gamma=0.89)
 #dqn = d3rlpy.algos.DoubleDQN(learning_rate=0.1, gamma=0.89, eps = 0.33)
 # train offline
 dqn.build_with_env(env)
