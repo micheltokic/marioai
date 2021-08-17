@@ -14,3 +14,7 @@ keyboard = "*"
 
 [requires]
 python_version = "3.8"
+
+[scripts]
+train = "python exercise_2_1/train_offline.py"
+play = "python exercise_2_1/play.py"
