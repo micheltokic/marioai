@@ -15,7 +15,7 @@ training/plots/*
 
 marioai/exercise_2_1/data
 d3rlpy_logs/*
-
+runs/*
 
 
 ################
@@ -161,3 +161,4 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+exercise_2_1/data/*
