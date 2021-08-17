@@ -1,25 +1,18 @@
 
+from data.datasets.getDatasets import getDataset
 from gym_setup import Env
 import d3rlpy
 from d3rlpy.dataset import MDPDataset
 from d3rlpy.metrics.scorer import evaluate_on_environment
 from sklearn.model_selection import train_test_split
-env = Env(visible=False, port='8082')
+from gym_marioai import levels
+
+env = Env(visible=False, port='8082', level=levels.cliff_level)
 env = env.get_env()
 import numpy as np
 import os
 
-dataset = None
-
-directory = r'exercise_2_1\data\datasets'
-for entry in os.scandir(directory):
-    if (entry.path.endswith(".h5")
-            or entry.path.endswith(".h5")) and entry.is_file():
-        print(entry.path)
-        if dataset is not None:
-            dataset.extend(MDPDataset.load(entry.path))
-        else:
-            dataset = MDPDataset.load(entry.path)
+dataset = getDataset()
 
 train_episodes, test_episodes = train_test_split(dataset, test_size=0.2)
 
@@ -34,7 +27,7 @@ evaluate_scorer = evaluate_on_environment(env)
 # evaluate algorithm on the environment
 rewards = evaluate_scorer(dqn)
 
-dqn.fit(train_episodes, eval_episodes=test_episodes, n_epochs=10, scorers={
+dqn.fit(train_episodes, eval_episodes=test_episodes, n_epochs=20, scorers={
         'environment': evaluate_scorer
 })
 

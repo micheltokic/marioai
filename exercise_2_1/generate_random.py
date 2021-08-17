@@ -9,7 +9,7 @@ import numpy as np
 
 EPISODES = 10000
 
-env = Env(visible=False)
+env = Env(visible=False, level=levels.cliff_level)
 env = env.get_env()
 
 observations = []
