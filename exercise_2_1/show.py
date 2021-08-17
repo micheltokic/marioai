@@ -6,7 +6,7 @@ from gym_setup import Env
 import d3rlpy
 from gym_marioai import levels
 
-env = Env(visible=True, level=levels.cliff_level)
+env = Env(visible=True)
 env = env.get_env()
 
 dqn = DQN()

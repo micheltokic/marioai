@@ -2,15 +2,13 @@
 from data.datasets.getDatasets import getDataset
 from gym_setup import Env
 import d3rlpy
-from d3rlpy.dataset import MDPDataset
 from d3rlpy.metrics.scorer import evaluate_on_environment
 from sklearn.model_selection import train_test_split
 from gym_marioai import levels
 
-env = Env(visible=False, port='8082', level=levels.cliff_level)
+env = Env(visible=False, port='8083', level=levels.cliff_level)
 env = env.get_env()
-import numpy as np
-import os
+
 
 dataset = getDataset()
 
@@ -31,5 +29,5 @@ dqn.fit(train_episodes, eval_episodes=test_episodes, n_epochs=20, scorers={
         'environment': evaluate_scorer
 })
 
-dqn.save_model('exercise_2_1/data/model.pt')
+dqn.save_model('exercise_2_1/data/models/model.pt')
 
