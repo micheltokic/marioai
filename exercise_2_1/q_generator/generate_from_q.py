@@ -36,10 +36,10 @@ def train():
     all_gap_jumps = np.zeros([SAVE_FREQ])
 
     
-    observations = np.array([])
-    actions = np.array([])
-    rewards = np.array([])
-    terminals = np.array([])
+    observations = []
+    actions = []
+    rewards = []
+    terminals = []
 
 
     ###################################
@@ -68,18 +68,18 @@ def train():
 
         while not done:
             next_state, reward, done, info = env.step(action)
+            observations.append(next_state)
+            actions.append(action)
+            rewards.append(reward)
+            terminals.append(done)
             next_action = agent.choose_action(next_state, epsilon)
             agent.learn(state, action, reward, next_state, next_action)
-
             total_reward += reward
             steps += 1
             action = next_action
             state = next_state
 
-            observations = np.append(observations, state)
-            actions = np.append(actions, action)
-            rewards = np.append(rewards, reward)
-            terminals = np.append(terminals, done)
+
 
         # episode finished
         logger.append(total_reward, info['steps'], info['win'])
@@ -96,8 +96,7 @@ def train():
                   f'win rate: {all_wins.mean():3.2f}\t  \t'
                   f'states: {agent.Q.num_states}')
 
-            dataset = MDPDataset(np.reshape(observations, (-1, 1)), np.reshape(actions, (-1, 1)), np.reshape(
-            rewards, (-1, 1)), np.reshape(terminals, (-1, 1)), discrete_action=True, episode_terminals=None)
+            dataset = MDPDataset(np.asarray(observations), np.asarray(actions), np.asarray(rewards),np.asarray( terminals), discrete_action=True, episode_terminals=None)
             dataset.dump('exercise_2_1/data/q_data.h5')
 
 

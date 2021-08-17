@@ -1,6 +1,7 @@
 
 # here the player can play to generate data
 from d3rlpy.dataset import MDPDataset
+from gym_marioai import levels
 from gym_setup import Env
 from Controller.gamepad_controller import GamepadController
 from Controller.keyboard_controller import KeyboardController
@@ -8,13 +9,13 @@ import numpy as np
 
 USE_GAMEPAD = False
 
-env = Env()
+env = Env(port='8080', level=levels.cliff_level)
 env = env.get_env()
 
-observations = np.array([])
-actions = np.array([])
-rewards = np.array([])
-terminals = np.array([])
+observations = []
+actions = []
+rewards = []
+terminals = []
 
 if USE_GAMEPAD:
     controller = GamepadController(env)
@@ -30,18 +31,17 @@ while True:
     while not done:
         next_state, reward, done, info = env.step(action)
 
-        observations = np.append(observations, next_state)
-        actions = np.append(actions, action)
-        rewards = np.append(rewards, reward)
-        terminals = np.append(terminals, done)
+        observations.append(next_state)
+        actions.append(action)
+        rewards.append(reward)
+        terminals.append(done)
 
         total_reward += reward
         next_action = controller.read()
         state, action = next_state, next_action
 
-    dataset = MDPDataset(np.reshape(observations, (-1, 1)), np.reshape(actions, (-1, 1)), np.reshape(
-    rewards, (-1, 1)), np.reshape(terminals, (-1, 1)), discrete_action=True, episode_terminals=None)
-    dataset.dump('exercise_2_1/data/player_data.h5')
+    dataset = MDPDataset(np.asarray(observations), np.asarray(actions), np.asarray(rewards),np.asarray( terminals), discrete_action=True, episode_terminals=None)
+    dataset.dump('exercise_2_1/data/datasets/player_data.h5')
     stats = dataset.compute_stats()
     mean = stats['return']['mean']
     std = stats['return']['std']

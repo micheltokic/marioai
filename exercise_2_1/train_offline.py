@@ -6,8 +6,20 @@ from d3rlpy.metrics.scorer import evaluate_on_environment
 from sklearn.model_selection import train_test_split
 env = Env(visible=False, port='8082')
 env = env.get_env()
+import numpy as np
+import os
 
-dataset = MDPDataset.load('exercise_2_1/data/player_data.h5')
+dataset = None
+
+directory = r'exercise_2_1\data\datasets'
+for entry in os.scandir(directory):
+    if (entry.path.endswith(".h5")
+            or entry.path.endswith(".h5")) and entry.is_file():
+        print(entry.path)
+        if dataset is not None:
+            dataset.extend(MDPDataset.load(entry.path))
+        else:
+            dataset = MDPDataset.load(entry.path)
 
 train_episodes, test_episodes = train_test_split(dataset, test_size=0.2)
 
@@ -16,7 +28,7 @@ opt = d3rlpy.models.optimizers.AdamFactory(optim_cls = 'Adam', betas = (0.9, 0.9
 dqn = d3rlpy.algos.DQN(learning_rate=0.5, gamma=0.89, use_gpu=False)
 #dqn = d3rlpy.algos.DoubleDQN(learning_rate=0.1, gamma=0.89, eps = 0.33)
 # train offline
-dqn.build_with_env(env)
+dqn.build_with_dataset(dataset)
 # set environment in scorer function
 evaluate_scorer = evaluate_on_environment(env)
 # evaluate algorithm on the environment
