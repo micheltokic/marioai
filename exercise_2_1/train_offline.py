@@ -16,7 +16,7 @@ train_episodes, test_episodes = train_test_split(dataset, test_size=0.2)
 
 # prepare algorithm
 opt = d3rlpy.models.optimizers.AdamFactory(optim_cls = 'Adam', betas = (0.9, 0.999), eps = 0.33, weight_decay = 0, asmgrad = False)
-dqn = d3rlpy.algos.DQN(learning_rate=0.5, gamma=0.89, use_gpu=False)
+dqn = d3rlpy.algos.DQN(learning_rate=3e-4, gamma=0.89, use_gpu=False, target_update_interval=5000) #target_update_interval anpassen epochenzahl* 6
 #dqn = d3rlpy.algos.DoubleDQN(learning_rate=0.1, gamma=0.89, eps = 0.33)
 # train offline
 dqn.build_with_dataset(dataset)

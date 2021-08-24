@@ -4,14 +4,15 @@ import gym_marioai
 # reward function params
 prog = 2
 timestep = -1
-cliff = 5
-kill = 1
-coin = 1
-win = 100
+#cliff = 5
+#kill = 1
+#coin = 1
+win = 150
 dead = -10
 
 reward_settings = gym_marioai.RewardSettings(
-    progress=prog, timestep=timestep, cliff=cliff, win=win, dead=dead, kill = kill, coin = coin)
+    #progress=prog, timestep=timestep, cliff=cliff, win=win, dead=dead, kill = kill, coin = coin)
+    progress=prog, timestep=timestep, win=win, dead=dead)
 
 class Env:
     def open(self, port):
