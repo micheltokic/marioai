@@ -4,9 +4,9 @@ import gym_marioai
 # reward function params
 prog = 2
 timestep = -1
-#cliff = 5
-#kill = 1
-#coin = 1
+cliff = 0
+kill = 0
+coin = 0
 win = 150
 dead = -10
 
