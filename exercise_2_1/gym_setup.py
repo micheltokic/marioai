@@ -6,15 +6,15 @@ import gym_marioai
 # reward function params
 prog = 2
 timestep = -1
+mario_mode = 0
 cliff = 0
 kill = 0
 coin = 0
 win = 150
 dead = -10
 
-reward_settings = gym_marioai.RewardSettings(
-    # progress=prog, timestep=timestep, cliff=cliff, win=win, dead=dead, kill = kill, coin = coin)
-    progress=prog, timestep=timestep, win=win, dead=dead)
+reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep, mario_mode=mario_mode, kill=kill,
+                                             coin=coin, win=win, dead=dead, cliff=cliff)
 
 
 class Env:
