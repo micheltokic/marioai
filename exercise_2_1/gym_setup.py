@@ -19,7 +19,7 @@ class Env:
         # Open Game
         from subprocess import Popen
         server_process = Popen(
-            ['java', '-jar', 'gym-marioai\gym_marioai\server\marioai-server-0.1-jar-with-dependencies.jar', '-p', port])
+            ['java', '-jar', 'gym-marioai\gym_marioai\server\marioai.jar', '-p', port])
     def __init__(self, visible=True, port='8080', level='None') -> None:
         self.open(port)
         self.all_actions = (0,1,2,3,4,5,6,7,8,9,10,11,12)
