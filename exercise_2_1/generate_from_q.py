@@ -42,8 +42,7 @@ def train():
     ###################################
     #       environment setup
     ###################################
-    env = Env(visible=False, level=levels.cliff_level)
-    env = env.get_env()
+    env = Env(visible=False, level=levels.cliff_level).env
 
     ####################################
     #       Q-learner setup

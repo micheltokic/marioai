@@ -32,6 +32,3 @@ class Env:
                             enabled_actions=self.all_actions,
                             rf_width=20, rf_height=10,
                             port=int(port))
-
-    def get_env(self):
-        return self.env
