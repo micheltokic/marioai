@@ -11,7 +11,7 @@ if not MODEL_DIR.exists():
 
 # Environment settings
 level = "levels/CliffsAndEnemiesLevel.lvl"
-port = "8080"
+port = 8080
 run_server = True
 visible = False
 

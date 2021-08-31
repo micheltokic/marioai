@@ -20,7 +20,7 @@ terminals = []
 if __name__ == '__main__':
     try:
         with subprocess.Popen(['java', '-jar', 'server.jar'], shell=True) as server:
-            env = Env(visible=True, port='8080', level=level_path, run_server=False).env
+            env = Env(visible=True, port=8080, level=level_path, run_server=False).env
             if USE_GAMEPAD:
                 controller = GamepadController(env)
             else:

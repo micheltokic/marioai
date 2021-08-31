@@ -21,7 +21,7 @@ class Env:
     def open(self, port):
         return subprocess.Popen(['java', '-jar', 'server.jar', '-p', port])
 
-    def __init__(self, visible=True, port='8080', level='None', run_server=True) -> None:
+    def __init__(self, visible=True, port=8080, level='None', run_server=True):
         if run_server:
             self.server = self.open(port)
         self.all_actions = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
@@ -31,4 +31,4 @@ class Env:
                             reward_settings=reward_settings,
                             enabled_actions=self.all_actions,
                             rf_width=20, rf_height=10,
-                            port=int(port))
+                            port=port)
