@@ -19,7 +19,7 @@ reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep, m
 
 class Env:
     def open(self, port):
-        return subprocess.Popen(['java', '-jar', 'server.jar', '-p', port])
+        return subprocess.Popen(['java', '-jar', 'server.jar', '-p', str(port)])
 
     def __init__(self, visible=True, port=8080, level='None', run_server=True):
         if run_server:
