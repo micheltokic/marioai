@@ -20,19 +20,19 @@ terminals = []
 if __name__ == '__main__':
     try:
         with subprocess.Popen(['java', '-jar', 'server.jar'], shell=True) as server:
-            env = Env(visible=True, port='8080', level=level_path, run_server=False)
+            env = Env(visible=True, port='8080', level=level_path, run_server=False).env
             if USE_GAMEPAD:
-                controller = GamepadController(env.env)
+                controller = GamepadController(env)
             else:
-                controller = KeyboardController(env.env)
+                controller = KeyboardController(env)
             while True:
-                state = env.env.reset()
+                state = env.reset()
                 done = False
                 total_reward = 0
-                action = env.env.NOTHING
+                action = env.NOTHING
 
                 while not done:
-                    next_state, reward, done, info = env.env.step(action)
+                    next_state, reward, done, info = env.step(action)
 
                     observations.append(next_state)
                     actions.append(action)
