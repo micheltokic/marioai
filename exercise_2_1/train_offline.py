@@ -1,35 +1,47 @@
 from data.datasets.getDatasets import getDataset
 from gym_setup import Env
 import d3rlpy
+import pathlib
 from d3rlpy.metrics.scorer import evaluate_on_environment
 from sklearn.model_selection import train_test_split
 
-level = "exercise_2_1/levels/CliffsAndEnemiesLevel.lvl"
+MODEL_DIR = pathlib.Path("data", "models")
+if not MODEL_DIR.exists():
+    MODEL_DIR.mkdir(parents=True)
+
+# Environment settings
+level = "levels/CliffsAndEnemiesLevel.lvl"
+port = "8080"
+run_server = True
+visible = False
+
+# Training parameters
+gamma = 0.9
+learning_rate = 0.0003
+target_update_interval = 5000
+n_epochs = 1
+test_size = 0.1
+use_gpu = False
 
 if __name__ == '__main__':
-    env = Env(visible=False, port='8085', level=level, run_server=True).env
+    env = Env(visible=visible, port=port, level=level, run_server=run_server).env
 
     dataset = getDataset()
 
-    train_episodes, test_episodes = train_test_split(dataset, test_size=0.1)
+    train_episodes, test_episodes = train_test_split(dataset, test_size=test_size)
 
-    gamma = 0.9
-    learningrate = 0.0003
-    target_update_interval = 5000
+    dqn = d3rlpy.algos.DQN(learning_rate=learning_rate, gamma=gamma, use_gpu=use_gpu,
+                           target_update_interval=target_update_interval)
 
-    dqn = d3rlpy.algos.DQN(learning_rate=learningrate, gamma=gamma, use_gpu=True,
-                                 target_update_interval=target_update_interval)  # , encoder_factory=encoder_factory)  # target_update_interval anpassen epochenzahl* 6
-    #dqn = d3rlpy.algos.DoubleDQN(learning_rate=0.1, gamma=0.89, eps = 0.33)
     # train offline
     dqn.build_with_dataset(dataset)
     # set environment in scorer function
     evaluate_scorer = evaluate_on_environment(env)
     # evaluate algorithm on the environment
     rewards = evaluate_scorer(dqn)
-    name = 'marioai_:%s_%s_%s_%s_' % (level.split(
-        '/')[-1], gamma, learningrate, target_update_interval)
-    dqn.fit(train_episodes, eval_episodes=test_episodes, tensorboard_dir='runs',  experiment_name=name, n_epochs=100, scorers={
-        'environment': evaluate_scorer
-    })
+    name = 'marioai_%s_%s_%s_%s_%s' % (level.split('/')[-1], gamma, learning_rate, target_update_interval, n_epochs)
+    dqn.fit(train_episodes, eval_episodes=test_episodes, tensorboard_dir='runs', experiment_name=name,
+            n_epochs=n_epochs, scorers={'environment': evaluate_scorer})
 
-    dqn.save_model('exercise_2_1/data/models/%s.pt' % (name))
+    model_file = pathlib.Path(MODEL_DIR, name + ".pt")
+    dqn.save_model(model_file)
