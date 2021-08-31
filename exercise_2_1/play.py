@@ -12,11 +12,6 @@ USE_GAMEPAD = False
 
 level_path = os.path.join("levels", "RoughTerrainLevel.lvl")
 
-observations = []
-actions = []
-rewards = []
-terminals = []
-
 if __name__ == '__main__':
     try:
         with subprocess.Popen(['java', '-jar', 'server.jar'], shell=True) as server:
@@ -26,26 +21,33 @@ if __name__ == '__main__':
             else:
                 controller = KeyboardController(env)
             while True:
-                state = env.reset()
+                observation = env.reset()
                 done = False
-                total_reward = 0
-                action = env.NOTHING
+                action = controller.read()
+
+                observations = [observation]
+                actions = [action]
+                rewards = [0]  # No reward at first time step, because no action was taken yet
+                terminals = [done]
 
                 while not done:
-                    next_state, reward, done, info = env.step(action)
+                    observation, reward, done, info = env.step(action)
+                    action = controller.read()
 
-                    observations.append(next_state)
+                    observations.append(observation)
                     actions.append(action)
                     rewards.append(reward)
                     terminals.append(done)
 
-                    total_reward += reward
-                    next_action = controller.read()
-                    state, action = next_state, next_action
-
-                dataset = MDPDataset(np.asarray(observations), np.asarray(actions), np.asarray(rewards),
-                                     np.asarray(terminals), discrete_action=True)
-                dataset.dump('data/datasets/RoughTerrainData.h5')
+                dataset_path = os.path.join("data", "datasets", os.path.split(level_path)[1] + ".h5")
+                if os.path.isfile(dataset_path):
+                    dataset = MDPDataset.load(dataset_path)
+                    dataset.append(np.asarray(observations), np.asarray(actions), np.asarray(rewards),
+                                   np.asarray(terminals))
+                else:
+                    dataset = MDPDataset(np.asarray(observations), np.asarray(actions), np.asarray(rewards),
+                                         np.asarray(terminals), discrete_action=True)
+                dataset.dump(dataset_path)
                 stats = dataset.compute_stats()
                 mean = stats['return']['mean']
                 std = stats['return']['std']
