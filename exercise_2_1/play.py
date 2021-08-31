@@ -4,8 +4,8 @@ import subprocess
 
 from d3rlpy.dataset import MDPDataset
 from gym_setup import Env
-from Controller.gamepad_controller import GamepadController
-from Controller.keyboard_controller import KeyboardController
+from gamepad_controller import GamepadController
+from keyboard_controller import KeyboardController
 import numpy as np
 
 USE_GAMEPAD = False
