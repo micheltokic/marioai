@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 barWidth = 0.3
  
 # Choose the height of the blue bars
-barsQ = [0, 176, 0]
+barsQ = [232, 176, -559]
  
 # Choose the height of the cyan bars
-barsDQN = [0, 193, 0]
+barsDQN = [280, 193, -34]
  
 
 # The x position of bars
@@ -29,4 +29,4 @@ plt.ylabel('maximum reward')
 plt.legend()
  
 # Show graphic
-plt.show()
+plt.savefig("exercise_2_1/data/jupyter/level-summary.png")
