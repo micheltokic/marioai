@@ -10,17 +10,20 @@ if not MODEL_DIR.exists():
     MODEL_DIR.mkdir(parents=True)
 
 # Environment settings
-level = "levels/CliffsAndEnemiesLevel.lvl"
-port = 8080
+level = "exercise_2_1/levels/RoughTerrainLevel.lvl"
+port = 8085
 run_server = True
 visible = False
 
 # Training parameters
-gamma = 0.9
+gamma = 0.99
 learning_rate = 0.0003
-target_update_interval = 5000
+target_update_interval = 3000
 n_epochs = 1
 test_size = 0.1
+batch_size = 2
+n_frames = 1
+n_steps = 40
 use_gpu = False
 
 if __name__ == '__main__':
@@ -31,7 +34,7 @@ if __name__ == '__main__':
     train_episodes, test_episodes = train_test_split(dataset, test_size=test_size)
 
     dqn = d3rlpy.algos.DQN(learning_rate=learning_rate, gamma=gamma, use_gpu=use_gpu,
-                           target_update_interval=target_update_interval)
+                           target_update_interval=target_update_interval, batch_size=batch_size)
 
     # train offline
     dqn.build_with_dataset(dataset)
