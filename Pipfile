@@ -10,6 +10,7 @@ gym-marioai = {path = "./gym-marioai"}
 inputs = "*"
 keyboard = "*"
 tensorboard = "*"
+jupyter = "*"
 
 [dev-packages]
 
