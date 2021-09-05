@@ -11,6 +11,7 @@ inputs = "*"
 keyboard = "*"
 tensorboard = "*"
 jupyter = "*"
+pypiwin32 = "*"
 
 [dev-packages]
 
@@ -21,3 +22,4 @@ python_version = "3.8"
 train = "python exercise_2_1/train_offline.py"
 play = "python exercise_2_1/play.py"
 board = "tensorboard --logdir runs"
+start = "pipenv run jupyter notebook ./exercise_2_1/marioai_offline_rl.ipynb"
