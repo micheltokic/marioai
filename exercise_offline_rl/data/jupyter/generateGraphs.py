@@ -29,4 +29,4 @@ plt.ylabel('maximum reward')
 plt.legend()
  
 # Show graphic
-plt.savefig("exercise_2_1/data/jupyter/level-summary.png")
+plt.savefig("exercise_offline_rl/data/jupyter/level-summary.png")

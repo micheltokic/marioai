@@ -10,7 +10,7 @@ if not MODEL_DIR.exists():
     MODEL_DIR.mkdir(parents=True)
 
 # Environment settings
-level = "exercise_2_1/levels/RoughTerrainLevel.lvl"
+level = "exercise_offline_rl/levels/RoughTerrainLevel.lvl"
 port = 8085
 run_server = True
 visible = False

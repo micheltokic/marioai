@@ -30,7 +30,7 @@ for episode in range(0, EPISODES):
 
     if episode % 50 == 0 and episode != 0:
         dataset = MDPDataset(np.asarray(observations), np.asarray(actions), np.asarray(rewards),np.asarray( terminals), discrete_action=True, episode_terminals=None)
-        dataset.dump('exercise_2_1/data/datasets/random_data.h5')
+        dataset.dump('exercise_offline_rl/data/datasets/random_data.h5')
         stats = dataset.compute_stats()
         mean = stats['return']['mean']
         std = stats['return']['std']

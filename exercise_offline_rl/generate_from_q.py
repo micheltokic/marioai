@@ -89,7 +89,7 @@ def train():
                   f'states: {agent.Q.num_states}')
 
             dataset = MDPDataset(np.asarray(observations), np.asarray(actions), np.asarray(rewards),np.asarray(terminals), discrete_action=True, episode_terminals=None)
-            dataset.dump('exercise_2_1/data/datasets/cliff_q_data.h5')
+            dataset.dump('exercise_offline_rl/data/datasets/cliff_q_data.h5')
 
 
 class QTable:

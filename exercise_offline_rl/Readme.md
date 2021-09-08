@@ -6,4 +6,6 @@ If you do not have pipenv installed please do so by running:
 
 After that please run 
 
-``pipenv run start``
+``pipenv install && pipenv run start``
+
+in the root directory to start the Jupyter notebook.
