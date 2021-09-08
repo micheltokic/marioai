@@ -35,14 +35,14 @@ if level == 'earlyCliffLevel':
 trace = 2
 rf_width = 20
 rf_height = 10
-prog = 2
-timestep = -0.5
-cliff = 1
-win = 250
+prog = 1
+timestep = -1
+cliff = 1000
+win = -10
 dead = -10
 
 
-training = True
+training = False
 replay_version = 12 
 
 
