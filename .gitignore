@@ -161,4 +161,4 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-#exercise_offline_rl/data/*
+exercise_offline_rl/d3rlpy_logs/*

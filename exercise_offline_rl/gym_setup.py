@@ -1,3 +1,5 @@
+from contextlib import closing
+import socket
 import subprocess
 
 import gym
@@ -17,11 +19,20 @@ reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep, m
                                              coin=coin, win=win, dead=dead, cliff=cliff)
 
 
+def find_free_port():
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.bind(('', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return s.getsockname()[1]
+
+
 class Env:
     def open(self, port):
         return subprocess.Popen(['java', '-jar', 'server.jar', '-p', str(port)])
 
-    def __init__(self, visible=True, port=8080, level='None', run_server=True):
+    def __init__(self, visible=True, level='None', run_server=True):
+        port = find_free_port()
+        print("Running on port", port)
         if run_server:
             self.server = self.open(port)
         self.all_actions = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
