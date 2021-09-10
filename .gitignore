@@ -161,3 +161,4 @@ dmypy.json
 cython_debug/
 exercise_offline_rl/d3rlpy_logs/*
 exercise_offline_rl/runs/*
+exercise_offline_rl/data/models/*
