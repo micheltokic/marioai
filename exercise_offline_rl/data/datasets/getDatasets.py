@@ -4,7 +4,7 @@ from d3rlpy.dataset import MDPDataset
 
 def getDataset():
     dataset = None
-    directory = r'data\datasets'
+    directory = os.path.dirname(os.path.realpath(__file__))
     for entry in os.scandir(directory):
         if entry.path.endswith(".h5") and entry.is_file():
             print(entry.path)

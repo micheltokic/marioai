@@ -8,7 +8,6 @@ target
 *.project
 settings.json
 
-
 training/models/*
 training/results/*
 training/plots/*
@@ -16,7 +15,6 @@ training/plots/*
 # marioai/exercise_offline_rl/data
 d3rlpy_logs/*
 runs/*
-
 
 ################
 # python stuff #
@@ -162,3 +160,4 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 exercise_offline_rl/d3rlpy_logs/*
+exercise_offline_rl/runs/*

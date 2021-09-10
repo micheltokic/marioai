@@ -6,6 +6,8 @@ If you do not have pipenv installed please do so by running:
 
 After that please run 
 
-``pipenv install && pipenv run start``
+``pipenv install`` and
+``pipenv run start``.
 
-in the root directory to start the Jupyter notebook.
+
+in the root directory to start the Jupyter notebook containing the exercise.
