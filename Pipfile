@@ -16,7 +16,7 @@ pypiwin32 = "*"
 [dev-packages]
 
 [requires]
-python_version = "3"
+python_version = "3.6"
 
 [scripts]
 train = "python exercise_offline_rl/train_offline.py"

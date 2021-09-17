@@ -11,3 +11,5 @@ After that please run
 
 
 in the root directory to start the Jupyter notebook containing the exercise.
+
+(pipfile set to python version 3.6 by default, can be edited if needed)
