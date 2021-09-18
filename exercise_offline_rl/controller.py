@@ -1,17 +1,41 @@
 from inputs import get_gamepad
 import math
 import threading
-import gym
-from gym_marioai import levels
 import keyboard
 
 
-# buttonStatus = {}
+class KeyboardController:
+    def __init__(self, env):
+        self.env = env
+
+    def read(self):
+        if keyboard.is_pressed('A+S+right'):
+            return self.env.SPEED_JUMP_RIGHT
+        elif keyboard.is_pressed('A+S+left'):
+            return self.env.SPEED_JUMP_LEFT
+        elif keyboard.is_pressed('S+right'):
+            return self.env.JUMP_RIGHT
+        elif keyboard.is_pressed('S+left'):
+            return self.env.JUMP_LEFT
+        elif keyboard.is_pressed('A+right'):
+            return self.env.SPEED_RIGHT
+        elif keyboard.is_pressed('A+left'):
+            return self.env.SPEED_LEFT
+        elif keyboard.is_pressed('right'):
+            return self.env.RIGHT
+        elif keyboard.is_pressed('left'):
+            return self.env.LEFT
+        elif keyboard.is_pressed('down'):
+            return self.env.DOWN
+        elif keyboard.is_pressed('S'):
+            return self.env.JUMP
+        else:
+            return self.env.NOTHING
+
 
 class GamepadController:
     MAX_TRIG_VAL = math.pow(2, 8)
     MAX_JOY_VAL = math.pow(2, 15)
-
 
     def __init__(self, env):
         self.env = env
@@ -35,12 +59,9 @@ class GamepadController:
         self.RightDPad = 0
         self.UpDPad = 0
         self.DownDPad = 0
-        # for b in self.BUTTONS:
-        #    buttonStatus[b] = 0
         self._monitor_thread = threading.Thread(target=self.monitor, args=())
         self._monitor_thread.daemon = True
         self._monitor_thread.start()
-
 
     def monitor(self):
         while True:
@@ -96,30 +117,28 @@ class GamepadController:
                         self.UpDPad = event.state
 
     def read(self):
-        if (self.RightDPad == 1 and self.B == 1 and self.A == 1):
+        if self.RightDPad == 1 and self.B == 1 and self.A == 1:
             return self.env.SPEED_JUMP_RIGHT
-        if (self.LeftDPad == -1 and self.B == 1 and self.A == 1):
+        if self.LeftDPad == -1 and self.B == 1 and self.A == 1:
             return self.env.SPEED_JUMP_LEFT
 
-        elif (self.RightDPad == 1 and self.B == 1):
+        elif self.RightDPad == 1 and self.B == 1:
             return self.env.JUMP_RIGHT
-        elif (self.LeftDPad == -1 and self.B == 1):
+        elif self.LeftDPad == -1 and self.B == 1:
             return self.env.JUMP_LEFT
 
-        if (self.RightDPad == 1 and self.A == 1):
+        if self.RightDPad == 1 and self.A == 1:
             return self.env.SPEED_RIGHT
-        if (self.LeftDPad == -1 and self.A == 1):
+        if self.LeftDPad == -1 and self.A == 1:
             return self.env.SPEED_LEFT
 
-        elif (self.RightDPad == 1):
+        elif self.RightDPad == 1:
             return self.env.RIGHT
-        elif (self.LeftDPad == -1):
+        elif self.LeftDPad == -1:
             return self.env.LEFT
-        elif (self.DownDPad == 1):
+        elif self.DownDPad == 1:
             return self.env.DOWN
-        elif (self.B == 1):
+        elif self.B == 1:
             return self.env.JUMP
         else:
             return self.env.NOTHING
-
-
