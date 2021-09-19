@@ -12,9 +12,9 @@ training/models/*
 training/results/*
 training/plots/*
 
-# marioai/exercise_offline_rl/data
-d3rlpy_logs/*
-runs/*
+exercise_offline_rl/d3rlpy_logs/*
+exercise_offline_rl/runs/*
+exercise_offline_rl/data/models/*
 
 ################
 # python stuff #
@@ -159,6 +159,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-exercise_offline_rl/d3rlpy_logs/*
-exercise_offline_rl/runs/*
-exercise_offline_rl/data/models/*
