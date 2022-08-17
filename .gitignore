@@ -8,14 +8,13 @@ target
 *.project
 settings.json
 
-
 training/models/*
 training/results/*
 training/plots/*
 
-
-
-
+exercise_offline_rl/d3rlpy_logs/*
+exercise_offline_rl/runs/*
+exercise_offline_rl/data/models/*
 
 ################
 # python stuff #
