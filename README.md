@@ -19,10 +19,16 @@ Watch a video of how Mario learns behavior using this library: https://www.youtu
 in ```./gym_marioai```, run ```pip install .```
 
 ### 3) run the server
-
 in ```./gym_marioai/gym-marioai/server/```, run ```java -jar ./marioai-server-0.1-jar-with-dependencies.jar```. The parameter ```-p``` allows to specify a port (default is 8080)
+
 ### 4) run the demo
-navigate to ```./gym_marioai/demo/```, then run ```python demo.py```. This will open a separate window with Mario performing random actions in the environment.
+navigate to `./gym_marioai/demo/`, then run `python demo.py`. This will open a separate window with Mario performing random actions in the environment.
+
+### MacOS additional steps
+to be able to control Mario when running `play.py` on MacOS, additional permissions must be granted. This can be done via System Preferences -> Security & Privacy -> Tab 'Privacy'. 
+In the categories 'Accessibility' and 'Input-Monitoring', open the lock to allow editing and add your respective IDE (e.g. Visual Studio Code or Terminal) to the list. 
+Then, run the program with administrator permissions: `sudo python play.py`.
+
 
 # API
 Initialization of the environment:  
