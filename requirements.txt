@@ -1,0 +1,12 @@
+d3rlpy
+numpy
+# FIXME: install this.
+./gym-marioai
+inputs
+keyboard
+tensorboard
+jupyter
+wheel
+setuptools
+grpcio
+scikit-learn
