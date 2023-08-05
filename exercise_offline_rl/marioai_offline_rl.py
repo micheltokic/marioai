@@ -35,19 +35,17 @@
 # In[15]:
 
 
-# Setup the imports. Run this cell again if you encounter any import errors.
-import copy
-import numpy as np
 import pathlib
 
-from d3rlpy.algos import DQN
-from d3rlpy.dataset import MDPDataset
-# from d3rlpy.metrics.scorer import evaluate_on_environment
-from sklearn.model_selection import train_test_split
+import d3rlpy.dataset
+# Setup the imports. Run this cell again if you encounter any import errors.
+import numpy as np
+from d3rlpy.dataset import MDPDataset, ReplayBuffer
 
-from gym_setup import Env
 from controller import GamepadController, KeyboardController
-from data.datasets.getDatasets import getDataset
+from gym_setup import Env
+
+# from d3rlpy.metrics.scorer import evaluate_on_environment
 # get_ipython().run_line_magic('load_ext', 'tensorboard')
 # get_ipython().run_line_magic('set_env', 'PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python')
 
@@ -64,10 +62,12 @@ from data.datasets.getDatasets import getDataset
 
 
 # Setup global variables
-level = pathlib.Path("levels", "OneCliffLevel.lvl").resolve()
-dataset_path = pathlib.Path("data", "datasets", level.stem + ".h5").resolve()
-dataset_path_rand = pathlib.Path("data", "datasets", level.stem + ".random.h5").resolve()
+init_dir = pathlib.Path("gym-marioai/gym_marioai").resolve()
+level = init_dir / pathlib.Path("levels", "OneCliffLevel.lvl")
+dataset_path = init_dir / pathlib.Path("data", "datasets", level.stem + ".h5")
+dataset_path_rand = init_dir / pathlib.Path("data", "datasets", level.stem + ".random.h5")
 
+print(level)
 
 # ### 1.1 Player generated data.
 #
@@ -84,7 +84,6 @@ dataset_path_rand = pathlib.Path("data", "datasets", level.stem + ".random.h5").
 
 # Don't forget to run me
 USE_GAMEPAD = False
-
 
 # ### Controls
 # |            	| Keyboard    	| Xbox       	| Playstation 	|
@@ -131,19 +130,22 @@ try:
             terminals.append(done)
 
         if dataset_path.exists():
-            dataset = MDPDataset.load(dataset_path)
-            dataset.append(np.asarray(observations), np.asarray(actions),
-                           np.asarray(rewards), np.asarray(terminals))
+            # NOTE: is this the correct type of buffer?
+            # see https://d3rlpy.readthedocs.io/en/latest/references/dataset.html
+            with dataset_path.open("b") as dataset_file:
+                dataset: ReplayBuffer = MDPDataset.load(dataset_file, d3rlpy.dataset.InfiniteBuffer())
+                # np.asarray(terminals)
+                dataset.append(np.asarray(observations), np.asarray(actions),
+                               np.asarray(rewards))
         else:
             dataset = MDPDataset(np.asarray(observations), np.asarray(actions),
-                                 np.asarray(rewards), np.asarray(terminals),
-                                 discrete_action=True)
-        dataset.dump(dataset_path)
+                                 np.asarray(rewards), np.asarray(terminals))
+            with open(dataset_path, "xb") as f:
+                dataset.dump(f)
 except ConnectionResetError:
     print("Done")
 
 exit()
-
 
 # ### 1.2 Randomly generated data (optional)
 # To complement the player generated data, it is possible to also generate some random data for the algorithm to train with.
@@ -152,7 +154,7 @@ exit()
 
 
 # Generate random data
-EPISODES = 2 # <--- increase if you want more random data. More data might slow down the training process.
+EPISODES = 2  # <--- increase if you want more random data. More data might slow down the training process.
 
 env_rand = Env(visible=False, level=str(level)).env
 
@@ -188,7 +190,6 @@ for episode in range(EPISODES):
 
 print("Done!")
 
-
 # ## 2. Use the generated data to train a policy
 # Now that you have generated some data for the neural network to train with, let's begin with the training.
 # For the purpose of this exercise we will use the Offline RL Python library [d3rlpy](https://github.com/takuseno/d3rlpy).
@@ -215,16 +216,15 @@ print("Done!")
 
 
 # Training parameters
-n_epochs = 100 # <--- change here if you want to train more / less
-test_size = 0.1 # percentage of episodes not used for training
+n_epochs = 100  # <--- change here if you want to train more / less
+test_size = 0.1  # percentage of episodes not used for training
 
 # DQN parameters
-learning_rate = 0.0003 # to what extent the agent overrides old information with new information
-gamma = 0.99 # discount factor, how important future rewards are
-target_update_interval = 3000 # interval of steps that the agent uses to update target network
-batch_size = 2 # size of training examples utilized in one iteration
-use_gpu = False # usage of gpu to train
-
+learning_rate = 0.0003  # to what extent the agent overrides old information with new information
+gamma = 0.99  # discount factor, how important future rewards are
+target_update_interval = 3000  # interval of steps that the agent uses to update target network
+batch_size = 2  # size of training examples utilized in one iteration
+use_gpu = False  # usage of gpu to train
 
 # ### 2.3 Training time!
 #
@@ -235,7 +235,6 @@ use_gpu = False # usage of gpu to train
 
 # Start tensorboard
 get_ipython().run_line_magic('tensorboard', '--logdir runs')
-
 
 # To start the training run the next cell:
 
@@ -276,7 +275,6 @@ for epoch, metrics in fitter:
         print("A suitable model has been found.")
         break
 
-
 # ### 2.4 Validation
 # Now let's see if the training did something. If the results are not as expected try recording more data or increasing the training epochs.
 
@@ -299,7 +297,6 @@ try:
         print(f'finished episode, total_reward: {total_reward}')
 except ConnectionResetError:
     print("Window closed.")
-
 
 # ## 3. Offline RL vs Online RL
 #
