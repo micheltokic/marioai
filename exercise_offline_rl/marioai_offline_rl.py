@@ -38,12 +38,16 @@
 import pathlib
 
 import d3rlpy.dataset
+from d3rlpy.algos import DQN
 # Setup the imports. Run this cell again if you encounter any import errors.
 import numpy as np
 from d3rlpy.dataset import MDPDataset, ReplayBuffer
 
 from controller import GamepadController, KeyboardController
 from gym_setup import Env
+
+from data.datasets.getDatasets import getDataset
+from sklearn.model_selection import train_test_split
 
 # from d3rlpy.metrics.scorer import evaluate_on_environment
 # get_ipython().run_line_magic('load_ext', 'tensorboard')
@@ -101,7 +105,7 @@ USE_GAMEPAD = False
 
 # In[18]:
 
-
+"""
 # Let's play!
 try:
     env_play = Env(visible=True, level=str(level)).env
@@ -129,23 +133,24 @@ try:
             rewards.append(reward)
             terminals.append(done)
 
+        dataset = None
         if dataset_path.exists():
             # NOTE: is this the correct type of buffer?
             # see https://d3rlpy.readthedocs.io/en/latest/references/dataset.html
-            with dataset_path.open("b") as dataset_file:
-                dataset: ReplayBuffer = MDPDataset.load(dataset_file, d3rlpy.dataset.InfiniteBuffer())
-                # np.asarray(terminals)
-                dataset.append(np.asarray(observations), np.asarray(actions),
-                               np.asarray(rewards))
+            with dataset_path.open("rb") as dataset_file:
+                dataset: ReplayBuffer = ReplayBuffer.load(dataset_file, d3rlpy.dataset.InfiniteBuffer())
+                dataset.append_episode(d3rlpy.dataset.components.Episode(np.asarray(observations), np.asarray(actions),
+                               np.asarray(rewards), done))
         else:
             dataset = MDPDataset(np.asarray(observations), np.asarray(actions),
                                  np.asarray(rewards), np.asarray(terminals))
-            with open(dataset_path, "xb") as f:
-                dataset.dump(f)
+        with open(dataset_path, "w+b") as f:
+            dataset.dump(f)
 except ConnectionResetError:
     print("Done")
 
 exit()
+"""
 
 # ### 1.2 Randomly generated data (optional)
 # To complement the player generated data, it is possible to also generate some random data for the algorithm to train with.
@@ -154,6 +159,7 @@ exit()
 
 
 # Generate random data
+"""
 EPISODES = 2  # <--- increase if you want more random data. More data might slow down the training process.
 
 env_rand = Env(visible=False, level=str(level)).env
@@ -178,17 +184,22 @@ for episode in range(EPISODES):
         rewards.append(reward)
         terminals.append(done)
 
+    dataset = None
     if dataset_path_rand.exists():
-        dataset = MDPDataset.load(dataset_path_rand)
-        dataset.append(np.asarray(observations), np.asarray(actions),
-                       np.asarray(rewards), np.asarray(terminals))
+        # NOTE: is this the correct type of buffer?
+        # see https://d3rlpy.readthedocs.io/en/latest/references/dataset.html
+        with dataset_path_rand.open("rb") as dataset_file:
+            dataset: ReplayBuffer = ReplayBuffer.load(dataset_file, d3rlpy.dataset.InfiniteBuffer())
+            dataset.append_episode(d3rlpy.dataset.components.Episode(np.asarray(observations), np.asarray(actions),
+                           np.asarray(rewards), done))
     else:
         dataset = MDPDataset(np.asarray(observations), np.asarray(actions),
-                             np.asarray(rewards), np.asarray(terminals),
-                             discrete_action=True)
+                             np.asarray(rewards), np.asarray(terminals))
+
     dataset.dump(dataset_path_rand)
 
 print("Done!")
+"""
 
 # ## 2. Use the generated data to train a policy
 # Now that you have generated some data for the neural network to train with, let's begin with the training.
@@ -234,7 +245,7 @@ use_gpu = False  # usage of gpu to train
 
 
 # Start tensorboard
-get_ipython().run_line_magic('tensorboard', '--logdir runs')
+# get_ipython().run_line_magic('tensorboard', '--logdir runs')
 
 # To start the training run the next cell:
 
@@ -242,7 +253,8 @@ get_ipython().run_line_magic('tensorboard', '--logdir runs')
 
 
 dataset = getDataset()
-train_episodes, test_episodes = train_test_split(dataset, test_size=test_size)
+train_episodes, test_episodes = dataset, dataset
+# train_episodes, test_episodes = train_test_split(dataset, test_size=test_size)
 
 dqn = DQN(learning_rate=learning_rate, gamma=gamma,
           target_update_interval=target_update_interval,
