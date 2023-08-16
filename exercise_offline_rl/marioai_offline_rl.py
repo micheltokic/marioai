@@ -1,12 +1,22 @@
 #!/usr/bin/env python
 # coding: utf-8
+import copy
+import pathlib
+
+import d3rlpy.dataset
+# Setup the imports. Run this cell again if you encounter any import errors.
+import numpy as np
+from d3rlpy.dataset import MDPDataset, ReplayBuffer
+from d3rlpy.metrics import EnvironmentEvaluator
+
+from data.datasets.getDatasets import getDataset
+from gym_setup import Env
 
 # # Training an Agent to play Super Mario with Offline Learning
 # ---
 #
 # In this exercise you will learn how to use offline learning to train a neural network to play Super Mario.
 # Its performance will then be compared with the results from the Q-Learning exercise.
-
 # ## 0. Setup
 #
 # ### Requirements
@@ -15,7 +25,6 @@
 #  - Microsoft Visual C++ 14.0 (or later)
 #
 # You will be provided with both the .jar and the gym-marioai python package.
-
 # ### Installation
 # To setup this exercise we will use Pipenv.
 # If you do not have pipenv installed please do so by running:
@@ -31,23 +40,7 @@
 # in the root directory to start the Jupyter notebook containing the exercise.
 #
 # (pipfile set to python version 3.6 by default, can be edited if needed)
-
 # In[15]:
-
-
-import pathlib
-
-import d3rlpy.dataset
-from d3rlpy.algos import DQN
-# Setup the imports. Run this cell again if you encounter any import errors.
-import numpy as np
-from d3rlpy.dataset import MDPDataset, ReplayBuffer
-
-from controller import GamepadController, KeyboardController
-from gym_setup import Env
-
-from data.datasets.getDatasets import getDataset
-from sklearn.model_selection import train_test_split
 
 # from d3rlpy.metrics.scorer import evaluate_on_environment
 # get_ipython().run_line_magic('load_ext', 'tensorboard')
@@ -66,7 +59,7 @@ from sklearn.model_selection import train_test_split
 
 
 # Setup global variables
-init_dir = pathlib.Path("gym-marioai/gym_marioai").resolve()
+init_dir = pathlib.Path("gym-marioai/gym_marioai")
 level = init_dir / pathlib.Path("levels", "OneCliffLevel.lvl")
 dataset_path = init_dir / pathlib.Path("data", "datasets", level.stem + ".h5")
 dataset_path_rand = init_dir / pathlib.Path("data", "datasets", level.stem + ".random.h5")
@@ -159,13 +152,12 @@ exit()
 
 
 # Generate random data
-"""
 EPISODES = 2  # <--- increase if you want more random data. More data might slow down the training process.
 
-env_rand = Env(visible=False, level=str(level)).env
+env_rand = Env(visible=False, level=str(level), port=8080).env
 
 for episode in range(EPISODES):
-    observation = env_rand.reset()
+    observation, _ = env_rand.reset()
     done = False
     action = env_rand.action_space.sample()
 
@@ -176,7 +168,7 @@ for episode in range(EPISODES):
     terminals = [done]
 
     while not done:
-        observation, reward, done, info = env_rand.step(action)
+        observation, reward, done, truncated, info = env_rand.step(action)
         action = env_rand.action_space.sample()
 
         observations.append(observation)
@@ -190,16 +182,17 @@ for episode in range(EPISODES):
         # see https://d3rlpy.readthedocs.io/en/latest/references/dataset.html
         with dataset_path_rand.open("rb") as dataset_file:
             dataset: ReplayBuffer = ReplayBuffer.load(dataset_file, d3rlpy.dataset.InfiniteBuffer())
-            dataset.append_episode(d3rlpy.dataset.components.Episode(np.asarray(observations), np.asarray(actions),
-                           np.asarray(rewards), done))
+            dataset.append_episode(
+                d3rlpy.dataset.components.Episode(np.asarray(observations), np.asarray(actions)[:, np.newaxis],
+                                                  np.asarray(rewards)[:, np.newaxis], done))
     else:
-        dataset = MDPDataset(np.asarray(observations), np.asarray(actions),
-                             np.asarray(rewards), np.asarray(terminals))
-    with open(dataset_path_rand, "w+b") as f:
-        dataset.dump(f)
+        dataset = MDPDataset(np.asarray(observations), np.asarray(actions)[:, np.newaxis],
+                             np.asarray(rewards)[:, np.newaxis], np.asarray(terminals))
+    # FIXME: change this back
+    # with open(dataset_path_rand, "w+b") as f:
+        # dataset.dump(f)
 
 print("Done!")
-"""
 
 # ## 2. Use the generated data to train a policy
 # Now that you have generated some data for the neural network to train with, let's begin with the training.
@@ -227,7 +220,8 @@ print("Done!")
 
 
 # Training parameters
-n_epochs = 100  # <--- change here if you want to train more / less
+n_epochs = 10  # <--- change here if you want to train more / less
+n_steps_per_epoch = 1000
 test_size = 0.1  # percentage of episodes not used for training
 
 # DQN parameters
@@ -256,36 +250,41 @@ dataset = getDataset()
 train_episodes, test_episodes = dataset, dataset
 # train_episodes, test_episodes = train_test_split(dataset, test_size=test_size)
 
-dqn = DQN(learning_rate=learning_rate, gamma=gamma,
-          target_update_interval=target_update_interval,
-          batch_size=batch_size, use_gpu=use_gpu)
-dqn.build_with_dataset(dataset)
+ddqn = d3rlpy.algos.DoubleDQNConfig(learning_rate=learning_rate, gamma=gamma,
+                                    target_update_interval=target_update_interval,
+                                    batch_size=batch_size).create()
 
 # set environment in scorer function
-env_train = Env(visible=False, level=str(level)).env
-evaluate_scorer = evaluate_on_environment(env_train)
+env_train = Env(visible=False, level=str(level), port=8080).env
+ddqn.build_with_dataset(dataset)
+env_evaluator = EnvironmentEvaluator(env_train)
+
 # evaluate algorithm on the environment
-rewards = evaluate_scorer(dqn)
-name = 'marioai_%s_%s_%s_%s_%s' % (level.stem, gamma, learning_rate, target_update_interval, n_epochs)
+
+name = 'DDQN_marioai_%s_%s_%s_%s_%s' % (level.stem, gamma, learning_rate, target_update_interval, n_epochs)
 model_file = pathlib.Path("data", "models", name + ".pt")
 currentMax = -100000
-dqn_max = copy.deepcopy(dqn)
+ddqn_max = copy.deepcopy(ddqn)
 
-fitter = dqn.fitter(train_episodes, eval_episodes=test_episodes,
-                    tensorboard_dir='runs', experiment_name=name,
-                    n_epochs=n_epochs, scorers={'environment': evaluate_scorer})
+fitter = ddqn.fitter(
+    dataset,
+    n_steps=n_steps_per_epoch * n_epochs,
+    n_steps_per_epoch=n_steps_per_epoch,
+    evaluators={'environment': env_evaluator}
+)
 
 for epoch, metrics in fitter:
     if metrics.get("environment") > currentMax:
         currentMax = metrics.get("environment")
-        dqn_max.copy_q_function_from(dqn)
+        ddqn_max.copy_q_function_from(ddqn)
     else:
-        dqn.copy_q_function_from(dqn_max)
-    dqn.save_model(model_file)
+        ddqn.copy_q_function_from(ddqn_max)
+    ddqn.save_model(model_file)
     if currentMax > 100:
         # For the purpose of the exercise the training will stop if the agent manages to complete the level
         print("A suitable model has been found.")
         break
+exit()
 
 # ### 2.4 Validation
 # Now let's see if the training did something. If the results are not as expected try recording more data or increasing the training epochs.

@@ -66,7 +66,7 @@ while True:
     while not done:
         a = get_action()
         print('action', a)
-        s, r, done, info = env.step(a)
+        s, r, done, info, terminated = env.step(a)
         # print(len(s), ':', s)
 
         total_reward += r
