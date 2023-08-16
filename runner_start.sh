@@ -1,0 +1,1 @@
+sudo PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python python3 exercise_offline_rl/marioai_offline_rl.py
