@@ -195,8 +195,8 @@ for episode in range(EPISODES):
     else:
         dataset = MDPDataset(np.asarray(observations), np.asarray(actions),
                              np.asarray(rewards), np.asarray(terminals))
-
-    dataset.dump(dataset_path_rand)
+    with open(dataset_path_rand, "w+b") as f:
+        dataset.dump(f)
 
 print("Done!")
 """
