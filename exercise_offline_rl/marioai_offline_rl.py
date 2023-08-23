@@ -60,7 +60,7 @@ from gym_setup import Env
 
 # Setup global variables
 init_dir = pathlib.Path("gym-marioai/gym_marioai")
-level = init_dir / pathlib.Path("levels", "OneCliffLevel.lvl")
+level = init_dir / pathlib.Path("levels", "CliffsAndEnemiesLevel.lvl")
 dataset_path = init_dir / pathlib.Path("data", "datasets", level.stem + ".h5")
 dataset_path_rand = init_dir / pathlib.Path("data", "datasets", level.stem + ".random.h5")
 
