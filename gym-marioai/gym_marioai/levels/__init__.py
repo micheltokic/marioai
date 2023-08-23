@@ -3,10 +3,14 @@ from pathlib import Path
 
 
 current_folder = Path(__file__).resolve().parent
-__path = str(current_folder.relative_to(Path.cwd())) + "/"
+# FIXME: make this correct.
+print("init_gym_marioai")
+print(Path.cwd().parent)
+__path = str(current_folder.relative_to(Path.cwd().parent)) + "/"
 print(__path)
 print(current_folder)
 # __path = os.path.dirname(os.path.realpath(__file__)) + '/'
+print("end_init_gym_marioai")
 
 easy_level = __path + 'easyLevel.lvl'
 flat_level = __path + 'flatLevel.lvl'

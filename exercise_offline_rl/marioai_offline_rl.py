@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 # coding: utf-8
 import copy
+import numpy as np
 import pathlib
 
+from d3rlpy.algos import DQN
 import d3rlpy.dataset
-# Setup the imports. Run this cell again if you encounter any import errors.
-import numpy as np
 from d3rlpy.dataset import MDPDataset, ReplayBuffer
 from d3rlpy.metrics import EnvironmentEvaluator
+# from d3rlpy.metrics.scorer import evaluate_on_environment
+from sklearn.model_selection import train_test_split
 
-from data.datasets.getDatasets import getDataset
 from gym_setup import Env
+from controller import GamepadController, KeyboardController
+from data.datasets.getDatasets import getDataset
 
 # # Training an Agent to play Super Mario with Offline Learning
 # ---
@@ -59,12 +62,12 @@ from gym_setup import Env
 
 
 # Setup global variables
-init_dir = pathlib.Path("gym-marioai/gym_marioai")
+init_dir = pathlib.Path(__file__).parent
 level = init_dir / pathlib.Path("levels", "CliffsAndEnemiesLevel.lvl")
 dataset_path = init_dir / pathlib.Path("data", "datasets", level.stem + ".h5")
 dataset_path_rand = init_dir / pathlib.Path("data", "datasets", level.stem + ".random.h5")
 
-print(level)
+print(f"level location={level}")
 
 # ### 1.1 Player generated data.
 #
@@ -98,27 +101,36 @@ USE_GAMEPAD = False
 
 # In[18]:
 
-"""
+
+if dataset_path.exists():
+    with dataset_path.open("rb") as dataset_file:
+            dataset: ReplayBuffer = ReplayBuffer.load(dataset_file, d3rlpy.dataset.InfiniteBuffer())
+            print(f"number of episodes: {dataset.size()}")
+# Let's play!
 # Let's play!
 try:
-    env_play = Env(visible=True, level=str(level)).env
+    env_play = Env(visible=True, level=str(level.resolve()), port=8080).env
+
     if USE_GAMEPAD:
         controller = GamepadController(env_play)
     else:
         controller = KeyboardController(env_play)
     while True:
-        observation = env_play.reset()
+        observation,_ = env_play.reset()
+
         done = False
         action = controller.read()
 
         observations = [observation]
+
         actions = [action]
         # No reward at first time step, because no action was taken yet
         rewards = [0]
         terminals = [done]
 
         while not done:
-            observation, reward, done, info = env_play.step(action)
+            observation, reward, done, truncated, info = env_play.step(action)
+
             action = controller.read()
 
             observations.append(observation)
@@ -132,18 +144,19 @@ try:
             # see https://d3rlpy.readthedocs.io/en/latest/references/dataset.html
             with dataset_path.open("rb") as dataset_file:
                 dataset: ReplayBuffer = ReplayBuffer.load(dataset_file, d3rlpy.dataset.InfiniteBuffer())
-                dataset.append_episode(d3rlpy.dataset.components.Episode(np.asarray(observations), np.asarray(actions),
-                               np.asarray(rewards), done))
+                dataset.append_episode(d3rlpy.dataset.components.Episode(np.asarray(observations), np.asarray(actions)[:,np.newaxis],
+                               np.asarray(rewards)[:,np.newaxis], done))
+                print(f"number of episodes: {dataset.size()}")
         else:
-            dataset = MDPDataset(np.asarray(observations), np.asarray(actions),
-                                 np.asarray(rewards), np.asarray(terminals))
+            dataset = MDPDataset(np.asarray(observations), np.asarray(actions)[:,np.newaxis],
+                                 np.asarray(rewards)[:,np.newaxis], np.asarray(terminals))
         with open(dataset_path, "w+b") as f:
             dataset.dump(f)
+
 except ConnectionResetError:
     print("Done")
 
 exit()
-"""
 
 # ### 1.2 Randomly generated data (optional)
 # To complement the player generated data, it is possible to also generate some random data for the algorithm to train with.

@@ -9,13 +9,15 @@ class KeyboardController:
         self.env = env
 
     def read(self):
-        if keyboard.is_pressed('A+S+right'):
+        # fireflower
+        if keyboard.is_pressed('A+up+right'):
             return self.env.SPEED_JUMP_RIGHT
-        elif keyboard.is_pressed('A+S+left'):
+        # fireflower
+        elif keyboard.is_pressed('A+up+left'):
             return self.env.SPEED_JUMP_LEFT
-        elif keyboard.is_pressed('S+right'):
+        elif keyboard.is_pressed('up+right'):
             return self.env.JUMP_RIGHT
-        elif keyboard.is_pressed('S+left'):
+        elif keyboard.is_pressed('up+left'):
             return self.env.JUMP_LEFT
         elif keyboard.is_pressed('A+right'):
             return self.env.SPEED_RIGHT
@@ -27,7 +29,7 @@ class KeyboardController:
             return self.env.LEFT
         elif keyboard.is_pressed('down'):
             return self.env.DOWN
-        elif keyboard.is_pressed('S'):
+        elif keyboard.is_pressed('up'):
             return self.env.JUMP
         else:
             return self.env.NOTHING
