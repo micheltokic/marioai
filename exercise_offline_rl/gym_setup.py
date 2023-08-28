@@ -1,11 +1,13 @@
-from contextlib import closing
 import socket
 import subprocess
+from contextlib import closing
 
 import gym
+
 import gym_marioai
 
 # reward function params
+# FIXME: change these?
 prog = 2
 timestep = -1
 mario_mode = 0
@@ -37,7 +39,7 @@ class Env:
         if run_server:
             self.server = self.open(port)
         self.all_actions = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
-        self.env = gym.make('Marioai-v2', render=visible,
+        self.env = gym.make('Marioai-v2', should_render=visible,
                             level_path=level,
                             compact_observation=False,
                             reward_settings=reward_settings,
