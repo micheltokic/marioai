@@ -292,11 +292,16 @@ class MarioEnv(gym.Env):
                   )
 
         # add reward for being stuck for an extended period of time
-        # if for more than 2 seconds, add a stuck reward
+        # if for more than n seconds, add a stuck reward
         # 24 fps * seconds
-        if self.time_last_moved >= 24 * 2:
+        if self.time_last_moved >= 24 * 5:
             print("stuck reward added")
             reward += self.reward_settings.stuck
+            # FIXME: needs to be reset here
+            # should be reset somewhere, so that if movement occurs again,
+            # it should not be in this branch
+            # FIXME: just do value - 10 or something?
+            self.time_last_moved = 0
         # mario has not moved in a while
         elif s.mario_x == self.last_floor_x:
             self.time_last_moved += 1
