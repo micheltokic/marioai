@@ -15,6 +15,8 @@ from gym_setup import Env
 from controller import GamepadController, KeyboardController
 from data.datasets.getDatasets import getDataset
 
+visible=True
+
 init_dir = pathlib.Path("./exercise_offline_rl")
 level = init_dir / pathlib.Path("levels", "CliffsAndEnemiesLevel.lvl")
 dataset_path = init_dir / pathlib.Path("data", "datasets", level.stem + ".h5")
@@ -34,7 +36,7 @@ target_update_interval = 3000  # interval of steps that the agent uses to update
 batch_size = 2  # size of training examples utilized in one iteration
 use_gpu = False  # usage of gpu to train
 
-env_show = Env(visible=False, level=str(level), port=8080).env
+env_show = Env(visible=visible, level=str(level), port=8080).env
 
 ddqn = d3rlpy.algos.DoubleDQNConfig(learning_rate=learning_rate, gamma=gamma,
           target_update_interval=target_update_interval,

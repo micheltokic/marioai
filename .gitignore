@@ -164,3 +164,5 @@ dmypy.json
 cython_debug/
 
 activate_all.sh
+ddqn_show.sh
+ddqn_start.sh

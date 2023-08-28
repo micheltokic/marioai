@@ -15,6 +15,8 @@ from gym_setup import Env
 from controller import GamepadController, KeyboardController
 from data.datasets.getDatasets import getDataset
 
+visible = True
+
 # # Training an Agent to play Super Mario with Offline Learning
 # ---
 #
@@ -82,7 +84,7 @@ test_size = 0.1  # percentage of episodes not used for training
 learning_rate = 0.0003  # to what extent the agent overrides old information with new information
 gamma = 0.99  # discount factor, how important future rewards are
 target_update_interval = 3000  # interval of steps that the agent uses to update target network
-batch_size = 2  # size of training examples utilized in one iteration
+batch_size = 10  # size of training examples utilized in one iteration
 use_gpu = False  # usage of gpu to train
 
 dataset = getDataset()
@@ -94,8 +96,11 @@ ddqn = d3rlpy.algos.DoubleDQNConfig(learning_rate=learning_rate, gamma=gamma,
           batch_size=batch_size).create()
 
 # set environment in scorer function
-env_train = Env(visible=False, level=str(level), port=8080).env
+env_train = Env(visible=visible, level=str(level), port=8080).env
 ddqn.build_with_dataset(dataset)
+test_episodes = dataset.episodes[:30]
+# set environment in scorer function
+# FIXME: is this correct? The evaluator only runs the same example multiple times
 env_evaluator  = EnvironmentEvaluator(env_train)
 
 # evaluate algorithm on the environment
@@ -109,17 +114,24 @@ fitter = ddqn.fitter(
    dataset,
    n_steps = n_steps_per_epoch * n_epochs,
    n_steps_per_epoch=n_steps_per_epoch,
-  evaluators={'environment': env_evaluator }
+  evaluators={'td_error': d3rlpy.metrics.TDErrorEvaluator(test_episodes),
+              'value_scale': d3rlpy.metrics.AverageValueEstimationEvaluator(test_episodes),
+              'environment': env_evaluator }
 )
 
 for epoch, metrics in fitter:
+    print(f"{metrics.get('environment')=}")
     if metrics.get("environment") > currentMax:
         currentMax = metrics.get("environment")
         ddqn_max.copy_q_function_from(ddqn)
+        # FIXME: would this be better?
+        # ddqn.copy_q_function_from(ddqn_max)
     else:
+        # FIXME: why is this needed?
         ddqn.copy_q_function_from(ddqn_max)
     ddqn.save_model(model_file)
-    if currentMax > 100:
+    # FIXME: what is the correct value?
+    if currentMax > 300:
         # For the purpose of the exercise the training will stop if the agent manages to complete the level
         print("A suitable model has been found.")
         break
