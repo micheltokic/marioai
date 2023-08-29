@@ -104,7 +104,7 @@ fitter = ddqn.fitter(
 for epoch, metrics in fitter:
     print(f"{metrics.get('environment')=}")
     # FIXME: what is the correct value?
-    if metrics.get("environment") > 400:
+    if metrics.get("environment") > 1000:
         ddqn.save_model(model_file)
         # For the purpose of the exercise the training will stop if the agent manages to complete the level
         print("A suitable model has been found.")
