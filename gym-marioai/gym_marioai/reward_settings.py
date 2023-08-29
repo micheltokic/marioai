@@ -11,7 +11,7 @@ class RewardSettings:
     mario_mode: float = 10
     kill: float = 1
     coin: float = 1
-    win: float = 100
+    win: float = 1000
     dead: float = -100
     cliff: float = 25
-    stuck: float = -100
+    stuck: float = -4

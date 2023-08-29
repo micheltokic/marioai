@@ -18,7 +18,9 @@ win = 150
 dead = -10
 
 reward_settings = gym_marioai.RewardSettings(progress=prog, timestep=timestep, mario_mode=mario_mode, kill=kill,
-                                             coin=coin, win=win, dead=dead, cliff=cliff)
+                                             coin=coin, cliff=cliff,
+                                             win=win, dead=dead,
+                                             )
 
 
 def find_free_port():
@@ -42,7 +44,7 @@ class Env:
         self.env = gym.make('Marioai-v2', should_render=visible,
                             level_path=level,
                             compact_observation=False,
-                            reward_settings=reward_settings,
+                            # reward_settings=reward_settings,
                             enabled_actions=self.all_actions,
                             rf_width=20, rf_height=10,
                             port=port)

@@ -82,12 +82,12 @@ env_train = Env(visible=visible, level=str(level_paths.level), port=8080).env
 ddqn.build_with_dataset(dataset)
 test_episodes = dataset.episodes[:30]
 # set environment in scorer function
-# FIXME: is this correct? The evaluator only runs the same example multiple times
-env_evaluator = EnvironmentEvaluator(env_train)
+# only run right now, as there is no randomness in the game
+env_evaluator = EnvironmentEvaluator(env_train, n_trials=1)
 
 # evaluate algorithm on the environment
 
-name = 'DDQN_marioai_%s_%s_%s_%s_%s' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs)
+name = 'DDQN_marioai_%s_%s_%s_%s_%s_v2' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs)
 model_file = init_dir / pathlib.Path("data", "models", name + ".pt")
 currentMax = -100000
 ddqn_max = copy.deepcopy(ddqn)
@@ -103,17 +103,9 @@ fitter = ddqn.fitter(
 
 for epoch, metrics in fitter:
     print(f"{metrics.get('environment')=}")
-    if metrics.get("environment") > currentMax:
-        currentMax = metrics.get("environment")
-        ddqn_max.copy_q_function_from(ddqn)
-        # FIXME: would this be better?
-        # ddqn.copy_q_function_from(ddqn_max)
-    else:
-        # FIXME: why is this needed?
-        ddqn.copy_q_function_from(ddqn_max)
-    ddqn.save_model(model_file)
     # FIXME: what is the correct value?
-    if currentMax > 300:
+    if metrics.get("environment") > 400:
+        ddqn.save_model(model_file)
         # For the purpose of the exercise the training will stop if the agent manages to complete the level
         print("A suitable model has been found.")
         break
