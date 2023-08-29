@@ -14,4 +14,4 @@ class RewardSettings:
     win: float = 100
     dead: float = -100
     cliff: float = 25
-    stuck: float = -2
+    stuck: float = -100
