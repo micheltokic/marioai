@@ -9,7 +9,7 @@ from d3rlpy.dataset.buffers import InfiniteBuffer
 from d3rlpy.metrics import EnvironmentEvaluator
 from sklearn.model_selection import train_test_split
 
-from data.datasets.getDatasets import getDataset
+from data.datasets.getDatasets import getDataset, getSpecificDataset
 from get_paths import LevelPaths
 from gym_setup import Env
 from training_params import *
@@ -26,7 +26,8 @@ level_paths: LevelPaths = LevelPaths(init_dir, "CliffsAndEnemiesLevel.lvl")
 print(f"level location={level_paths.level}")
 
 # run_ddqn
-dataset = getDataset()
+# dataset = getDataset()
+dataset = getSpecificDataset(level_paths.level_name)
 train_episodes, test_episodes = train_test_split(dataset.episodes, test_size=test_size)
 train_dataset = ReplayBuffer(InfiniteBuffer(), episodes=train_episodes)
 print(f"{len(train_episodes)=}")
