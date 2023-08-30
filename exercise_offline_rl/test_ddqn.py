@@ -1,23 +1,16 @@
 #!/usr/bin/env python
 # coding: utf-8
-import copy
-import numpy as np
 import pathlib
 
-from d3rlpy.algos import DQN
 import d3rlpy.dataset
-from d3rlpy.dataset import MDPDataset, ReplayBuffer
-from d3rlpy.metrics import EnvironmentEvaluator
-from get_paths import LevelPaths
-from sklearn.model_selection import train_test_split
+import numpy as np
 
+from get_paths import LevelPaths
 from gym_setup import Env
-from controller import GamepadController, KeyboardController
-from data.datasets.getDatasets import getDataset
 from training_params import *
 
-visible=True
-try_other=True
+visible = True
+try_other = True
 
 init_dir = pathlib.Path("./exercise_offline_rl")
 level_paths: LevelPaths = LevelPaths(init_dir, "CliffsAndEnemiesLevel.lvl")
@@ -30,10 +23,12 @@ else:
 # print(f"level location={level}")
 
 
+ddqn = d3rlpy.algos.DoubleDQNConfig(learning_rate=learning_rate, gamma=gamma,
+                                    target_update_interval=target_update_interval,
+                                    batch_size=batch_size).create()
 
-ddqn = d3rlpy.algos.DoubleDQN.from_json("d3rlpy_logs/DoubleDQN_20230829203505/params.json")
-
-name = 'DDQN_marioai_%s_%s_%s_%s_%s_v2' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs)
+name = 'DDQN_marioai_%s_%s_%s_%s_%s_v2' % (
+level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs)
 ddqn.load_model(init_dir / pathlib.Path("data") / "models" / f"{name}.pt")
 
 try:
