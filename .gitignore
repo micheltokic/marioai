@@ -16,6 +16,7 @@ training/plots/*
 exercise_offline_rl/d3rlpy_logs/*
 exercise_offline_rl/runs/*
 exercise_offline_rl/data/models/*
+exercise_offline_rl/data/datasets/*.random.h5
 d3rlpy_logs/
 
 ################

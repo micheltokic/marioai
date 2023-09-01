@@ -8,16 +8,20 @@ from get_paths import LevelPaths
 from gym_setup import Env
 
 init_dir = pathlib.Path(__file__).parent
-level_paths: LevelPaths = LevelPaths(init_dir, "CliffsAndEnemiesLevel.lvl")
+level_str = "CliffsAndEnemiesLevel.lvl"
+# level_str = "ClimbLevel.lvl"
+
+level_paths: LevelPaths = LevelPaths(init_dir, level_str)
 
 print(f"level location={level_paths.level}")
 
 # Generate random data
-EPISODES = 2  # <--- increase if you want more random data. More data might slow down the training process.
+EPISODES = 100  # <--- increase if you want more random data. More data might slow down the training process.
 
 env_rand = Env(visible=False, level=str(level_paths.level), port=8080).env
 
 for episode in range(EPISODES):
+    print(f"{episode=} \r")
     observation, _ = env_rand.reset()
     done = False
     action = env_rand.action_space.sample()

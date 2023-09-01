@@ -51,11 +51,13 @@ env_evaluator = EnvironmentEvaluator(env_train, n_trials=1)
 
 # evaluate algorithm on the environment
 
-name = 'DDQN_marioai_%s_%s_%s_%s_%s_v2' % (
-    level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs)
+name = 'DDQN_marioai_%s_%s_%s_%s' % (gamma, learning_rate, target_update_interval, n_epochs)
 model_file = init_dir / pathlib.Path("data", "models", name + ".pt")
 currentMax = -100000
 ddqn_max = copy.deepcopy(ddqn)
+
+ddqn.load_model(model_file)
+
 
 fitter = ddqn.fitter(
     train_dataset,
@@ -67,10 +69,14 @@ fitter = ddqn.fitter(
 )
 
 for epoch, metrics in fitter:
-    print(f"{metrics.get('environment')=}")
-    # FIXME: what is the correct value?
-    if metrics.get("environment") > 1000:
+    current_reward = metrics.get("environment")
+    print(f"{current_reward=}")
+    if current_reward > currentMax:
+        print("saving version to file")
+        currentMax = current_reward
         ddqn.save_model(model_file)
+    # FIXME: what is the correct value?
+    if current_reward > 1000:
         # For the purpose of the exercise the training will stop if the agent manages to complete the level
         print("A suitable model has been found.")
         break

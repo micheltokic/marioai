@@ -12,16 +12,19 @@ from training_params import *
 
 
 init_dir = pathlib.Path("./exercise_offline_rl")
-level_paths: LevelPaths = LevelPaths(init_dir, "CliffsAndEnemiesLevel.lvl")
+# level_str = "CliffsAndEnemiesLevel.lvl"
+level_str = "ClimbLevel.lvl"
 
-env_show = Env(visible=False, level=str(level_paths.level), port=8080).env
+level_paths: LevelPaths = LevelPaths(init_dir, level_str)
+
+env_show = Env(visible=True, level=str(level_paths.level), port=8080).env
 
 ddqn = d3rlpy.algos.DoubleDQNConfig(learning_rate=learning_rate, gamma=gamma,
                                     target_update_interval=target_update_interval,
                                     batch_size=batch_size).create()
 ddqn.build_with_dataset(getDataset())
 
-name = 'DDQN_marioai_%s_%s_%s_%s_%s' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs)
+name = 'DDQN_marioai_%s_%s_%s_%s' % (gamma, learning_rate, target_update_interval, n_epochs)
 ddqn.load_model(init_dir / pathlib.Path("data") / "models" / f"{name}.pt")
 
 try:
