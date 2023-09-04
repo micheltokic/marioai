@@ -415,7 +415,8 @@ public void move()
 //            }
     ableToShoot = !keys[KEY_SPEED];
 
-    mayJump = (onGround || sliding) && !keys[KEY_JUMP];
+    //TODO: might this break something?
+    mayJump = (onGround || sliding); //&& !keys[KEY_JUMP];
 
     xFlipPic = facing == -1;
 
