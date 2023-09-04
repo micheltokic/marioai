@@ -4,7 +4,7 @@
 
     <groupId>de.lmu.parl</groupId>
     <artifactId>marioai-server</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>marioai</groupId>
             <artifactId>marioai</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.3-SNAPSHOT</version>
         </dependency>
         <!-- <dependency> -->
         <!--     <artifactId>teachingbox-core</artifactId> -->
