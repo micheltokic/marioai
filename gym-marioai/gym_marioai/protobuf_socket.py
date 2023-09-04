@@ -69,7 +69,7 @@ class ProtobufSocket:
         """ send a RESET message """
         self.sock.send(self.reset_msg)
 
-    def send_action(self, action:int):
+    def send_action(self, action: int):
         """ send an ACTION message """
         self.sock.send(self.action_messages[action])
 

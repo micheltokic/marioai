@@ -22,12 +22,14 @@ visible = False
 # init_dir = pathlib.Path(__file__).parent
 init_dir = pathlib.Path("./exercise_offline_rl")
 level_paths: LevelPaths = LevelPaths(init_dir, "CliffsAndEnemiesLevel.lvl")
+# level_paths: LevelPaths = LevelPaths(init_dir, "ClimbLevel.lvl")
+
 
 print(f"level location={level_paths.level}")
 
 # run_ddqn
-dataset = getDataset()
-# dataset = getSpecificDataset(level_paths.level_name)
+# dataset = getDataset()
+dataset = getSpecificDataset(level_paths.level_name)
 train_episodes, test_episodes = train_test_split(dataset.episodes, test_size=test_size)
 train_dataset = ReplayBuffer(InfiniteBuffer(), episodes=train_episodes)
 print(f"{len(train_episodes)=}")
