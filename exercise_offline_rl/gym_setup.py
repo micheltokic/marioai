@@ -34,7 +34,8 @@ def find_free_port():
 class Env:
     def open(self, port):
         jar_file_path = os.path.join("exercise_offline_rl", "server.jar")
-        return subprocess.Popen(['java', '-jar', 'server.jar', '-p', str(port)])
+        # return subprocess.Popen(['java', '-jar', 'server.jar', '-p', str(port)])
+        return subprocess.Popen(['java', '-jar', jar_file_path, '-p', str(port)])
 
     def __init__(self, visible=True, level='None', run_server=True, port=None):
         if port is None:

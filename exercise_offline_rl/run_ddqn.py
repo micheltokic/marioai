@@ -2,6 +2,7 @@
 # coding: utf-8
 import copy
 import pathlib
+import matplotlib.pyplot as plt
 
 import d3rlpy.dataset
 from d3rlpy.dataset import ReplayBuffer
@@ -21,7 +22,7 @@ visible = False
 # Setup global variables
 # init_dir = pathlib.Path(__file__).parent
 init_dir = pathlib.Path("./exercise_offline_rl")
-level_paths: LevelPaths = LevelPaths(init_dir, "CliffsAndEnemiesLevel.lvl")
+level_paths: LevelPaths = LevelPaths(init_dir, "ClimbLevel.lvl")
 
 print(f"level location={level_paths.level}")
 
@@ -33,6 +34,9 @@ train_dataset = ReplayBuffer(InfiniteBuffer(), episodes=train_episodes)
 print(f"{len(train_episodes)=}")
 print(f"{len(test_episodes)=}")
 
+losses = []
+epochs = []
+tderror = []
 
 ddqn = d3rlpy.algos.DoubleDQNConfig(learning_rate=learning_rate, gamma=gamma,
                                     target_update_interval=target_update_interval,
@@ -69,8 +73,29 @@ for epoch, metrics in fitter:
         print("saving version to file")
         currentMax = current_reward
         ddqn.save_model(model_file)
+
+    loss = metrics.get("loss")
+    losses.append(loss)
+    epochs.append(epoch)
+    td_error = metrics.get("td_error")
+    tderror.append(td_error)
+
     # FIXME: what is the correct value?
     if current_reward > 1000:
         # For the purpose of the exercise the training will stop if the agent manages to complete the level
         print("A suitable model has been found.")
         break
+
+# Plot loss vs. epoch
+plt.figure(figsize=(10, 6))
+plt.plot(epochs, losses, marker='o', label='Loss')
+scaled_tderror = [td / 10.0 for td in tderror]  # Scale TD error for visualization
+plt.plot(epochs, scaled_tderror, marker='x', label='TD Error (Scaled)')
+plt.xlabel('Epoch')
+plt.ylabel('Loss / TD Error (Scaled)')
+plt.title('Loss and TD Error vs. Epoch')
+plt.legend()
+plt.grid(True)
+
+plt.show()
+print(max(losses)-min(losses))
