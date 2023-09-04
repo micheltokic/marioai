@@ -32,7 +32,7 @@ def find_free_port():
 
 class Env:
     def open(self, port):
-        return subprocess.Popen(['java', '-jar', 'server.jar', '-p', str(port)])
+        return subprocess.Popen(['java', '-jar', 'marioai-server-0.2-jar-with-dependencies.jar', '-p', str(port)])
 
     def __init__(self, visible=True, level='None', run_server=False, port=None):
         if port is None:
