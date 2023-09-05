@@ -9,6 +9,9 @@ import numpy as np
 
 from get_paths import LevelPaths
 from gym_setup import Env
+from d3rlpy.dataset import MDPDataset, ReplayBuffer
+import d3rlpy.dataset
+
 
 
 def make_epsilon_greedy_policy(Q, epsilon, num_actions):
@@ -27,15 +30,17 @@ def make_epsilon_greedy_policy(Q, epsilon, num_actions):
 # state is an array
 # Q[array]
 
-def sarsa_lambda(env, num_episodes, num_actions, discount=0.9, alpha=0.01, trace_decay=0.9, epsilon=0.1, type='accumulate'):
+def sarsa_lambda(env, num_episodes, num_actions, level_paths: LevelPaths, discount=0.9, alpha=0.01, trace_decay=0.9, epsilon=0.1, type='accumulate'):
     Q = defaultdict(lambda: np.zeros(num_actions))
     E = defaultdict(lambda: np.zeros(num_actions))
 
     policy = make_epsilon_greedy_policy(Q, epsilon, num_actions)
 
+    # No reward at first time step, because no action was taken yet
     rewards = [0.]
 
     for i_episode in range(num_episodes):
+
 
         print("\rEpisode {}/{}. ({})".format(i_episode + 1, num_episodes, rewards[-1]), end="")
         sys.stdout.flush()
@@ -43,6 +48,11 @@ def sarsa_lambda(env, num_episodes, num_actions, discount=0.9, alpha=0.01, trace
         state, _ = env.reset()
         action_probs = policy(state)
         action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
+
+        done = False
+        observations = [tuple(state)]
+        actions = [action]
+        terminals = [done]
 
         for t in itertools.count():
 
@@ -54,6 +64,12 @@ def sarsa_lambda(env, num_episodes, num_actions, discount=0.9, alpha=0.01, trace
             # NOTE: better version than tuple?
             next_state = tuple(next_state)
             state = tuple(state)
+
+            # save data
+            actions.append(action)
+            rewards.append(reward)
+            terminals.append(done)
+            observations.append(next_state)
 
             delta = reward + discount * Q[next_state][next_action] - Q[state][action]
 
@@ -74,12 +90,27 @@ def sarsa_lambda(env, num_episodes, num_actions, discount=0.9, alpha=0.01, trace
 
             state = next_state
             action = next_action
+        dataset = None
+        if level_paths.dataset_path_sarsa.exists():
+            # NOTE: is this the correct type of buffer?
+            # see https://d3rlpy.readthedocs.io/en/latest/references/dataset.html
+            with level_paths.dataset_path_sarsa.open("rb") as dataset_file:
+                dataset: ReplayBuffer = ReplayBuffer.load(dataset_file, d3rlpy.dataset.InfiniteBuffer())
+                dataset.append_episode(
+                    d3rlpy.dataset.components.Episode(np.asarray(observations), np.asarray(actions)[:, np.newaxis],
+                                                      np.asarray(rewards)[:, np.newaxis], done))
+        else:
+            dataset = MDPDataset(np.asarray(observations), np.asarray(actions)[:, np.newaxis],
+                                 np.asarray(rewards)[:, np.newaxis], np.asarray(terminals))
+        # FIXME: change this back
+        with open(level_paths.dataset_path_sarsa, "w+b") as f:
+            dataset.dump(f)
 
     return Q
 
 
 if __name__ == '__main__':
-    visible = True
+    visible = False
 
     # Setup global variables
     # init_dir = pathlib.Path(__file__).parent
@@ -93,6 +124,6 @@ if __name__ == '__main__':
     num_actions = len(environment.env.enabled_actions)
 
     start = time.time()
-    Q = sarsa_lambda(env_train, 100, num_actions=num_actions)
+    Q = sarsa_lambda(env_train, 20, num_actions=num_actions, level_paths=level_paths)
     end = time.time()
     print("Algorithm took {} to execute".format(end - start))

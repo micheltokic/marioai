@@ -27,8 +27,8 @@ level_paths: LevelPaths = LevelPaths(init_dir, "ClimbLevel.lvl")
 print(f"level location={level_paths.level}")
 
 # run_ddqn
-dataset = getDataset()
-# dataset = getSpecificDataset(level_paths.level_name)
+# dataset = getDataset()
+dataset = getSpecificDataset(level_paths.level_name)
 train_episodes, test_episodes = train_test_split(dataset.episodes, test_size=test_size)
 train_dataset = ReplayBuffer(InfiniteBuffer(), episodes=train_episodes)
 print(f"{len(train_episodes)=}")
@@ -89,7 +89,7 @@ for epoch, metrics in fitter:
 # Plot loss vs. epoch
 plt.figure(figsize=(10, 6))
 plt.plot(epochs, losses, marker='o', label='Loss')
-scaled_tderror = [td / 10.0 for td in tderror]  # Scale TD error for visualization
+scaled_tderror = [td / 1000.0 for td in tderror]  # Scale TD error for visualization
 plt.plot(epochs, scaled_tderror, marker='x', label='TD Error (Scaled)')
 plt.xlabel('Epoch')
 plt.ylabel('Loss / TD Error (Scaled)')
@@ -97,5 +97,9 @@ plt.title('Loss and TD Error vs. Epoch')
 plt.legend()
 plt.grid(True)
 
+# Save the plot
+plot_image_file = "loss_tderror_vs_epoch_plot.png"
+plt.savefig(plot_image_file)
 plt.show()
+
 print(max(losses)-min(losses))
