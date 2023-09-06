@@ -12,8 +12,8 @@ from training_params import *
 
 
 init_dir = pathlib.Path("./exercise_offline_rl")
-level_str = "CliffsAndEnemiesLevel.lvl"
-# level_str = "ClimbLevel.lvl"
+# level_str = "CliffsAndEnemiesLevel.lvl"
+level_str = "ClimbLevel.lvl"
 
 level_paths: LevelPaths = LevelPaths(init_dir, level_str)
 

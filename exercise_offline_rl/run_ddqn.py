@@ -28,7 +28,8 @@ print(f"level location={level_paths.level}")
 
 # run_ddqn
 # dataset = getDataset()
-dataset = getSpecificDataset(level_paths.level_name)
+# dataset = getSpecificDataset(level_paths.level_name)
+dataset = getSpecificDataset("ClimbLevel350epi")
 train_episodes, test_episodes = train_test_split(dataset.episodes, test_size=test_size)
 train_dataset = ReplayBuffer(InfiniteBuffer(), episodes=train_episodes)
 print(f"{len(train_episodes)=}")
@@ -99,6 +100,7 @@ plt.grid(True)
 
 # Save the plot
 plot_image_file = "loss_tderror_vs_epoch_plot.png"
+# plot_image_file = "loss_tderror_vs_epoch_plot_4Sarsa.png"
 plt.savefig(plot_image_file)
 plt.show()
 
