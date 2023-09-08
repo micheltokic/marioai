@@ -10,3 +10,5 @@ wheel
 setuptools
 grpcio
 scikit-learn
+matplotlib
+
