@@ -63,7 +63,7 @@ def run_ddqn(learning_rate, gamma, target_update_interval, batch_size, graph=Fal
 
     # evaluate algorithm on the environment
 
-    name = 'DDQN_marioai_%s_%s_%s_%s_%s' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs)
+    name = 'DDQN_marioai_%s_%s_%s_%s_%s_%s' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs, batch_size)
     model_file = init_dir / pathlib.Path("data", "models", name + ".pt")
     currentMax = -100000
     ddqn_max = copy.deepcopy(ddqn)
@@ -96,6 +96,8 @@ def run_ddqn(learning_rate, gamma, target_update_interval, batch_size, graph=Fal
             # For the purpose of the exercise the training will stop if the agent manages to complete the level
             print("A suitable model has been found.")
             break
+    # this is needed to close the socket to the java program or else it does not work when called multiple times.
+    env_train.teardown()
 
     if graph:
         # Plot loss vs. epoch
