@@ -50,7 +50,7 @@ env_evaluator = EnvironmentEvaluator(env_train, n_trials=1)
 
 # evaluate algorithm on the environment
 
-name = 'DDQN_marioai_%s_%s_%s_%s' % (gamma, learning_rate, target_update_interval, n_epochs)
+name = 'DDQN_marioai_%s_%s_%s_%s_%s' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs)
 model_file = init_dir / pathlib.Path("data", "models", name + ".pt")
 currentMax = -100000
 ddqn_max = copy.deepcopy(ddqn)

@@ -5,6 +5,7 @@ from contextlib import closing
 import gym
 
 import gym_marioai
+import os
 
 # reward function params
 # FIXME: change these?
@@ -32,10 +33,10 @@ def find_free_port():
 
 class Env:
     def open(self, port):
-        jar_file_path = os.path.join("exercise_offline_rl", 'marioai-server-0.2-jar-with-dependencies.jar')
-        return subprocess.Popen(['java', '-jar', jar_file_path, '-p', str(port)])
+        jar_file_path = os.path.join("exercise_offline_rl","marioai-server-0.2-jar-with-dependencies.jar")
+        return subprocess.Popen(['java', '-jar', "marioai-server-0.2-jar-with-dependencies.jar", '-p', str(port)])
 
-    def __init__(self, visible=True, level='None', run_server=False, port=None):
+    def __init__(self, visible=True, level='None', run_server=True, port=None):
         if port is None:
             port = find_free_port()
         print("Running on port", port)
