@@ -93,7 +93,7 @@ USE_GAMEPAD = False
 # To start the game run the next cell. If you think you have enough data just close the game window and move on to the next cell.
 #
 # Note: We have pregenerated some training data for your convenience which will be used in addition to your data to train the model.
-# If you want to train with your own data only, go ahead and delete the data from ``exercise_offline_rl\data\datasets``.
+# If you want to train with your own data only, go ahead and delete the data from ``project_offline_rl\data\datasets``.
 
 # In[18]:
 
@@ -212,7 +212,7 @@ print("Done!")
 #
 
 # ### 2.1 Choosing an algorithm
-# ![DQN](https://raw.githubusercontent.com/koerners/marioai/master/exercise_offline_rl/data/jupyter/dqn.PNG)
+# ![DQN](https://raw.githubusercontent.com/koerners/marioai/master/project_offline_rl/data/jupyter/dqn.PNG)
 #
 # #### Why we chose DQN
 # The Deep Q-Network approach is known to have been able to achieve human-level control in Atari games, and it is able to learn successful policies directly from high-dimensional sensory inputs (like pixels) using end-to-end reinforcement learning which makes it ideal for our purpose. [[1]](https://www.nature.com/articles/nature14236)
@@ -338,8 +338,8 @@ except ConnectionResetError:
 #
 # |  | Reward | Video |
 # | -------- | -------- | -------- |
-# | Q-Learner  | 232     | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/exercise_offline_rl/data/jupyter/rough_terrain_q_learner_232.gif)    |
-# | Deep Q-Network  | 280    | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/exercise_offline_rl/data/jupyter/rough_terrain_dqn_280.gif)    |
+# | Q-Learner  | 232     | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/project_offline_rl/data/jupyter/rough_terrain_q_learner_232.gif)    |
+# | Deep Q-Network  | 280    | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/project_offline_rl/data/jupyter/rough_terrain_dqn_280.gif)    |
 #
 # With sufficient training, neither model struggles with the easy level. However, the model fed with player generated data shows better anticipation of jumps which leads to a better overall result.
 
@@ -347,22 +347,22 @@ except ConnectionResetError:
 #
 # |  | Reward | Video |
 # | -------- | -------- | -------- |
-# | Q-Learner  | 176     | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/exercise_offline_rl/data/jupyter/cliff_and_enemies_q_learner_176.gif)    |
-# | Deep Q-Network  | 193    | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/exercise_offline_rl/data/jupyter/cliff_and_enemies_dqn_193.gif)    |
+# | Q-Learner  | 176     | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/project_offline_rl/data/jupyter/cliff_and_enemies_q_learner_176.gif)    |
+# | Deep Q-Network  | 193    | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/project_offline_rl/data/jupyter/cliff_and_enemies_dqn_193.gif)    |
 #
 # In the medium level, both models behave similarly to the easy level. While the Online Learner seems to have a better strategy to avoid enemies, the Offline Learner has the better jumping performance leading to a better overall score as it is quicker to finish the level.
 
 # ### 3.4 Hard level
 # |  | Reward | Video |
 # | -------- | -------- | -------- |
-# | Q-Learner  | -559     | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/exercise_offline_rl/data/jupyter/climb_q_learner_-559.gif)    |
-# | Deep Q-Network  | -34    | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/exercise_offline_rl/data/jupyter/climb_dqn_-34.gif)    |
+# | Q-Learner  | -559     | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/project_offline_rl/data/jupyter/climb_q_learner_-559.gif)    |
+# | Deep Q-Network  | -34    | ![Gif](https://raw.githubusercontent.com/koerners/marioai/master/project_offline_rl/data/jupyter/climb_dqn_-34.gif)    |
 #
 # Neither model manages to complete the really hard level we tested them on. It is however interesting to observe the different strategies they applied. While the Q-Learner shows a very promising leap to the middle platform, failing to reach the final platform it seems to just give up and wait for the time to run out leading to a high time punishment and therefore an extremely low score. The offline trained model while still failing to complete the level, has developed a strategy to avoid the high time punishment by committing suicide as soon as possible.
 
 # ### 3.5 Reward Summary
 #
-# ![Summary](https://raw.githubusercontent.com/koerners/marioai/master/exercise_offline_rl/data/jupyter/level-summary.png)
+# ![Summary](https://raw.githubusercontent.com/koerners/marioai/master/project_offline_rl/data/jupyter/level-summary.png)
 #
 #
 #
@@ -377,7 +377,7 @@ except ConnectionResetError:
 #
 # The plot below shows the total reward achieved by the offline and online method for each level. Here we can also see that the offline method is usually able to obtain a higher reward than the online method. This means that either the offline agent is able to progress further into the level or that the online learner gets stuck somewhere while the offline learner prefers a quick death like in the hard level above.
 #
-# ![Comparison: Achieved Reward](https://raw.githubusercontent.com/koerners/marioai/master/exercise_offline_rl/data/jupyter/eval.png)
+# ![Comparison: Achieved Reward](https://raw.githubusercontent.com/koerners/marioai/master/project_offline_rl/data/jupyter/eval.png)
 #
 
 # ## 4. Conclusion

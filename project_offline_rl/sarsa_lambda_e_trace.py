@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
     # Setup global variables
     # init_dir = pathlib.Path(__file__).parent
-    init_dir = pathlib.Path("./exercise_offline_rl")
+    init_dir = pathlib.Path("./project_offline_rl")
     level_paths: LevelPaths = LevelPaths(init_dir, "ClimbLevel.lvl")
 
     print(f"level location={level_paths.level}")

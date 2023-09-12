@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
-import copy
 import pathlib
+
 try:
     import matplotlib.pyplot as plt
 except ImportError as e:
@@ -13,17 +13,13 @@ from d3rlpy.dataset.buffers import InfiniteBuffer
 from d3rlpy.metrics import EnvironmentEvaluator
 from sklearn.model_selection import train_test_split
 
-from data.datasets.getDatasets import getDataset, getSpecificDataset
+from data.datasets.getDatasets import getSpecificDataset
 from get_paths import LevelPaths
 from gym_setup import Env
 import training_params
 
-# from d3rlpy.metrics.scorer import evaluate_on_environment
 
-visible = False
-
-def run_ddqn(learning_rate, gamma, target_update_interval, batch_size, graph=False):
-
+def run_discrete_cql(learning_rate, gamma, target_update_interval, batch_size, graph=False, visible=False):
     n_epochs = training_params.n_epochs
     n_steps_per_epoch = training_params.n_steps_per_epoch
     test_size = training_params.test_size
@@ -31,7 +27,7 @@ def run_ddqn(learning_rate, gamma, target_update_interval, batch_size, graph=Fal
 
     # Setup global variables
     # init_dir = pathlib.Path(__file__).parent
-    init_dir = pathlib.Path("./exercise_offline_rl")
+    init_dir = pathlib.Path("./project_offline_rl")
     # level_paths: LevelPaths = LevelPaths(init_dir, "ClimbLevel.lvl")
     level_paths: LevelPaths = LevelPaths(init_dir, "CliffsAndEnemiesLevel.lvl")
 
@@ -49,11 +45,11 @@ def run_ddqn(learning_rate, gamma, target_update_interval, batch_size, graph=Fal
     epochs = []
     tderror = []
 
-    ddqn = d3rlpy.algos.DoubleDQNConfig(learning_rate=learning_rate, gamma=gamma,
-                                        target_update_interval=target_update_interval,
-                                        batch_size=batch_size).create(device=use_gpu)
+    cql = d3rlpy.algos.DiscreteCQLConfig(learning_rate=learning_rate, gamma=gamma,
+                                         target_update_interval=target_update_interval,
+                                         batch_size=batch_size).create()
     # Needs to be rebuilt
-    ddqn.build_with_dataset(train_dataset)
+    cql.build_with_dataset(train_dataset)
 
     # set environment in scorer function
     env_train = Env(visible=visible, level=str(level_paths.level), port=8080).env
@@ -63,13 +59,13 @@ def run_ddqn(learning_rate, gamma, target_update_interval, batch_size, graph=Fal
 
     # evaluate algorithm on the environment
 
-    name = 'DDQN_marioai_%s_%s_%s_%s_%s_%s' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs, batch_size)
+    name = 'CQL_marioai_%s_%s_%s_%s_%s_%s' % (
+        level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs, batch_size)
     model_file = init_dir / pathlib.Path("data", "models", name + ".pt")
     currentMax = -100000
-    ddqn_max = copy.deepcopy(ddqn)
 
-    fitter = ddqn.fitter(
-        train_dataset,
+    fitter = cql.fitter(
+        dataset,
         n_steps=n_steps_per_epoch * n_epochs,
         n_steps_per_epoch=n_steps_per_epoch,
         evaluators={'td_error': d3rlpy.metrics.TDErrorEvaluator(test_episodes),
@@ -83,7 +79,7 @@ def run_ddqn(learning_rate, gamma, target_update_interval, batch_size, graph=Fal
         if current_reward > currentMax:
             print("saving version to file")
             currentMax = current_reward
-            ddqn.save_model(model_file)
+            cql.save_model(model_file)
 
         loss = metrics.get("loss")
         losses.append(loss)
@@ -117,7 +113,9 @@ def run_ddqn(learning_rate, gamma, target_update_interval, batch_size, graph=Fal
         plt.savefig(plot_image_file)
         plt.show()
 
-        print(max(losses)-min(losses))
+        print(max(losses) - min(losses))
+
 
 if __name__ == '__main__':
-    run_ddqn(training_params.learning_rate, training_params.gamma, training_params.target_update_interval, training_params.batch_size)
+    run_discrete_cql(training_params.learning_rate, training_params.gamma, training_params.target_update_interval,
+                     training_params.batch_size)

@@ -11,7 +11,7 @@ from gym_setup import Env
 from training_params import *
 
 
-init_dir = pathlib.Path("./exercise_offline_rl")
+init_dir = pathlib.Path("./project_offline_rl")
 level_str = "CliffsAndEnemiesLevel.lvl"
 # level_str = "ClimbLevel.lvl"
 
@@ -25,19 +25,18 @@ ddqn = d3rlpy.algos.DoubleDQNConfig(learning_rate=learning_rate, gamma=gamma,
 ddqn.build_with_dataset(getDataset())
 
 # name = 'DDQN_marioai_%s_%s_%s_%s' % (gamma, learning_rate, target_update_interval, n_epochs)
-name = 'DDQN_marioai_%s_%s_%s_%s_%s' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs)
+name = 'DDQN_marioai_%s_%s_%s_%s_%s_%s' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs, batch_size)
 ddqn.load_model(init_dir / pathlib.Path("data") / "models" / f"{name}.pt")
 
 try:
-    while True:
-        observation, _ = env_show.reset()
+    observation, _ = env_show.reset()
 
-        done = False
-        total_reward = 0
-        while not done:
-            predict_action = ddqn.predict(observation[np.newaxis, :])[0]
-            observation, reward, done, truncated, info = env_show.step(predict_action)
-            total_reward += reward
-        print(f'finished episode, total_reward: {total_reward}')
+    done = False
+    total_reward = 0
+    while not done:
+        predict_action = ddqn.predict(observation[np.newaxis, :])[0]
+        observation, reward, done, truncated, info = env_show.step(predict_action)
+        total_reward += reward
+    print(f'finished episode, total_reward: {total_reward}')
 except ConnectionResetError:
     print("Window closed.")

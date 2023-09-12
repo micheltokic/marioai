@@ -23,7 +23,7 @@ def test_ddqn(level_name_learned: str, level_name_test: str | None, learning_rat
     test_size = training_params.test_size
     use_gpu = training_params.use_gpu
 
-    init_dir = pathlib.Path("./exercise_offline_rl")
+    init_dir = pathlib.Path("./project_offline_rl")
     level_paths: LevelPaths = LevelPaths(init_dir, level_name_learned)
     if level_name_test is not None:
         level_paths_other: LevelPaths = LevelPaths(init_dir, level_name_test)
@@ -42,9 +42,6 @@ def test_ddqn(level_name_learned: str, level_name_test: str | None, learning_rat
                                         batch_size=batch_size).create()
 
     name = 'DDQN_marioai_%s_%s_%s_%s_%s_%s' % (level_paths.level_name, gamma, learning_rate, target_update_interval, n_epochs, batch_size)
-
-    print(name)
-    print(init_dir / pathlib.Path("data") / "models" / f"{name}.pt")
 
     # Needs to be rebuilt
     ddqn.build_with_dataset(train_dataset)

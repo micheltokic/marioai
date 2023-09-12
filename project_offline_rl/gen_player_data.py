@@ -45,7 +45,7 @@ USE_GAMEPAD = False
 # To start the game run the next cell. If you think you have enough data just close the game window and move on to the next cell.
 #
 # Note: We have pregenerated some training data for your convenience which will be used in addition to your data to train the model.
-# If you want to train with your own data only, go ahead and delete the data from ``exercise_offline_rl\data\datasets``.
+# If you want to train with your own data only, go ahead and delete the data from ``project_offline_rl\data\datasets``.
 
 # In[18]:
 

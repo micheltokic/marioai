@@ -1,1 +1,1 @@
-PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python python exercise_offline_rl/run_ddpg.py
+PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python python project_offline_rl/run_ddpg.py
