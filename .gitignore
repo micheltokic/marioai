@@ -15,7 +15,6 @@ training/plots/*
 
 project_offline_rl/d3rlpy_logs/*
 project_offline_rl/runs/*
-project_offline_rl/data/models/*
 project_offline_rl/data/datasets/*.random.h5
 d3rlpy_logs/
 
