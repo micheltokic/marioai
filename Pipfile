@@ -6,20 +6,17 @@ name = "pypi"
 [packages]
 d3rlpy = "*"
 numpy = "*"
-# FIXME: install this.
-# gym-marioai = {path = "./gym-marioai"}
+gym-marioai = {path = "./gym-marioai"}
 inputs = "*"
 keyboard = "*"
 tensorboard = "*"
 jupyter = "*"
-wheel = "*"
-setuptools = "*"
-grpcio = "*"
+pypiwin32 = "*"
 
 [dev-packages]
 
 [requires]
-# python_version = "3.6"
+python_version = "3.6"
 
 [scripts]
 train = "python exercise_offline_rl/train_offline.py"
