@@ -1,6 +1,5 @@
 d3rlpy
 numpy
-# FIXME: install this.
 ./gym-marioai
 inputs
 keyboard

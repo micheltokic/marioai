@@ -1,1 +1,0 @@
-sudo PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python python3 project_offline_rl/gen_player_data.py

@@ -6,4 +6,5 @@ keyboard==0.13.5
 inputs==0.5
 numpy==1.25.2
 d3rlpy==2.0.4
+matplotlib==3.8.0
 ./gym-marioai
