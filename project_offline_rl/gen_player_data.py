@@ -11,7 +11,8 @@ from gym_setup import Env
 # Setup global variables
 init_dir = pathlib.Path(__file__).parent
 # level_str = "CliffsAndEnemiesLevel.lvl"
-level_str = "ClimbLevel.lvl"
+level_str = "RoughTerrainLevel.lvl"
+# level_str = "ClimbLevel.lvl"
 
 level_paths: LevelPaths = LevelPaths(init_dir, level_str)
 
