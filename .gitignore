@@ -7,6 +7,7 @@ target
 *.prefs
 *.project
 settings.json
+marioenv/
 
 training/models/*
 training/results/*
@@ -15,6 +16,10 @@ training/plots/*
 exercise_offline_rl/d3rlpy_logs/*
 exercise_offline_rl/runs/*
 exercise_offline_rl/data/models/*
+
+project_offline_rl/runs/*
+project_offline_rl/data/datasets/*.random.h5
+d3rlpy_logs
 
 ################
 # python stuff #
@@ -135,6 +140,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+venv-mac/
 
 # Spyder project settings
 .spyderproject
@@ -159,3 +165,5 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+activate_all.sh

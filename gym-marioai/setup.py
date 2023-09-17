@@ -13,9 +13,9 @@ setup(
     classifiers=[],
     python_requires='>=3.6',
     install_requires=[
-        'numpy', 
-        'gym>=0.17.2', 
-        'protobuf==3.14.0',
+        'numpy',
+        'gym>=0.17.2',
+        'protobuf>=3.14.0',
         'keyboard'],
 
     include_package_data=True,

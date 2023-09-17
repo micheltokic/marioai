@@ -1,0 +1,13 @@
+d3rlpy
+numpy
+./gym-marioai
+inputs
+keyboard
+tensorboard
+jupyter
+wheel
+setuptools
+grpcio
+scikit-learn
+matplotlib
+
